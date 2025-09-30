@@ -6,7 +6,7 @@ class Product {
   final String description;
   final String plimit;
   final List<String> images;
-  final List<Variant> variants;
+  final List<VariantModel> variants;
   final List<dynamic> extra;
 
   Product({
@@ -22,56 +22,62 @@ class Product {
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Debug prints to catch inconsistent types
+    print('Parsing product ID: ${json['productId']}');
+    print('Images type: ${json['images']?.runtimeType}');
+    print('Variants type: ${json['variants']?.runtimeType}');
+    print('Extra type: ${json['extra']?.runtimeType}');
+
+    List<String> images = [];
+    if (json['images'] is List) {
+      images = (json['images'] as List).map((e) => e.toString()).toList();
+    } else if (json['images'] is String && json['images'].trim().isNotEmpty) {
+      images = [json['images']];
+    }
+
+    List<VariantModel> variants = [];
+    if (json['variants'] is List) {
+      variants = (json['variants'] as List)
+          .map((e) => VariantModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+
+    List<dynamic> extra = [];
+    if (json['extra'] is List) {
+      extra = json['extra'];
+    } else if (json['extra'] is String && (json['extra'] as String).trim().isNotEmpty) {
+      extra = [json['extra']];
+    }
+
     return Product(
-      productId: json['productId']?.toString() ?? '',
+      productId: json['productId'] ?? '',
       productName: json['productName'] ?? '',
       status: json['status'] ?? '',
       primaryImage: json['primaryimage'] ?? '',
       description: json['description'] ?? '',
       plimit: json['plimit'] ?? '',
-      images: List<String>.from(json['images'] ?? []),
-      variants: (json['variants'] as List<dynamic>? ?? [])
-          .map((v) => Variant.fromJson(v))
-          .toList(),
-      extra: json['extra'] ?? [],
+      images: images,
+      variants: variants,
+      extra: extra,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'productId': productId,
-        'productName': productName,
-        'status': status,
-        'primaryimage': primaryImage,
-        'description': description,
-        'plimit': plimit,
-        'images': images,
-        'variants': variants.map((v) => v.toJson()).toList(),
-        'extra': extra,
-      };
 }
-
-class Variant {
-  final String varientId;
+class VariantModel {
+  final String variantId;
   final String variantName;
   final String varPrice;
 
-  Variant({
-    required this.varientId,
+  VariantModel({
+    required this.variantId,
     required this.variantName,
     required this.varPrice,
   });
 
-  factory Variant.fromJson(Map<String, dynamic> json) {
-    return Variant(
-      varientId: json['varientid']?.toString() ?? '',
+  factory VariantModel.fromJson(Map<String, dynamic> json) {
+    return VariantModel(
+      variantId: json['varientid'] ?? '',
       variantName: json['variantname'] ?? '',
-      varPrice: json['varprice']?.toString() ?? '',
+      varPrice: json['varprice'] ?? '',
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'varientid': varientId,
-        'variantname': variantName,
-        'varprice': varPrice,
-      };
 }

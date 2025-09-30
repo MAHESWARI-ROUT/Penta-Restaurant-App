@@ -15,20 +15,14 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      catId: json['cat_id']?.toString() ?? '',
+      catId: json['cat_id'] ?? '',
       categoryName: json['category_name'] ?? '',
       categoryImage: json['category_image'] ?? '',
-      products: (json['products'] as List<dynamic>? ?? [])
-          .map((p) => Product.fromJson(p))
-          .toList(),
+      products: (json['products'] is List)
+          ? (json['products'] as List)
+              .map((e) => Product.fromJson(e as Map<String, dynamic>))
+              .toList()
+          : [],
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'cat_id': catId,
-        'category_name': categoryName,
-        'category_image': categoryImage,
-        'products': products.map((p) => p.toJson()).toList(),
-      };
 }
-

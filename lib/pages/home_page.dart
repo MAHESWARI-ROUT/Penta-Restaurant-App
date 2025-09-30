@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ProductController controller = Get.put(ProductController());
-    RxInt selectedCategory = 0.obs;
+    RxInt selectedCategory = 1.obs;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Container(
-                      height: 90,
+                      height: 110, // Increased height to avoid overflow
                       decoration: BoxDecoration(
                         color: AppColors.darkGreen,
                         borderRadius: BorderRadius.circular(20),
@@ -115,9 +115,13 @@ class HomePage extends StatelessWidget {
                                 const SizedBox(height: 4),
                                 SizedBox(
                                   width: 110,
-                                  child: Text(
-                                    "Eat gelato like there's no tomorrow!",
-                                    style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      "Eat gelato like there's no tomorrow!",
+                                      style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -223,20 +227,15 @@ class HomePage extends StatelessWidget {
             // Product Grid and loading/error states
             Expanded(
               child: Obx(() {
-                if (controller.isLoadingCategories.value) {
+                if (controller.isLoadingProducts.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (controller.categoryError.isNotEmpty) {
-                  return Center(child: Text(controller.categoryError.value));
+                if (controller.productError.isNotEmpty) {
+                  return Center(child: Text(controller.productError.value));
                 }
-                if (controller.categories.isEmpty) {
-                  return const Center(child: Text('No categories found'));
-                }
-                // Get products safely
-                var productsRaw = controller.categories[selectedCategory.value].products;
-                final products = (productsRaw is List) ? productsRaw : [];
+                final products = controller.products;
                 if (products.isEmpty) {
-                  return const Center(child: Text('No products found in this category'));
+                  return const Center(child: Text('No products found'));
                 }
                 return GridView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -249,7 +248,6 @@ class HomePage extends StatelessWidget {
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-                    // Get lowest price from variants
                     String price = '';
                     if (product.variants.isNotEmpty) {
                       price = product.variants
@@ -259,13 +257,16 @@ class HomePage extends StatelessWidget {
                     } else {
                       price = product.plimit;
                     }
+                    String cleanDescription = RegExp(r'<[^>]*>').hasMatch(product.description)
+                        ? product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim()
+                        : product.description;
                     return Container(
                       decoration: BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.grey5.withValues(alpha: (0.2 * 255)),
+                            color: AppColors.grey5.withOpacity(0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -296,11 +297,14 @@ class HomePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(product.productName, style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 14)),
+                                Text(product.productName, style: TextStyle(
+                                    color: AppColors.black, fontWeight: FontWeight.bold, fontSize: 14)),
                                 const SizedBox(height: 2),
-                                Text(product.description, style: TextStyle(color: AppColors.grey2, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                Text(cleanDescription, style: TextStyle(
+                                    color: AppColors.grey2, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
                                 const SizedBox(height: 4),
-                                Text('₱$price', style: TextStyle(color: AppColors.yellow, fontWeight: FontWeight.bold, fontSize: 15)),
+                                Text('₱$price', style: TextStyle(
+                                    color: AppColors.yellow, fontWeight: FontWeight.bold, fontSize: 15)),
                               ],
                             ),
                           ),
@@ -329,8 +333,7 @@ class HomePage extends StatelessWidget {
                   },
                 );
               }),
-            ),
-          ],
+            ),          ],
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -348,3 +351,5 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+

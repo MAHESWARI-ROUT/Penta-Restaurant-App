@@ -17,22 +17,22 @@ class ProductController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchCategories();
+    // fetchCategories();
     fetchProducts();
   }
 
-  void fetchCategories() async {
-    isLoadingCategories.value = true;
-    categoryError.value = '';
-    try {
-      final result = await _productService.getCategoryList();
-      categories.assignAll(result);
-    } catch (e) {
-      categoryError.value = e.toString();
-    } finally {
-      isLoadingCategories.value = false;
-    }
-  }
+  // void fetchCategories() async {
+  //   isLoadingCategories.value = true;
+  //   categoryError.value = '';
+  //   try {
+  //     final result = await _productService.getCategoryList();
+  //     categories.assignAll(result);
+  //   } catch (e) {
+  //     categoryError.value = e.toString();
+  //   } finally {
+  //     isLoadingCategories.value = false;
+  //   }
+  // }
 
   void fetchProducts() async {
     isLoadingProducts.value = true;
