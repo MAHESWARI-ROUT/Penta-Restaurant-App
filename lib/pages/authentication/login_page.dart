@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
+import 'package:penta_restaurant/pages/authentication/forget_password_page.dart';
 import 'package:penta_restaurant/pages/authentication/signup_page.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
@@ -25,42 +26,17 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 24.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 32),
                 // Logo placeholder
-                AppIcon()
-                /*Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.yellow,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(Icons.restaurant_menu, size: 60, color: AppColors.darkGreen),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Penta',
-                  style: TextStyle(
-                    color: AppColors.yellow,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 4),
-                Text(
-                  'Family Restaurant',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                ),*/
-                ,SizedBox(height: 40),
+                AppIcon(),
+                SizedBox(height: 40),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -94,9 +70,14 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 8),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    'Forgot password?',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  child: TextButton(
+                    onPressed: () {
+                      Get.to(() => ForgetPasswordPage());
+                    },
+                    child: Text(
+                      'Forgot password?',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
                   ),
                 ),
                 SizedBox(height: 24),
@@ -113,7 +94,11 @@ class _LoginPageState extends State<LoginPage> {
                     },
                     child: Text(
                       'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -128,10 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: Text(
                     'Register Now',
-                    style: TextStyle(
-                      color: AppColors.yellow,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: AppColors.yellow, fontSize: 14),
                   ),
                 ),
               ],

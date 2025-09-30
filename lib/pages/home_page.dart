@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
-import 'package:penta_restaurant/pages/profile_page.dart';
+import 'package:penta_restaurant/pages/edit_profile_page.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
@@ -414,7 +414,7 @@ class _HomePageState extends State<HomePage> {
         onTap: (index) {
           // Handle navigation
           if (index == 1) Get.to(() => const CartPage());
-          if (index == 2) Get.to(() => ProfilePage());
+          if (index == 2) Get.to(() => EditProfilePage());
         },
         items: [
           const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
