@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../commons/appcolors.dart';
 import '../controller/product_controller.dart';
@@ -26,9 +27,12 @@ class CategorySelector extends StatelessWidget {
             itemCount: controller.categories.length + 1, // +1 for 'All'
             separatorBuilder: (_, __) => const SizedBox(width: 20),
             itemBuilder: (context, index) {
+              print('selectedCategoryIndex.value: ${selectedCategoryIndex.value}, index: $index');
+
               if (index == 0) {
                 // All tile
                 return CategoryCard(
+                  key: ValueKey(index),
                   label: 'All',
                   imageUrl: null,
                   isSelected: selectedCategoryIndex.value == 0,
@@ -39,6 +43,7 @@ class CategorySelector extends StatelessWidget {
                 final category = controller.categories[index - 1];
                 final isSelected = selectedCategoryIndex.value == index;
                 return CategoryCard(
+                  key: ValueKey(index),
                   label: category.categoryName,
                   imageUrl: category.categoryImage,
                   isSelected: isSelected,
@@ -72,6 +77,8 @@ class CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Building CategoryCard: $label, selected: $isSelected');
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -98,20 +105,19 @@ class CategoryCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 45,
+              height: 45,
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.darkGreen : AppColors.grey5,
                 shape: BoxShape.circle,
               ),
-              padding: const EdgeInsets.all(8),
               child: (imageUrl != null && imageUrl!.isNotEmpty)
                   ? ClipOval(
                       child: Image.network(
                         imageUrl!,
-                        height: 24,
-                        width: 24,
-                        fit: BoxFit.cover,
+                        height: 29,
+                        width: 29,
+                        fit: BoxFit.fill,
                         errorBuilder: (c, e, s) => Icon(
                           icon ?? Icons.fastfood,
                           color: isSelected ? AppColors.yellow : AppColors.grey2,
@@ -144,3 +150,6 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
+
+
+
