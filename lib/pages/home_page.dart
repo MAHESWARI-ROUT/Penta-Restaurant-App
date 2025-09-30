@@ -4,14 +4,21 @@ import 'package:penta_restaurant/pages/cart_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
+import '../widgets/category_card.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final selectedCategoryIndex = 0.obs; // Local UI state for the selected tab
 
   @override
   Widget build(BuildContext context) {
     final ProductController controller = Get.put(ProductController());
-    final selectedCategoryIndex = 0.obs; // Local UI state for the selected tab
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -109,6 +116,7 @@ class HomePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -117,28 +125,30 @@ class HomePage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Hello! Luke Thomp',
+                                  'Hello! User',
                                   style: TextStyle(
                                     color: AppColors.white,
                                     fontSize: 13,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                const SizedBox(
-                                  width: 90,
-                                  child: Text(
-                                    "Eat gelato like there's no tomorrow!",
-                                    style: TextStyle(
-                                      color: AppColors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                Expanded(
+                                  child: const SizedBox(
+                                    width: 90,
+                                    child: Text(
+                                      "Eat gelato like there's no tomorrow!",
+                                      style: TextStyle(
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const Spacer(),
+                          //const Spacer(),
                           const Padding(
                             padding: EdgeInsets.only(right: 8.0),
                             child: CircleAvatar(
@@ -197,75 +207,10 @@ class HomePage extends StatelessWidget {
             ),
 
             // Category Selector
-            Obx(
-              () => SizedBox(
-                height: 70,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: controller.categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final category = controller.categories[index];
-                    final isSelected = selectedCategoryIndex.value == index;
-                    return GestureDetector(
-                      onTap: () => selectedCategoryIndex.value = index,
-                      child: Container(
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.yellow
-                              : AppColors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.yellow
-                                : AppColors.grey4,
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            category.categoryImage.isNotEmpty
-                                ? Image.network(
-                                    category.categoryImage,
-                                    height: 28,
-                                    width: 28,
-                                    errorBuilder: (c, e, s) => Icon(
-                                      Icons.fastfood,
-                                      color: isSelected
-                                          ? AppColors.darkGreen
-                                          : AppColors.grey2,
-                                    ),
-                                  )
-                                : Icon(
-                                    Icons.fastfood,
-                                    color: isSelected
-                                        ? AppColors.darkGreen
-                                        : AppColors.grey2,
-                                  ),
-                            const SizedBox(height: 4),
-                            Text(
-                              category.categoryName,
-                              style: TextStyle(
-                                color: isSelected
-                                    ? AppColors.darkGreen
-                                    : AppColors.grey2,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+            CategorySelector(
+              selectedCategoryIndex: selectedCategoryIndex,
+              controller: controller,
             ),
-
             // Recommendations Header
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -305,9 +250,14 @@ class HomePage extends StatelessWidget {
                   return const Center(child: Text('No categories found'));
                 }
 
-                // Get products by selected category
-                final products =
-                    controller.categories[selectedCategoryIndex.value].products;
+                List products;
+                if (selectedCategoryIndex.value == 0) {
+                  // All selected: show all products from all categories
+                  products = controller.categories.expand((cat) => cat.products).toList();
+                } else {
+                  // Show products from selected category
+                  products = controller.categories[selectedCategoryIndex.value - 1].products;
+                }
 
                 if (products.isEmpty) {
                   return const Center(
@@ -338,111 +288,113 @@ class HomePage extends StatelessWidget {
                       price = product.plimit;
                     }
 
-                    return Container(
-                      height: 200,
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.grey5.withOpacity(0.2),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
+                    return SizedBox(
+                      height: 160,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundPrimary,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.darkGrey.withOpacity(0.2),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
-                            child: Image.network(
-                              product.primaryImage,
-                              height: 80,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Container(
-                                    height: 80,
-                                    color: AppColors.grey5,
-                                    child: Icon(
-                                      Icons.fastfood,
-                                      color: AppColors.grey3,
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
+                              child: Image.network(
+                                product.primaryImage,
+                                height: 100,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      height: 80,
+                                      color: AppColors.grey5,
+                                      child: Icon(
+                                        Icons.fastfood,
+                                        color: AppColors.grey3,
+                                      ),
+                                    ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.productName,
+                                    style: const TextStyle(
+                                      color: AppColors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
                                     ),
                                   ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    product.description,
+                                    style: const TextStyle(
+                                      color: AppColors.grey2,
+                                      fontSize: 11,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '₹ $price',
+                                    style: const TextStyle(
+                                      color: AppColors.yellow,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  product.productName,
-                                  style: const TextStyle(
-                                    color: AppColors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                            //const Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5.0,
+                                vertical: 3.0,
+                              ),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.darkGreen,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 3,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  product.description,
-                                  style: const TextStyle(
-                                    color: AppColors.grey2,
-                                    fontSize: 11,
+                                  onPressed: () {},
+                                  icon: const Icon(
+                                    Icons.add_shopping_cart,
+                                    size: 14,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '₱$price',
-                                  style: const TextStyle(
-                                    color: AppColors.yellow,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          //const Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5.0,
-                              vertical: 3.0,
-                            ),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkGreen,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 3,
-                                  ),
-                                ),
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.add_shopping_cart,
-                                  size: 14,
-                                ),
-                                label: const Text(
-                                  'Add to cart',
-                                  style: TextStyle(
-                                    color: AppColors.backgroundPrimary,
+                                  label: const Text(
+                                    'Add to cart',
+                                    style: TextStyle(
+                                      color: AppColors.backgroundPrimary,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -479,3 +431,4 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
