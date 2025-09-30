@@ -25,7 +25,10 @@ class _SignupPageState extends State<SignupPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 24.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -39,7 +42,11 @@ class _SignupPageState extends State<SignupPage> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Icon(Icons.restaurant_menu, size: 60, color: AppColors.darkGreen),
+                    child: Icon(
+                      Icons.restaurant_menu,
+                      size: 60,
+                      color: AppColors.darkGreen,
+                    ),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -54,10 +61,7 @@ class _SignupPageState extends State<SignupPage> {
                 SizedBox(height: 4),
                 Text(
                   'Food Restaurant',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 14),
                 ),
                 SizedBox(height: 40),
                 Align(
@@ -78,15 +82,7 @@ class _SignupPageState extends State<SignupPage> {
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
                   ),
-                  child: TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.person, color: Colors.grey),
-                      labelText: 'Name',
-                      labelStyle: TextStyle(color: Colors.black, fontSize: 16),
-                      border: InputBorder.none,
-                    ),
-                  ),
+                  child: CtextformField(text: 'Name',icon1: Icon(Icons.person),)
                 ),
                 SizedBox(height: 16),
                 // Username field
@@ -95,14 +91,9 @@ class _SignupPageState extends State<SignupPage> {
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.white,
                   ),
-                  child: TextFormField(
-                    controller: usernameController,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.account_circle, color: Colors.grey),
-                      labelText: 'Username',
-                      labelStyle: TextStyle(color: Colors.black, fontSize: 16),
-                      border: InputBorder.none,
-                    ),
+                  child: CtextformField(
+                    text: 'Username',
+                    icon1: Icon(Icons.person_2),
                   ),
                 ),
                 SizedBox(height: 16),
@@ -128,14 +119,22 @@ class _SignupPageState extends State<SignupPage> {
                     },
                     child: Text(
                       'Create Account',
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(height: 32),
                 Text(
                   "Already have an Account",
-                  style: TextStyle(color: Colors.white, fontSize: 14,height: 0),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    height: 0,
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
@@ -146,7 +145,7 @@ class _SignupPageState extends State<SignupPage> {
                     style: TextStyle(
                       color: AppColors.yellow,
                       fontSize: 14,
-                      height: 0
+                      height: 0,
                     ),
                   ),
                 ),

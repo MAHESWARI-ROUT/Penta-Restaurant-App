@@ -82,7 +82,6 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 24),
                 CtextformField(
                   text: 'Username',
-                  passwordController: passwordController,
                   icon1: Icon(Icons.account_circle, color: Colors.grey),
                 ),
                 SizedBox(height: 16),
