@@ -462,7 +462,7 @@ class HomePage extends StatelessWidget {
         onTap: (index) {
           // Handle navigation
           if (index == 1) Get.to(() => const CartPage());
-          if (index == 2) Get.to(ProfilePage());
+          if (index == 2) Get.to(() => ProfilePage());
         },
         items: [
           const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

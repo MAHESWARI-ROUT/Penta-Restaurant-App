@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
 
@@ -40,7 +42,7 @@ class ProfilePage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: () {Get.back();},
                                 icon: Icon(Icons.arrow_back),
                               ),
                             ),
