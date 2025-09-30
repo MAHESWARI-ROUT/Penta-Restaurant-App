@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
 
-class CtextformField extends StatelessWidget {
+class CtextformField extends StatefulWidget {
   CtextformField({
     super.key,
     required this.text,
@@ -15,6 +15,12 @@ class CtextformField extends StatelessWidget {
   final bool isPassword;
   final Icon? icon1;
   final PasswordController passwordController;
+
+  @override
+  State<CtextformField> createState() => _CtextformFieldState();
+}
+
+class _CtextformFieldState extends State<CtextformField> {
   final TextEditingController controller = TextEditingController();
 
   @override
@@ -24,22 +30,30 @@ class CtextformField extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
       ),
-      child: TextFormField(
+      child: widget.isPassword
+          ? Obx(() => TextFormField(
         controller: controller,
-        obscureText: isPassword ? passwordController.isHidden.value : false,
+        obscureText: widget.passwordController.isHidden.value,
         decoration: InputDecoration(
-          prefixIcon: icon1,
-          suffixIcon: isPassword
-              ? Obx(() => IconButton(
-                    icon: Icon(
-                      passwordController.isHidden.value
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: passwordController.toggleVisibility,
-                  ))
-              : null,
-          labelText: text,
+          prefixIcon: widget.icon1,
+          suffixIcon: IconButton(
+            icon: Icon(
+              widget.passwordController.isHidden.value
+                  ? Icons.visibility_off
+                  : Icons.visibility,
+            ),
+            onPressed: widget.passwordController.toggleVisibility,
+          ),
+          labelText: widget.text,
+          labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
+          border: InputBorder.none,
+        ),
+      ))
+          : TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          prefixIcon: widget.icon1,
+          labelText: widget.text,
           labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
           border: InputBorder.none,
         ),
