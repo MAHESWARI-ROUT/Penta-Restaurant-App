@@ -1,10 +1,10 @@
-import 'product_model.dart';
+import 'package:penta_restaurant/models/product_model.dart';
 
 class Category {
   final String catId;
   final String categoryName;
   final String categoryImage;
-  final List<Product> products;
+  final List<Product> products; // This list will now be populated by the controller
 
   Category({
     required this.catId,
@@ -14,15 +14,18 @@ class Category {
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {
+    var productsJson = json['products'];
+    List<Product> productList = [];
+
+    if (productsJson != null && productsJson is List) {
+      productList = productsJson.map((p) => Product.fromJson(p)).toList();
+    }
+
     return Category(
-      catId: json['cat_id'] ?? '',
+      catId: json['cat_id']?.toString() ?? '',
       categoryName: json['category_name'] ?? '',
       categoryImage: json['category_image'] ?? '',
-      products: (json['products'] is List)
-          ? (json['products'] as List)
-              .map((e) => Product.fromJson(e as Map<String, dynamic>))
-              .toList()
-          : [],
+      products: productList,
     );
   }
 }

@@ -1,3 +1,5 @@
+// lib/models/product_model.dart
+
 class Product {
   final String productId;
   final String productName;
@@ -6,7 +8,7 @@ class Product {
   final String description;
   final String plimit;
   final List<String> images;
-  final List<VariantModel> variants;
+  final List<Variant> variants;
   final List<dynamic> extra;
 
   Product({
@@ -21,63 +23,55 @@ class Product {
     required this.extra,
   });
 
+  // UPDATED: This factory is now more robust against bad API data.
   factory Product.fromJson(Map<String, dynamic> json) {
-    // Debug prints to catch inconsistent types
-    print('Parsing product ID: ${json['productId']}');
-    print('Images type: ${json['images']?.runtimeType}');
-    print('Variants type: ${json['variants']?.runtimeType}');
-    print('Extra type: ${json['extra']?.runtimeType}');
+    var imagesFromJson = json['images'];
+    var variantsFromJson = json['variants'];
+    var extraFromJson = json['extra'];
 
-    List<String> images = [];
-    if (json['images'] is List) {
-      images = (json['images'] as List).map((e) => e.toString()).toList();
-    } else if (json['images'] is String && json['images'].trim().isNotEmpty) {
-      images = [json['images']];
-    }
+    // Safely create lists. If the data is not a list, it will create an empty one.
+    List<String> imagesList = (imagesFromJson is List)
+        ? List<String>.from(imagesFromJson)
+        : [];
 
-    List<VariantModel> variants = [];
-    if (json['variants'] is List) {
-      variants = (json['variants'] as List)
-          .map((e) => VariantModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    }
+    List<Variant> variantsList = (variantsFromJson is List)
+        ? variantsFromJson.map((v) => Variant.fromJson(v)).toList()
+        : [];
 
-    List<dynamic> extra = [];
-    if (json['extra'] is List) {
-      extra = json['extra'];
-    } else if (json['extra'] is String && (json['extra'] as String).trim().isNotEmpty) {
-      extra = [json['extra']];
-    }
+    List<dynamic> extraList = (extraFromJson is List)
+        ? List<dynamic>.from(extraFromJson)
+        : [];
 
     return Product(
-      productId: json['productId'] ?? '',
+      productId: json['productId']?.toString() ?? '',
       productName: json['productName'] ?? '',
-      status: json['status'] ?? '',
+      status: json['status'] ?? 'available',
       primaryImage: json['primaryimage'] ?? '',
       description: json['description'] ?? '',
-      plimit: json['plimit'] ?? '',
-      images: images,
-      variants: variants,
-      extra: extra,
+      plimit: json['plimit'] ?? '0',
+      images: imagesList,
+      variants: variantsList,
+      extra: extraList,
     );
   }
 }
-class VariantModel {
-  final String variantId;
+
+class Variant {
+  final String varId;
   final String variantName;
   final String varPrice;
 
-  VariantModel({
-    required this.variantId,
+  Variant({
+    required this.varId,
     required this.variantName,
     required this.varPrice,
   });
 
-  factory VariantModel.fromJson(Map<String, dynamic> json) {
-    return VariantModel(
-      variantId: json['varientid'] ?? '',
+  factory Variant.fromJson(Map<String, dynamic> json) {
+    return Variant(
+      varId: json['varientid']?.toString() ?? '',
       variantName: json['variantname'] ?? '',
-      varPrice: json['varprice'] ?? '',
+      varPrice: json['varprice']?.toString() ?? '0',
     );
   }
 }

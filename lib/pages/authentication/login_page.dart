@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
 import 'package:penta_restaurant/pages/authentication/signup_page.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
@@ -30,7 +31,8 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 SizedBox(height: 32),
                 // Logo placeholder
-                Container(
+                AppIcon()
+                /*Container(
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
@@ -57,8 +59,8 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white,
                     fontSize: 14,
                   ),
-                ),
-                SizedBox(height: 40),
+                ),*/
+                ,SizedBox(height: 40),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
