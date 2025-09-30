@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
 
@@ -15,15 +16,15 @@ class PreloadPage extends StatelessWidget {
     });
     return Container(
       color: Color(0xFF1a6f6a),
-      padding: const EdgeInsets.all(20.0),
-      child: Center(
-        child: Text(
-          '  PENTA\nRESTAURANT',
-          style: TextStyle(
-            decoration: TextDecoration.none,
-            color: Colors.white,
-            fontSize: 16,
-          ),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 250.0),
+        child: Column(
+          
+          children: [
+            AppIcon(),
+            SizedBox(height: 20,),
+            
+          ],
         ),
       ),
       /*child: SizedBox(

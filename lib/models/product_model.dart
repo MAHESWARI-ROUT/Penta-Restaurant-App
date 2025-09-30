@@ -1,3 +1,5 @@
+// lib/models/product_model.dart
+
 class Product {
   final String productId;
   final String productName;
@@ -21,57 +23,55 @@ class Product {
     required this.extra,
   });
 
+  // UPDATED: This factory is now more robust against bad API data.
   factory Product.fromJson(Map<String, dynamic> json) {
+    var imagesFromJson = json['images'];
+    var variantsFromJson = json['variants'];
+    var extraFromJson = json['extra'];
+
+    // Safely create lists. If the data is not a list, it will create an empty one.
+    List<String> imagesList = (imagesFromJson is List) 
+        ? List<String>.from(imagesFromJson) 
+        : [];
+
+    List<Variant> variantsList = (variantsFromJson is List)
+        ? variantsFromJson.map((v) => Variant.fromJson(v)).toList()
+        : [];
+
+    List<dynamic> extraList = (extraFromJson is List) 
+        ? List<dynamic>.from(extraFromJson) 
+        : [];
+
     return Product(
       productId: json['productId']?.toString() ?? '',
       productName: json['productName'] ?? '',
-      status: json['status'] ?? '',
+      status: json['status'] ?? 'available',
       primaryImage: json['primaryimage'] ?? '',
       description: json['description'] ?? '',
-      plimit: json['plimit'] ?? '',
-      images: List<String>.from(json['images'] ?? []),
-      variants: (json['variants'] as List<dynamic>? ?? [])
-          .map((v) => Variant.fromJson(v))
-          .toList(),
-      extra: json['extra'] ?? [],
+      plimit: json['plimit'] ?? '0',
+      images: imagesList,
+      variants: variantsList,
+      extra: extraList,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'productId': productId,
-        'productName': productName,
-        'status': status,
-        'primaryimage': primaryImage,
-        'description': description,
-        'plimit': plimit,
-        'images': images,
-        'variants': variants.map((v) => v.toJson()).toList(),
-        'extra': extra,
-      };
 }
 
 class Variant {
-  final String varientId;
+  final String varId;
   final String variantName;
   final String varPrice;
 
   Variant({
-    required this.varientId,
+    required this.varId,
     required this.variantName,
     required this.varPrice,
   });
 
   factory Variant.fromJson(Map<String, dynamic> json) {
     return Variant(
-      varientId: json['varientid']?.toString() ?? '',
+      varId: json['varientid']?.toString() ?? '',
       variantName: json['variantname'] ?? '',
-      varPrice: json['varprice']?.toString() ?? '',
+      varPrice: json['varprice']?.toString() ?? '0',
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'varientid': varientId,
-        'variantname': variantName,
-        'varprice': varPrice,
-      };
 }

@@ -134,8 +134,8 @@ class _SignupPageState extends State<SignupPage> {
                 ),
                 SizedBox(height: 32),
                 Text(
-                  "Don't have Account?",
-                  style: TextStyle(color: Colors.white, fontSize: 14),
+                  "Already have an Account",
+                  style: TextStyle(color: Colors.white, fontSize: 14,height: 0),
                 ),
                 TextButton(
                   onPressed: () {
@@ -146,6 +146,7 @@ class _SignupPageState extends State<SignupPage> {
                     style: TextStyle(
                       color: AppColors.yellow,
                       fontSize: 14,
+                      height: 0
                     ),
                   ),
                 ),
