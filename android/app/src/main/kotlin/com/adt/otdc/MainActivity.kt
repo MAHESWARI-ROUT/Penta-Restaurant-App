@@ -1,4 +1,4 @@
-package com.example.penta_restaurant
+package com.adt.otdc
 
 import io.flutter.embedding.android.FlutterActivity
 
