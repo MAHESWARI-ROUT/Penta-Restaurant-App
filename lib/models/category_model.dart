@@ -1,6 +1,5 @@
 import 'package:penta_restaurant/models/product_model.dart';
 
-
 class Category {
   final String catId;
   final String categoryName;

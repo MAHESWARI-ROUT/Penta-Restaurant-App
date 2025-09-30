@@ -30,16 +30,16 @@ class Product {
     var extraFromJson = json['extra'];
 
     // Safely create lists. If the data is not a list, it will create an empty one.
-    List<String> imagesList = (imagesFromJson is List) 
-        ? List<String>.from(imagesFromJson) 
+    List<String> imagesList = (imagesFromJson is List)
+        ? List<String>.from(imagesFromJson)
         : [];
 
     List<Variant> variantsList = (variantsFromJson is List)
         ? variantsFromJson.map((v) => Variant.fromJson(v)).toList()
         : [];
 
-    List<dynamic> extraList = (extraFromJson is List) 
-        ? List<dynamic>.from(extraFromJson) 
+    List<dynamic> extraList = (extraFromJson is List)
+        ? List<dynamic>.from(extraFromJson)
         : [];
 
     return Product(

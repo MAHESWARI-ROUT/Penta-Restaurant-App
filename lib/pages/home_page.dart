@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
-import '../commons/appcolors.dart'; // Make sure this import path is correct
+import '../commons/appcolors.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -96,7 +96,6 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-
             // Promo Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

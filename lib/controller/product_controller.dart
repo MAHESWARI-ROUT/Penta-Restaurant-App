@@ -36,7 +36,7 @@ class ProductController extends GetxController {
 
       // Link products to their categories
       final linkedCategories = _linkProductsToCategories(allCategories, allProducts);
-      
+
       categories.assignAll(linkedCategories);
 
     } catch (e) {
@@ -61,7 +61,7 @@ class ProductController extends GetxController {
         }
       }
     }
-    
+
     // Return the updated list of categories
     return cats;
   }
