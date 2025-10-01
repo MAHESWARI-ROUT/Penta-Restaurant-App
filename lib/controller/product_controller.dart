@@ -10,8 +10,8 @@ class ProductController extends GetxController {
 
   // Observables
   var categories = <Category>[].obs;
-  var isLoading = true.obs; // Use a single loading state
-  var errorMessage = ''.obs; // Use a single error message state
+  var isLoading = true.obs;
+  var errorMessage = ''.obs;
 
   @override
   void onInit() {

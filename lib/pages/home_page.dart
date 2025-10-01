@@ -15,11 +15,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final RxInt selectedCategoryIndex = 0.obs; // Reactive index outside build
+  final RxInt selectedCategoryIndex = 0.obs;
+  final ProductController controller = Get.put(ProductController());
 
   @override
   Widget build(BuildContext context) {
-    final ProductController controller = Get.put(ProductController());
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -295,7 +295,7 @@ class _HomePageState extends State<HomePage> {
 
                     return Card(
                       color: AppColors.white,
-                      elevation: 0,
+                      elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -305,99 +305,99 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-
-                            // Image (smaller, circular)
-
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
-                              child: Image.network(
-                                product.primaryImage,
-                                height: 120,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      height: 80,
-                                      color: AppColors.grey5,
-                                      child: Icon(
-                                        Icons.fastfood,
-                                        color: AppColors.grey3,
+                            // Image section with fixed height
+                            Expanded(
+                              flex: 3,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                ),
+                                child: Image.network(
+                                  product.primaryImage,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                        color: AppColors.grey5,
+                                        child: Icon(
+                                          Icons.fastfood,
+                                          color: AppColors.grey3,
+                                          size: 32,
+                                        ),
                                       ),
-                                    ),
-                              ),
-                            ),
-
-
-                            const SizedBox(height: 8),
-
-                            // Title
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product.productName,
-                                    style: const TextStyle(
-                                      color: AppColors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    RegExp(r'<[^>]*>').hasMatch(product.description)
-                                        ? product.description.replaceAll(RegExp(r'<[^>]*>'), '')
-                                        : product.description,                                    style: const TextStyle(
-                                      color: AppColors.grey2,
-                                      fontSize: 11,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    '₹ $price',
-                                    style: const TextStyle(
-                                      color: AppColors.yellow,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5.0,
-                                vertical: 3.0,
-                              ),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.darkGreen,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 3,
-                                    ),
-                                  ),
-                                  onPressed: () {},
-
-                                  label: const Text(
-                                    'Add to cart',
-                                    style: TextStyle(
-                                      color: AppColors.backgroundPrimary,
-                                    ),
-                                  ),
                                 ),
                               ),
-                            ),                          ],
+                            ),
+
+                            // Content section with flexible height
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.productName,
+                                      style: const TextStyle(
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      cleanDescription,
+                                      style: const TextStyle(
+                                        color: AppColors.grey2,
+                                        fontSize: 10,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '₹ $price',
+                                          style: const TextStyle(
+                                            color: AppColors.yellow,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 24,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: AppColors.darkGreen,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                                            ),
+                                            onPressed: () {},
+                                            child: const Text(
+                                              'Add',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
