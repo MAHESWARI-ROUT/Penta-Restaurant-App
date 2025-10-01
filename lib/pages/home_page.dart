@@ -5,6 +5,7 @@ import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -266,12 +267,12 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 return GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 16,
-                    crossAxisSpacing: 16,
-                    childAspectRatio: 0.72,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 0.85, // slightly more compact
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
@@ -287,22 +288,26 @@ class _HomePageState extends State<HomePage> {
                       price = product.plimit;
                     }
 
-                    return SizedBox(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.backgroundPrimary,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.darkGrey.withOpacity(0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
+                    // Clean description (strip HTML)
+                    final String cleanDescription = RegExp(r'<[^>]*>').hasMatch(product.description)
+                        ? product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim()
+                        : product.description;
+
+                    return Card(
+                      color: AppColors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {},
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+
+                            // Image (smaller, circular)
+
                             ClipRRect(
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(20),
@@ -324,6 +329,11 @@ class _HomePageState extends State<HomePage> {
                                     ),
                               ),
                             ),
+
+
+                            const SizedBox(height: 8),
+
+                            // Title
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Column(
@@ -387,8 +397,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ),                          ],
                         ),
                       ),
                     );
