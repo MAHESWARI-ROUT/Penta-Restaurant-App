@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 
 void showPopupDialog(BuildContext context) {
@@ -14,8 +15,14 @@ void showPopupDialog(BuildContext context) {
       });
 
       return AlertDialog(
-        title: const Text("Please Wait"),
-        content: const Text("Redirecting to the next page..."),
+        title: const Text(
+          "Congratulations!!",
+          style: TextStyle(color: AppColors.black, fontSize: 20),
+        ),
+        content: const Text(
+          "You successfully updated \n your profile",
+          style: TextStyle(color: AppColors.grey1, fontSize: 16),
+        ),
       );
     },
   );
