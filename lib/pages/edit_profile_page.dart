@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
 import 'package:penta_restaurant/widgets/show_popup_dialog.dart.dart';
@@ -45,7 +46,7 @@ class EditProfilePage extends StatelessWidget {
                               ),
                               child: IconButton(
                                 onPressed: () {
-                                  Get.back();
+                                  Get.to(HomePage());
                                 },
                                 icon: Icon(Icons.arrow_back),
                               ),
@@ -132,7 +133,6 @@ class EditProfilePage extends StatelessWidget {
                         showPopupDialog(context);
 
                         // Optional: automatically close after 3 seconds and navigate
-                        
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.yellow,
