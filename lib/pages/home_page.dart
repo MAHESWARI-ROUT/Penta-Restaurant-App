@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
+import '../controller/cart_controller.dart'; // Added this import
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,6 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final RxInt selectedCategoryIndex = 0.obs;
   final ProductController controller = Get.put(ProductController());
+  final CartController cartController = Get.put(CartController()); // Added cart controller
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +382,25 @@ class _HomePageState extends State<HomePage> {
                                               ),
                                               padding: const EdgeInsets.symmetric(horizontal: 6),
                                             ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              // Get the lowest price variant
+                                              final variant = product.variants.isNotEmpty
+                                                  ? product.variants.reduce((a, b) =>
+                                                      (double.tryParse(a.varPrice) ?? 0) < (double.tryParse(b.varPrice) ?? 0) ? a : b)
+                                                  : null;
+
+                                              if (variant != null) {
+                                                cartController.addToCart(
+                                                  productId: product.productId,
+                                                  variantId: variant.variantId,
+                                                  productName: product.productName,
+                                                  variantName: variant.variantName,
+                                                  variantPrice: variant.varPrice,
+                                                  imageUrl: product.primaryImage,
+                                                  quantity: 1,
+                                                );
+                                              }
+                                            },
                                             child: const Text(
                                               'Add',
                                               style: TextStyle(
