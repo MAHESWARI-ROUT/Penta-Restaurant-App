@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
+import 'package:penta_restaurant/pages/edit_profile_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -415,7 +415,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: 0,
         onTap: (index) {
           if (index == 1) Get.to(() =>  CartPage());
-          if (index == 2) Get.to(() => ProfilePage());
+          if (index == 2) Get.to(() => EditProfilePage());
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
