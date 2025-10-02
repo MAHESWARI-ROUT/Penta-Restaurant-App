@@ -8,20 +8,31 @@ class CtextformField extends StatefulWidget {
     required this.text,
     this.isPassword = false,
     this.icon1,
-    this.passwordController, // optional
+    this.passwordController,
+    this.controller, // Added external controller
+    this.validator, // Added validator
   });
 
   final String text;
   final bool isPassword;
   final Icon? icon1;
   final PasswordController? passwordController;
+  final TextEditingController? controller; // Added
+  final String? Function(String?)? validator; // Added
 
   @override
   State<CtextformField> createState() => _CtextformFieldState();
 }
 
 class _CtextformFieldState extends State<CtextformField> {
-  final TextEditingController controller = TextEditingController();
+  late final TextEditingController _internalController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Use external controller if provided, otherwise create internal one
+    _internalController = widget.controller ?? TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +52,9 @@ class _CtextformFieldState extends State<CtextformField> {
               }
 
               return TextFormField(
-                controller: controller,
+                controller: _internalController,
                 obscureText: passwordCtrl.isHidden.value,
+                validator: widget.validator,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 16.0,
@@ -65,7 +77,8 @@ class _CtextformFieldState extends State<CtextformField> {
               );
             })
           : TextFormField(
-              controller: controller,
+              controller: _internalController,
+              validator: widget.validator,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 16.0,
@@ -79,5 +92,14 @@ class _CtextformFieldState extends State<CtextformField> {
               ),
             ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Only dispose if we created the controller internally
+    if (widget.controller == null) {
+      _internalController.dispose();
+    }
+    super.dispose();
   }
 }
