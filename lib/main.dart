@@ -7,6 +7,7 @@ import 'package:penta_restaurant/pages/preload_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import '../models/auth_response.dart';
 import 'dio_client.dart';
@@ -6,7 +8,7 @@ class AuthService {
   final Dio _dio = DioClient().dio;
 
   // Login user
-  Future<SignUpResponse> login({
+  Future<AuthResponse> login({
     required String email,
     required String password,
     String loginType = 'email',
@@ -21,14 +23,17 @@ class AuthService {
         }),
       );
 
-      return SignUpResponse.fromJson(response.data);
+      // response.data might be String, parse it
+      final data = response.data is String ? json.decode(response.data) : response.data;
+
+      return AuthResponse.fromJson(data);
     } catch (e) {
       throw Exception('Login failed: $e');
     }
   }
 
   // Register new user
-  Future<SignUpResponse> register({
+  Future<AuthResponse> register({
     required String name,
     required String email,
     required String password,
@@ -49,7 +54,7 @@ class AuthService {
         }),
       );
 
-      return SignUpResponse.fromJson(response.data);
+      return AuthResponse.fromJson(response.data);
     } catch (e) {
       throw Exception('Registration failed: $e');
     }

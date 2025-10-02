@@ -17,15 +17,21 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('AuthController initialized');
     _checkLoginStatus();
   }
 
   // Check if user is already logged in
   void _checkLoginStatus() {
+    print('Checking login status...');
     final userData = _storage.read('user_data');
+    print('Read user_data from storage: $userData');
     if (userData != null) {
       currentUser.value = UserData.fromJson(userData);
       isLoggedIn.value = true;
+      print('User is logged in with ID: ${currentUser.value?.userId}');
+    } else {
+      print('No user data found, user is not logged in');
     }
   }
 
@@ -34,6 +40,7 @@ class AuthController extends GetxController {
     required String email,
     required String password,
   }) async {
+    print('Login requested for email: $email');
     isLoading.value = true;
     errorMessage.value = '';
 
@@ -42,9 +49,11 @@ class AuthController extends GetxController {
         email: email,
         password: password,
       );
+      print('Login response success: ${response.success}');
+      print('Login response message: ${response.message}');
+      print('Login response userId: ${response.userId}');
 
       if (response.success) {
-        // Create minimal UserData since backend only returns userid
         final user = UserData(
           userId: response.userId ?? '',
           name: '',
@@ -57,6 +66,7 @@ class AuthController extends GetxController {
         await _storage.write('user_data', user.toJson());
         currentUser.value = user;
         isLoggedIn.value = true;
+        print('Login successful, user stored in local storage');
 
         Get.snackbar(
           'Success',
@@ -68,6 +78,7 @@ class AuthController extends GetxController {
         return true;
       } else {
         errorMessage.value = response.message;
+        print('Login failed: ${response.message}');
         Get.snackbar(
           'Login Failed',
           response.message,
@@ -79,6 +90,7 @@ class AuthController extends GetxController {
       return false;
     } catch (e) {
       errorMessage.value = 'Login failed: $e';
+      print('Login error: $e');
       Get.snackbar(
         'Error',
         'Login failed. Please try again.',
@@ -89,6 +101,7 @@ class AuthController extends GetxController {
       return false;
     } finally {
       isLoading.value = false;
+      print('Login process complete');
     }
   }
 
@@ -100,6 +113,7 @@ class AuthController extends GetxController {
     required String mobileNum,
     required String profession,
   }) async {
+    print('Signup requested for email: $email, name: $name');
     isLoading.value = true;
     errorMessage.value = '';
 
@@ -111,9 +125,11 @@ class AuthController extends GetxController {
         mobileNum: mobileNum,
         profession: profession,
       );
+      print('Signup response success: ${response.success}');
+      print('Signup response message: ${response.message}');
+      print('Signup response userId: ${response.userId}');
 
       if (response.success) {
-        // Create minimal UserData
         final user = UserData(
           userId: response.userId ?? '',
           name: name,
@@ -126,6 +142,7 @@ class AuthController extends GetxController {
         await _storage.write('user_data', user.toJson());
         currentUser.value = user;
         isLoggedIn.value = true;
+        print('Signup successful, user stored in local storage');
 
         Get.snackbar(
           'Success',
@@ -137,6 +154,7 @@ class AuthController extends GetxController {
         return true;
       } else {
         errorMessage.value = response.message;
+        print('Signup failed: ${response.message}');
         Get.snackbar(
           'Registration Failed',
           response.message,
@@ -148,6 +166,7 @@ class AuthController extends GetxController {
       return false;
     } catch (e) {
       errorMessage.value = 'Registration failed: $e';
+      print('Signup error: $e');
       Get.snackbar(
         'Error',
         'Registration failed. Please try again.',
@@ -158,14 +177,17 @@ class AuthController extends GetxController {
       return false;
     } finally {
       isLoading.value = false;
+      print('Signup process complete');
     }
   }
 
   // Logout function
   Future<void> logout() async {
+    print('Logout requested');
     await _storage.remove('user_data');
     currentUser.value = null;
     isLoggedIn.value = false;
+    print('User data removed from storage, logged out');
 
     Get.snackbar(
       'Logged Out',
