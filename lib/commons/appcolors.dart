@@ -18,6 +18,7 @@ class AppColors {
   static const yellow = Color(0xFFf3af4a);
   static const lightYellow = Color.fromARGB(255, 244, 201, 136);
   static const darkGrey = Color(0xFF181818);
+  static const productBackground = Color(0xFFC9E9E6);
 
   // System Background
   static const backgroundPrimary = Color(0xFFFFFFFF);

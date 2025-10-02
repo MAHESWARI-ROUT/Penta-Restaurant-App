@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
 import 'package:penta_restaurant/pages/edit_profile_page.dart';
+import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
@@ -301,7 +302,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(12),
-                        onTap: () {},
+                        onTap: () {Get.to(() => ProductDetailsPage(product: product,));},
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
