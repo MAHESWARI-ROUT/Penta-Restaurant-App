@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
 import 'package:penta_restaurant/pages/edit_profile_page.dart';
+import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/profile_page.dart';
 import '../controller/product_controller.dart';
-import '../controller/cart_controller.dart'; // Added this import
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
-import '../widgets/product_grid_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,7 +18,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final RxInt selectedCategoryIndex = 0.obs;
   final ProductController controller = Get.put(ProductController());
-  final CartController cartController = Get.put(CartController()); // Added cart controller
 
   @override
   Widget build(BuildContext context) {
@@ -275,15 +273,134 @@ class _HomePageState extends State<HomePage> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    childAspectRatio: 0.85,
+                    childAspectRatio: 0.85, // slightly more compact
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-                    return ProductGridItem(
-                      key: ValueKey('product-${product.productId}'),
-                      product: product,
-                      cartController: cartController,
+
+                    String price = '';
+                    if (product.variants.isNotEmpty) {
+                      price = product.variants
+                          .map((v) => double.tryParse(v.varPrice) ?? 0)
+                          .reduce((a, b) => a < b ? a : b)
+                          .toStringAsFixed(2);
+                    } else {
+                      price = product.plimit;
+                    }
+
+                    // Clean description (strip HTML)
+                    final String cleanDescription = RegExp(r'<[^>]*>').hasMatch(product.description)
+                        ? product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim()
+                        : product.description;
+
+                    return Card(
+                      color: AppColors.white,
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {Get.to(() => ProductDetailsPage(product: product,));},
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Image section with fixed height
+                            Expanded(
+                              flex: 3,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  topRight: Radius.circular(12),
+                                ),
+                                child: Image.network(
+                                  product.primaryImage,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                        color: AppColors.grey5,
+                                        child: Icon(
+                                          Icons.fastfood,
+                                          color: AppColors.grey3,
+                                          size: 32,
+                                        ),
+                                      ),
+                                ),
+                              ),
+                            ),
+
+                            // Content section with flexible height
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.productName,
+                                      style: const TextStyle(
+                                        color: AppColors.black,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      cleanDescription,
+                                      style: const TextStyle(
+                                        color: AppColors.grey2,
+                                        fontSize: 10,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          '₹ $price',
+                                          style: const TextStyle(
+                                            color: AppColors.yellow,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 24,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: AppColors.darkGreen,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(8),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 6),
+                                            ),
+                                            onPressed: () {},
+                                            child: const Text(
+                                              'Add',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 );
