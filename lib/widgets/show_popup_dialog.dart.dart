@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'package:penta_restaurant/pages/profile_page.dart';
+import 'package:penta_restaurant/pages/profile/profile_page.dart';
 
 void showPopupDialog(BuildContext context) {
   showDialog(

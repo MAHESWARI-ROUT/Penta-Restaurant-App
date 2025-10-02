@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
-import 'package:penta_restaurant/pages/edit_profile_page.dart';
+import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
-import 'package:penta_restaurant/pages/profile_page.dart';
+import 'package:penta_restaurant/pages/profile/profile_page.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
+import '../widgets/product_grid_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,7 +19,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final RxInt selectedCategoryIndex = 0.obs;
-  final ProductController controller = Get.put(ProductController());
+  final ProductController productController = Get.put(ProductController());
+  final CartController  cartController = Get.put(CartController());
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +214,7 @@ class _HomePageState extends State<HomePage> {
             // Category Selector
             CategorySelector(
               selectedCategoryIndex: selectedCategoryIndex,
-              controller: controller,
+              controller: productController,
             ),
 
             // Recommendations Header
@@ -243,24 +246,21 @@ class _HomePageState extends State<HomePage> {
             // Product Grid
             Expanded(
               child: Obx(() {
-                if (controller.isLoading.value) {
+                if (productController.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (controller.errorMessage.isNotEmpty) {
-                  return Center(child: Text(controller.errorMessage.value));
+                if (productController.errorMessage.isNotEmpty) {
+                  return Center(child: Text(productController.errorMessage.value));
                 }
-                if (controller.categories.isEmpty) {
+                if (productController.categories.isEmpty) {
                   return const Center(child: Text('No categories found'));
                 }
 
-                // Display all products if 'All' category is selected
                 List products;
                 if (selectedCategoryIndex.value == 0) {
-                  products =
-                      controller.categories.expand((cat) => cat.products).toList();
+                  products = productController.categories.expand((cat) => cat.products).toList();
                 } else {
-                  // Selected category is 1-based index because 0 is 'All'
-                  products = controller.categories[selectedCategoryIndex.value - 1].products;
+                  products = productController.categories[selectedCategoryIndex.value - 1].products;
                 }
 
                 if (products.isEmpty) {
@@ -268,144 +268,25 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 return GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    mainAxisSpacing: 12,
                     crossAxisSpacing: 12,
-                    childAspectRatio: 0.85, // slightly more compact
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 3 / 4,
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
-
-                    String price = '';
-                    if (product.variants.isNotEmpty) {
-                      price = product.variants
-                          .map((v) => double.tryParse(v.varPrice) ?? 0)
-                          .reduce((a, b) => a < b ? a : b)
-                          .toStringAsFixed(2);
-                    } else {
-                      price = product.plimit;
-                    }
-
-                    // Clean description (strip HTML)
-                    final String cleanDescription = RegExp(r'<[^>]*>').hasMatch(product.description)
-                        ? product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim()
-                        : product.description;
-
-                    return Card(
-                      color: AppColors.white,
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () {Get.to(() => ProductDetailsPage(product: product,));},
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Image section with fixed height
-                            Expanded(
-                              flex: 3,
-                              child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  topRight: Radius.circular(12),
-                                ),
-                                child: Image.network(
-                                  product.primaryImage,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Container(
-                                        color: AppColors.grey5,
-                                        child: Icon(
-                                          Icons.fastfood,
-                                          color: AppColors.grey3,
-                                          size: 32,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-
-                            // Content section with flexible height
-                            Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      product.productName,
-                                      style: const TextStyle(
-                                        color: AppColors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      cleanDescription,
-                                      style: const TextStyle(
-                                        color: AppColors.grey2,
-                                        fontSize: 10,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const Spacer(),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '₹ $price',
-                                          style: const TextStyle(
-                                            color: AppColors.yellow,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 24,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: AppColors.darkGreen,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(8),
-                                              ),
-                                              padding: const EdgeInsets.symmetric(horizontal: 6),
-                                            ),
-                                            onPressed: () {},
-                                            child: const Text(
-                                              'Add',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    return ProductGridItem(
+                      product: product,
+                      cartController: cartController,
                     );
                   },
                 );
               }),
             ),
+
           ],
         ),
       ),
