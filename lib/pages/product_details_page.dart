@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/models/product_model.dart';
+import 'package:penta_restaurant/pages/cart_page.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
@@ -136,7 +137,7 @@ class ProductDetailsPage extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(30.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -170,6 +171,24 @@ class ProductDetailsPage extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.grey2,
+                      ),
+                    ),
+                    Spacer(),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {Get.to(() => CartPage());},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.darkGreen,
+                        ),
+                        child: Text(
+                          'CheckOut Now',
+                          style: TextStyle(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
                       ),
                     ),
                   ],
