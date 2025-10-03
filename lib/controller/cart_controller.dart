@@ -1,10 +1,14 @@
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import '../models/auth_response.dart';
 import '../models/cart_model.dart';
 import '../services/cart_service.dart';
 import 'package:flutter/material.dart';
 
 class CartController extends GetxController {
   final CartService _cartService = CartService();
+  final Rx<UserData?> currentUser = Rx<UserData?>(null);
+
 
   // Observable cart items list
   final RxList<CartItem> cartItems = <CartItem>[].obs;
@@ -13,24 +17,43 @@ class CartController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
-  // User ID (you might get this from a user controller or shared preferences)
-  // This is a placeholder - implement proper user auth in your app
-  String get userId => '1'; // Replace with actual user ID logic
+  final GetStorage _storage = GetStorage();
+
+  // Read userId from GetStorage, fallback to empty string or handle accordingly
+  String get userId {
+    final userData = _storage.read('user_data');
+    print('Read user_data from storage: $userData');
+
+    if (userData != null ) {
+      currentUser.value = UserData.fromJson(userData);
+      final id = currentUser.value?.userId;
+      if (id != null && id is String && id.isNotEmpty) {
+        return id;
+      }
+    }
+    return '';
+  }
 
   // Calculate total price of all items in cart
   double get totalPrice => cartItems.fold(
-    0, (sum, item) => sum + item.totalPrice
+    0,
+        (sum, item) => sum + item.totalPrice,
   );
 
   // Calculate total number of items in cart
   int get itemCount => cartItems.fold(
-    0, (sum, item) => sum + item.quantity
+    0,
+        (sum, item) => sum + item.quantity,
   );
 
   @override
   void onInit() {
     super.onInit();
-    getCartItems();
+    if (userId.isNotEmpty) {
+      getCartItems();
+    } else {
+      print('User ID is empty on CartController init');
+    }
   }
 
   // Fetch cart items for the current user
@@ -43,6 +66,7 @@ class CartController extends GetxController {
       cartItems.value = items.map((item) => CartItem.fromJson(item)).toList();
     } catch (e) {
       errorMessage.value = 'Failed to load cart items: $e';
+      print(errorMessage.value);
     } finally {
       isLoading.value = false;
     }
@@ -61,11 +85,38 @@ class CartController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
 
+    print('AddToCart called with:');
+    print('userId: $userId');
+    print('productId: $productId');
+    print('variantId: $variantId');
+    print('variantQuantity: $quantity');
+    print('variantName: $variantName');
+    print('variantPrice: $variantPrice');
+    print('productName: $productName');
+
+    if (userId.isEmpty ||
+        productId.isEmpty ||
+        variantId.isEmpty ||
+        variantName.isEmpty ||
+        variantPrice.isEmpty ||
+        productName.isEmpty) {
+      errorMessage.value = 'One or more required fields are empty';
+      Get.snackbar(
+        'Error',
+        errorMessage.value,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(10),
+      );
+      isLoading.value = false;
+      return false;
+    }
+
     try {
       // Check if item already exists in cart
       final existingItemIndex = cartItems.indexWhere(
-        (item) => item.productId == productId && item.variantId == variantId
-      );
+              (item) => item.productId == productId && item.variantId == variantId);
 
       if (existingItemIndex >= 0) {
         // Item exists, update quantity
@@ -165,8 +216,7 @@ class CartController extends GetxController {
       if (success) {
         // Remove from local cart
         cartItems.removeWhere(
-          (item) => item.productId == productId && item.variantId == variantId
-        );
+                (item) => item.productId == productId && item.variantId == variantId);
         Get.snackbar(
           'Removed',
           'Item removed from cart',
@@ -181,6 +231,7 @@ class CartController extends GetxController {
       return success;
     } catch (e) {
       errorMessage.value = 'Failed to remove item from cart: $e';
+      print(errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;
@@ -198,8 +249,7 @@ class CartController extends GetxController {
 
     try {
       final index = cartItems.indexWhere(
-        (item) => item.productId == productId && item.variantId == variantId
-      );
+              (item) => item.productId == productId && item.variantId == variantId);
 
       if (index >= 0) {
         final item = cartItems[index];
@@ -225,6 +275,7 @@ class CartController extends GetxController {
       return false;
     } catch (e) {
       errorMessage.value = 'Failed to update quantity: $e';
+      print(errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;

@@ -42,21 +42,31 @@ class AuthService {
     String loginType = 'email',
   }) async {
     try {
+      // Debug print for data sent
+      print('Registering user with name=$name, email=$email, mobileNum=$mobileNum, profession=$profession');
+
       final response = await _dio.post(
         '/JSON/registernew.php',
         data: FormData.fromMap({
-          'name': name,
-          'email': email,
+          'name': name.trim(),
+          'email': email.trim(),
           'password': password,
-          'logintype': loginType,
-          'mobilenum': mobileNum,
-          'profession': profession,
+          'logintype': loginType.trim(),
+          'mobilenum': mobileNum.trim(),
+          'profession': profession.trim(),
         }),
       );
 
-      return AuthResponse.fromJson(response.data);
+      // Ensure backend sometimes returns JSON string
+      final data = response.data is String ? json.decode(response.data) : response.data;
+
+      print('Register response: $data');
+
+      return AuthResponse.fromJson(data);
     } catch (e) {
+      print('Registration failed: $e');
       throw Exception('Registration failed: $e');
     }
   }
+
 }
