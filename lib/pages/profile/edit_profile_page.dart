@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/instance_manager.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
-import 'package:penta_restaurant/pages/profile_page.dart';
+import 'package:penta_restaurant/pages/profile/profile_page.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
 import 'package:penta_restaurant/widgets/show_popup_dialog.dart.dart';
 

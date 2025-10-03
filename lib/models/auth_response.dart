@@ -1,19 +1,19 @@
-class SignUpResponse {
+class AuthResponse {
   final bool success;
   final String message;
   final String? userId;
 
-  SignUpResponse({
+  AuthResponse({
     required this.success,
     required this.message,
     this.userId,
   });
 
-  factory SignUpResponse.fromJson(Map<String, dynamic> json) {
-    return SignUpResponse(
-      success: json['success'] == "true" || json['success'] == true,
-      message: json['message'] ?? '',
-      userId: json['userid']?.toString(),
+  factory AuthResponse.fromJson(Map<String, dynamic> json) {
+    return AuthResponse(
+      success: json['success'] == 'true', // Convert string "true"/"false" to bool
+      message: json['message'],
+      userId: json['userid'], // userid as String
     );
   }
 }

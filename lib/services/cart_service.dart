@@ -32,7 +32,7 @@ class CartService {
       );
 
       final responseData = json.decode(response.data.toString());
-      return responseData['status'] == 'success';
+      return responseData['success'].toString() == 'true';
     } catch (e) {
       print('Error adding to cart: $e');
       return false;

@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:get/utils.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
-import 'package:penta_restaurant/pages/edit_profile_page.dart';
+import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
