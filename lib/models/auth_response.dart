@@ -13,7 +13,7 @@ class AuthResponse {
     return AuthResponse(
       success: json['success'] == 'true', // Convert string "true"/"false" to bool
       message: json['message'],
-      userId: json['userid'], // userid as String
+      userId: json['userid'] != null ? json['userid'].toString() : null, // <-- FIX
     );
   }
 }
