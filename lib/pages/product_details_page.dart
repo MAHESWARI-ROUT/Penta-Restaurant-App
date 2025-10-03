@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
+import 'package:penta_restaurant/controller/favorite_controller.dart';
 import 'package:penta_restaurant/models/product_model.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
 import 'package:penta_restaurant/pages/favorite_page.dart';
@@ -16,10 +17,13 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   int selectedVariantIndex = 0;
+  //final FavoriteController favoriteController = Get.put(FavoriteController());
 
   @override
   Widget build(BuildContext context) {
     final CartController cartController = Get.find<CartController>();
+    final FavoriteController favoriteController = Get.find<FavoriteController>();
+
     final product = widget.product;
     final variant = product.variants.isNotEmpty
         ? product.variants[selectedVariantIndex]
@@ -147,43 +151,52 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Text(
-                          product.productName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black,
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            product.productName,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.black,
+                            ),
                           ),
-                        ),
-                        Spacer(),
-                        Text(
-                          product.plimit,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
+                          Spacer(),
+                          Text(
+                            product.plimit,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 8),
-                    const Text('Description'),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: const Text('Description'),
+                    ),
                     Expanded(
                       child: SingleChildScrollView(
-                        child: Text(
-                          product.description.isNotEmpty
-                              ? product.description
-                              : "No description available",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.grey2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text(
+                            product.description.isNotEmpty
+                                ? product.description
+                                : "No description available",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: AppColors.grey2,
+                            ),
                           ),
                         ),
                       ),
@@ -209,31 +222,41 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Get.to(() => FavoritePage());
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.darkGreen,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.favorite_border),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Wishlist',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                          child: Obx(() {
+                            final isFav = favoriteController.isFavorite(
+                              product,
+                            );
+                            return ElevatedButton(
+                              onPressed: () {
+                                favoriteController.toggleFavorite(product);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.darkGreen,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    isFav
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isFav ? Colors.red : AppColors.white,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Wishlist',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 5),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () async {
@@ -247,7 +270,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                 imageUrl: product.primaryImage,
                                 quantity: 1,
                               );
-                              print("AddToCart result: $success"); 
+                              print("AddToCart result: $success");
                               if (success) {
                                 Get.to(() => CartPage());
                               }
@@ -255,12 +278,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.darkGreen,
                             ),
-                            child: const Text(
-                              'CheckOut Now',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: const Text(
+                                'Checkout Now',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
                           ),

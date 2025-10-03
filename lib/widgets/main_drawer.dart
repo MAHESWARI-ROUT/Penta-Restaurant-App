@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/cart_page.dart';
+import 'package:penta_restaurant/pages/favorite_page.dart';
 import 'package:penta_restaurant/pages/profile/profile_page.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -22,7 +23,11 @@ class MainDrawer extends StatelessWidget {
       'icon': Icons.shopping_cart_outlined,
       'action': () => Get.to(() => CartPage()),
     },
-    {'title': 'Wishlist', 'icon': Icons.favorite, 'route': null},
+    {
+      'title': 'Wishlist',
+      'icon': Icons.favorite,
+      'action': () => Get.to(() => FavoritePage()),
+    },
     {
       'title': 'Profile',
       'icon': Icons.account_circle_outlined,
