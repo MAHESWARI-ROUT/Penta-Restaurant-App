@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/models/product_model.dart';
-import 'package:penta_restaurant/pages/cart_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/favorite_page.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -211,7 +211,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () {
-                              Get.to(() => FavoritePage());
+                              Get.to(() => Wishlistpage());
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.darkGreen,

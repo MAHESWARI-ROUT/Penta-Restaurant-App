@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../commons/appcolors.dart';
-import '../controller/cart_controller.dart';
+import '../../commons/appcolors.dart';
+import '../../controller/cart_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class CartPage extends StatelessWidget {
