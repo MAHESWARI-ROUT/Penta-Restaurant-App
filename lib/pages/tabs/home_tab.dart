@@ -9,6 +9,7 @@ import '../../controller/cart_controller.dart';
 import '../../controller/product_controller.dart';
 import '../../widgets/category_card.dart';
 import '../../widgets/product_grid_item.dart';
+import '../favorite_page.dart';
 import 'cart_page.dart';
 import '../profile/edit_profile_page.dart';
 import 'profile_page.dart';
@@ -109,6 +110,7 @@ class HomeTab extends StatelessWidget {
                                       title: Text('Wishlist'),
                                       onTap: () {
                                         Navigator.pop(context);
+                                        Get.to(() => FavoritePage());
                                         // Navigate to Wishlist page
                                       },
                                     ),

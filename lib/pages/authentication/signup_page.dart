@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
 import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
@@ -42,35 +43,7 @@ class _SignupPageState extends State<SignupPage> {
                 children: [
                   SizedBox(height: 32),
                   // Logo placeholder
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: AppColors.yellow,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.restaurant_menu,
-                        size: 60,
-                        color: AppColors.darkGreen,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'MadeFork',
-                    style: TextStyle(
-                      color: AppColors.yellow,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Food Restaurant',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
+                  AppIcon(),
                   SizedBox(height: 40),
                   Align(
                     alignment: Alignment.centerLeft,
