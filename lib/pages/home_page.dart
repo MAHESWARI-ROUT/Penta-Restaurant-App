@@ -76,7 +76,6 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 16,
                         ),
                       ),
-                      Spacer(),
                       CircleAvatar(
                         backgroundColor: AppColors.grey5,
                         radius: 20,
@@ -298,14 +297,14 @@ class _HomePageState extends State<HomePage> {
       
               return GridView.builder(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
+                  horizontal: 10,
                   vertical: 8,
                 ),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 3 / 4,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 3/4,
                 ),
                 itemCount: products.length,
                 itemBuilder: (context, index) {

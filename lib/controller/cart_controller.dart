@@ -286,4 +286,12 @@ class CartController extends GetxController {
   void clearCart() {
     cartItems.clear();
   }
+  
+  int getQuantity(String productId, String variantId) {
+    final item = cartItems.firstWhereOrNull(
+      (e) => e.productId == productId && e.variantId == variantId,
+    );
+    return item?.quantity ?? 0;
+  }
+
 }
