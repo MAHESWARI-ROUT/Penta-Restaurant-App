@@ -5,6 +5,7 @@ import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/tabs/home_tab.dart';
+import 'package:penta_restaurant/pages/tabs/profile_page.dart';
 import 'package:penta_restaurant/widgets/main_drawer.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
@@ -39,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       // Cart tab content
       CartPage(),
       // Profile tab content (could be home profile or EditProfilePage based on your app)
-      EditProfilePage(),
+      ProfilePage(),
     ]);
   }
 
