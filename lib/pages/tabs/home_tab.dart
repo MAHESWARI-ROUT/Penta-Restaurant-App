@@ -335,11 +335,36 @@ class HomeTab extends StatelessWidget {
           child: Obx(() {
             if (productController.isLoading.value) {
               return SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()));
+                child: Center(child: CircularProgressIndicator()),
+              );
             }
             if (productController.errorMessage.isNotEmpty) {
               return SliverFillRemaining(
-                  child: Center(child: Text(productController.errorMessage.value)));
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        productController.errorMessage.value,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.red, fontSize: 16),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          productController.fetchDataAndLink(); // Your reload function
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Reload'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.redAccent,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             }
             if (productController.categories.isEmpty) {
               return SliverFillRemaining(
