@@ -35,7 +35,7 @@ class FavoritePage extends StatelessWidget {
             final product = favoriteController.favorites[index];
             return GestureDetector(
               onTap: () {
-                Get.to(() => ProductDetailsPage(product: product));
+                Get.to(() => ProductDetailsPage(product: product,cartController: cartController,));
               },
               child: ProductGridItem(
                 product: product,

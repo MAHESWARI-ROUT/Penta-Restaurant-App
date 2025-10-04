@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
-import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/tabs/home_tab.dart';
+import 'package:penta_restaurant/widgets/main_drawer.dart';
 import '../controller/product_controller.dart';
 import '../commons/appcolors.dart';
 import '../widgets/category_card.dart';
