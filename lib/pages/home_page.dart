@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                       ),
-                      Spacer(),
+                      
                       Text(
                         'Explore the taste of Asian Food',
                         style: TextStyle(
@@ -76,11 +76,7 @@ class _HomePageState extends State<HomePage> {
                           fontSize: 16,
                         ),
                       ),
-                      CircleAvatar(
-                        backgroundColor: AppColors.grey5,
-                        radius: 20,
-                        child: Icon(Icons.person, color: AppColors.grey2),
-                      ),
+                      
                     ],
                   ),
                   const SizedBox(height: 16),

@@ -70,6 +70,8 @@ class ProductDetailsPage extends StatelessWidget {
                           ),
                         ),
                       ),
+
+                      // Replace your Obx widget for quantity/add button with this:
                       Obx(() {
                         final qty = variant != null
                             ? cartController.getQuantity(
@@ -77,57 +79,63 @@ class ProductDetailsPage extends StatelessWidget {
                                 variant.varId,
                               )
                             : 0;
-                        return qty == 0
-                            ? ElevatedButton(
-                                onPressed: () async {
-                                  if (variant == null) return;
-                                  await cartController.addToCart(
-                                    productId: product.productId,
-                                    variantId: variant.varId,
-                                    productName: product.productName,
-                                    variantName: variant.variantName,
-                                    variantPrice: variant.varPrice,
-                                    imageUrl: product.primaryImage,
-                                    quantity: 1,
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkGreen,
-                                ),
-                                child: const Text(
-                                  "Add",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              )
-                            : Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove),
-                                    onPressed: () =>
-                                        cartController.updateQuantity(
-                                          product.productId,
-                                          variant!.varId,
-                                          qty - 1,
-                                        ),
+
+                        // Wrap in a SizedBox to avoid layout issues
+                        return SizedBox(
+                          width: double.infinity,
+                          child: qty == 0
+                              ? ElevatedButton(
+                                  onPressed: () async {
+                                    if (variant == null) return;
+                                    await cartController.addToCart(
+                                      productId: product.productId,
+                                      variantId: variant.varId,
+                                      productName: product.productName,
+                                      variantName: variant.variantName,
+                                      variantPrice: variant.varPrice,
+                                      imageUrl: product.primaryImage,
+                                      quantity: 1,
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.darkGreen,
                                   ),
-                                  Text(
-                                    '$qty',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
+                                  child: const Text(
+                                    "Add",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.remove),
+                                      onPressed: () =>
+                                          cartController.updateQuantity(
+                                            product.productId,
+                                            variant!.varId,
+                                            qty - 1,
+                                          ),
                                     ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () =>
-                                        cartController.updateQuantity(
-                                          product.productId,
-                                          variant!.varId,
-                                          qty + 1,
-                                        ),
-                                  ),
-                                ],
-                              );
+                                    Text(
+                                      '$qty',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.add),
+                                      onPressed: () =>
+                                          cartController.updateQuantity(
+                                            product.productId,
+                                            variant!.varId,
+                                            qty + 1,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                        );
                       }),
                     ],
                   ),
@@ -195,7 +203,9 @@ class ProductDetailsPage extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Obx(() {
-                            final isFav = favoriteController.isFavorite(product);
+                            final isFav = favoriteController.isFavorite(
+                              product,
+                            );
                             return ElevatedButton(
                               onPressed: () {
                                 favoriteController.toggleFavorite(product);
@@ -207,7 +217,9 @@ class ProductDetailsPage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(
-                                    isFav ? Icons.favorite : Icons.favorite_border,
+                                    isFav
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
                                     color: isFav ? Colors.red : Colors.white,
                                   ),
                                   const SizedBox(width: 8),
@@ -220,15 +232,18 @@ class ProductDetailsPage extends StatelessWidget {
                             );
                           }),
                         ),
-                        
-                        SizedBox(width: 10,),
+
+                        SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () => Get.to(() => CartPage()),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.darkGreen,
                             ),
-                            child: const Text("Checkout Now",style: TextStyle(color: AppColors.white),),
+                            child: const Text(
+                              "Checkout Now",
+                              style: TextStyle(color: AppColors.white),
+                            ),
                           ),
                         ),
                       ],
