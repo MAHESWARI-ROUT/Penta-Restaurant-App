@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
-import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
-import 'package:penta_restaurant/pages/product_details_page.dart';
+import 'package:penta_restaurant/controller/product_controller.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/tabs/home_tab.dart';
 import 'package:penta_restaurant/pages/tabs/profile_page.dart';
-import 'package:penta_restaurant/widgets/main_drawer.dart';
-import '../controller/product_controller.dart';
-import '../commons/appcolors.dart';
-import '../widgets/category_card.dart';
-import '../widgets/product_grid_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,36 +17,104 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int currentIndex = 0;
 
-  // Hold your controllers as before
   final ProductController productController = Get.put(ProductController());
   final CartController cartController = Get.put(CartController());
 
-  // Define the pages/tabs exactly as widgets here
-  final List<Widget> pages = [];
+  late final List<Widget> pages;
 
   @override
   void initState() {
     super.initState();
-
-    // Initialize tabs/pages
-    pages.addAll([
-      // Home tab content — extracted from your current build body for home
+    // The CartPage is removed from the list of main tabs.
+    pages = [
       HomeTab(productController: productController, cartController: cartController),
-      // Cart tab content
-      CartPage(),
-      // Profile tab content (could be home profile or EditProfilePage based on your app)
-      ProfilePage(),
-    ]);
+      const ProfilePage(),
+    ];
+  }
+
+  // Helper widget for standard nav items (Home, Profile) that switch tabs
+  Widget _buildNavItem({
+    required IconData icon,
+    required String label,
+    required int index,
+  }) {
+    bool isSelected = currentIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => currentIndex = index),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.yellow : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? Colors.white : AppColors.darkGrey, size: 24),
+            const SizedBox(width: 8),
+            if (isSelected)
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Helper widget specifically for the cart button, which navigates to a new page
+  Widget _buildCartNavItem() {
+    return GestureDetector(
+      // This now navigates to the CartPage as a separate screen
+      onTap: () => Get.to(() => const CartPage()),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+        color: Colors.transparent,
+        child: Obx(() {
+          final itemCount = cartController.itemCount;
+          return Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Icon(Icons.shopping_cart, color: AppColors.darkGrey, size: 26),
+              if (itemCount > 0)
+                Positioned(
+                  top: -4,
+                  right: -8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '$itemCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
-      body: pages[currentIndex], // Show selected tab
+      body: pages[currentIndex], // Shows either HomeTab or ProfilePage
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10), // Adjust margin as needed
+        padding: const EdgeInsets.only(bottom: 10),
         child: Container(
           height: 45,
           margin: const EdgeInsets.symmetric(horizontal: 40),
@@ -62,106 +125,24 @@ class _HomePageState extends State<HomePage> {
               BoxShadow(
                 color: Colors.black.withOpacity(0.07),
                 blurRadius: 16,
-                offset: Offset(0, 8),
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // Home Tab
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  currentIndex = 0;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                decoration: BoxDecoration(
-                  color: currentIndex == 0 ? AppColors.yellow : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.home, color: currentIndex == 0 ? Colors.white : AppColors.darkGrey, size: 24),
-                    const SizedBox(width: 8),
-                    if (currentIndex == 0)
-                      const Text(
-                        'Home',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Home Tab (index 0)
+              _buildNavItem(icon: Icons.home, label: 'Home', index: 0),
+              
+              // Cart Button (navigates, does not have an index)
+              _buildCartNavItem(),
 
-            // Cart Tab
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  currentIndex = 1;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                decoration: BoxDecoration(
-                  color: currentIndex == 1 ? AppColors.yellow : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.shopping_cart, color: currentIndex == 1 ? Colors.white : AppColors.darkGrey, size: 26),
-                    const SizedBox(width: 8),
-                    if (currentIndex == 1)
-                      const Text(
-                        'Cart',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Profile Tab
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  currentIndex = 2;
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                decoration: BoxDecoration(
-                  color: currentIndex == 2 ? AppColors.yellow : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.person, color: currentIndex == 2 ? Colors.white : AppColors.darkGrey, size: 26),
-                    const SizedBox(width: 8),
-                    if (currentIndex == 2)
-                      const Text(
-                        'Profile',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+              // Profile Tab (now index 1)
+              _buildNavItem(icon: Icons.person, label: 'Profile', index: 1),
+            ],
+          ),
         ),
-
-      ),
       ),
     );
   }

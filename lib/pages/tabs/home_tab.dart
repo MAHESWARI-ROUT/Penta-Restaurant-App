@@ -1,14 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-
-import '../../commons/appcolors.dart';
-import '../../controller/cart_controller.dart';
-import '../../controller/product_controller.dart';
-import '../../widgets/category_card.dart';
-import '../../widgets/product_grid_item.dart';
+import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/cart_controller.dart';
+import 'package:penta_restaurant/controller/product_controller.dart';
+import 'package:penta_restaurant/widgets/category_card.dart';
+import 'package:penta_restaurant/widgets/product_grid_item.dart';
 import '../favorite_page.dart';
 import 'cart_page.dart';
 import '../profile/edit_profile_page.dart';
@@ -18,178 +14,93 @@ class HomeTab extends StatelessWidget {
   final ProductController productController;
   final CartController cartController;
 
-   HomeTab({
-    super.key,
+  HomeTab({
+    Key? key,
     required this.productController,
     required this.cartController,
-  });
+  }) : super(key: key);
 
   final RxInt selectedCategoryIndex = 0.obs;
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final itemWidth = (screenWidth / 2) - 24;
+
     return CustomScrollView(
       slivers: [
-        // Sliver for Top Bar
+        // Your existing SliverAppBar
         SliverAppBar(
           pinned: true,
+          floating: true,
           backgroundColor: AppColors.yellow,
-          expandedHeight: 0,
-          toolbarHeight: 120, // Adjust as needed for your design
-          flexibleSpace: FlexibleSpaceBar(
-            background: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(32),
-                bottomRight: Radius.circular(32),
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-                decoration: BoxDecoration(
-                  color: AppColors.yellow,
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(32),
-                    bottomRight: Radius.circular(32),
+          elevation: 0,
+          title: Text(
+            'Explore Menu',
+            style: TextStyle(
+              color: AppColors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.menu, color: AppColors.darkGrey),
+              onPressed: () {
+                // Your menu bottom sheet logic
+              },
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(60),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Row(
+                        children: [
+                           SizedBox(width: 12),
+                           Icon(Icons.search, color: AppColors.grey2),
+                           SizedBox(width: 8),
+                           Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Find for food or restaurant...',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(
+                                  color: AppColors.grey3,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            'Explore the taste of Asian Food',
-                            style: TextStyle(
-                              color: AppColors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.menu, color: AppColors.darkGrey),
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              builder: (context) => Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    ListTile(
-                                      leading: CircleAvatar(
-                                        backgroundColor: AppColors.grey5,
-                                        child: Icon(Icons.person, color: AppColors.grey2),
-                                      ),
-                                      title: Text('Hello, User'),
-                                      subtitle: Text('user@email.com'),
-                                    ),
-                                    const Divider(),
-                                    ListTile(
-                                      leading: Icon(Icons.person),
-                                      title: Text('Profile'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        Get.to(() => ProfilePage());
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: Icon(Icons.edit),
-                                      title: Text('Edit Profile'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        Get.to(() => EditProfilePage());
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: Icon(Icons.favorite_border),
-                                      title: Text('Wishlist'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        Get.to(() => FavoritePage());
-                                        // Navigate to Wishlist page
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: Icon(Icons.shopping_cart),
-                                      title: Text('Cart'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        Get.to(() => CartPage());
-                                      },
-                                    ),
-                                    ListTile(
-                                      leading: Icon(Icons.logout),
-                                      title: Text('Logout'),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        // Handle logout logic here
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
+                  const SizedBox(width: 12),
+                  Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(height: 16),
-                    // ...search bar row...
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 8),
-                                Icon(Icons.search, color: AppColors.grey2),
-                                const SizedBox(width: 8),
-                                const Expanded(
-                                  child: TextField(
-                                    decoration: InputDecoration(
-                                      hintText: 'Find for food or restaurant...',
-                                      border: InputBorder.none,
-                                      hintStyle: TextStyle(
-                                        color: AppColors.grey3,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Icon(Icons.tune, color: AppColors.grey2),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                    child: Icon(Icons.tune, color: AppColors.grey2),
+                  ),
+                ],
               ),
             ),
           ),
         ),
 
-        // Sliver for Promo Section
+        // Your Promo / Advertisement Banner Section is restored here
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -202,11 +113,11 @@ class HomeTab extends StatelessWidget {
                       color: AppColors.darkGreen,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: EdgeInsets.all(10.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -218,31 +129,28 @@ class HomeTab extends StatelessWidget {
                                   fontSize: 13,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Expanded(
-                                child: const SizedBox(
-                                  width: 90,
-                                  child: Text(
-                                    "Eat gelato like there's no tomorrow!",
-                                    style: TextStyle(
-                                      color: AppColors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
+                              SizedBox(height: 4),
+                              SizedBox(
+                                width: 90,
+                                child: Text(
+                                  "Eat gelato like there's no tomorrow!",
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        //const Spacer(),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(right: 8.0),
                           child: CircleAvatar(
                             radius: 32,
                             backgroundImage: AssetImage(
                               'assets/images/icecreame.jpg',
-                            ), // Ensure this asset exists
+                            ),
                             backgroundColor: AppColors.yellow,
                           ),
                         ),
@@ -305,7 +213,7 @@ class HomeTab extends StatelessWidget {
         // Sliver for Recommendations Header
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -330,81 +238,49 @@ class HomeTab extends StatelessWidget {
           ),
         ),
 
-        // Product Grid
-        Expanded(
-          child: Obx(() {
-            if (productController.isLoading.value) {
-              return SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            if (productController.errorMessage.isNotEmpty) {
-              return SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        productController.errorMessage.value,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.red, fontSize: 16),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          productController.fetchDataAndLink(); // Your reload function
-                        },
-                        icon: const Icon(Icons.refresh),
-                        label: const Text('Reload'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-            if (productController.categories.isEmpty) {
-              return SliverFillRemaining(
-                  child: Center(child: Text('No categories found')));
-            }
+        // Product Grid using Wrap for dynamic height
+        Obx(() {
+          if (productController.isLoading.value) {
+            return const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-            List products;
-            if (selectedCategoryIndex.value == 0) {
-              products = productController.categories.expand((cat) => cat.products).toList();
-            } else {
-              products = productController.categories[selectedCategoryIndex.value - 1].products;
-            }
+          // Your product filtering logic
+          List products;
+          if (selectedCategoryIndex.value == 0) {
+            products = productController.categories.expand((cat) => cat.products).toList();
+          } else if (productController.categories.length > selectedCategoryIndex.value - 1) {
+            products = productController.categories[selectedCategoryIndex.value - 1].products;
+          } else {
+            products = []; // Handle index out of bounds case
+          }
 
-            return SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              sliver: SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    final product = products[index];
-                    return ProductGridItem(
+          // Return a SliverToBoxAdapter containing the Wrap widget
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: products.map((product) {
+                  return SizedBox(
+                    width: itemWidth,
+                    child: ProductGridItem(
                       product: product,
                       cartController: cartController,
-                    );
-                  },
-                  childCount: products.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 3 / 4,
-                ),
+                    ),
+                  );
+                }).toList(),
               ),
-            );
-          }),
-        ),
+            ),
+          );
+        }),
 
-        SliverToBoxAdapter(child: SizedBox(height: 60,
-        child: Container(),))
-
+        // Padding at the bottom
+        const SliverToBoxAdapter(
+          child: SizedBox(height: 80),
+        )
       ],
     );
   }

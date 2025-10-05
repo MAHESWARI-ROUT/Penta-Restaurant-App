@@ -266,4 +266,5 @@ class CartController extends GetxController {
       return 0;
     }
   }
+ 
 }

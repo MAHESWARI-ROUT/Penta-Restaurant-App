@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/favorite_page.dart';
+import 'package:penta_restaurant/pages/tabs/profile_page.dart';
 
-import '../pages/tabs/cart_page.dart';
-import '../pages/tabs/profile_page.dart';
+
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});

@@ -3,6 +3,10 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:penta_restaurant/pages/my_order_page.dart';
+
+// Import the new files you created
+import 'package:penta_restaurant/widgets/address_bottom_sheet.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -45,15 +49,45 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  // Helper method to show the success dialog after address confirmation
+  void _showOrderSuccessDialog() {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 28),
+            SizedBox(width: 12),
+            Text('Order Placed!'),
+          ],
+        ),
+        content: const Text('Your order was placed successfully.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back(); // Close the dialog
+              cartController.clearCart(); // Empty the cart
+              Get.off(() => const MyOrdersPage()); // Go to MyOrdersPage, replacing the cart screen
+            },
+            child: Text('OK', style: TextStyle(color: AppColors.darkGreen, fontSize: 16)),
+          ),
+        ],
+      ),
+      barrierDismissible: false, // Prevent closing by tapping outside
+    );
+  }
+
+  // This method now starts the entire checkout flow
   void _checkout() {
-    // TODO: Implement checkout process
-    Get.snackbar(
-      'Checkout',
-      'Processing your order...',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.darkGreen,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
+    Get.bottomSheet(
+      AddressBottomSheet(
+        onConfirm: () {
+          Get.back(); // Close the bottom sheet
+          _showOrderSuccessDialog(); // Show the success dialog
+        },
+      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true, // Important for keyboard handling
     );
   }
 
@@ -62,7 +96,7 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        
         backgroundColor: AppColors.yellow,
         elevation: 0,
         title: Text(
@@ -70,51 +104,6 @@ class _CartPageState extends State<CartPage> {
           style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
-        // actions: [
-        //   Stack(
-        //     alignment: Alignment.center,
-        //     children: [
-        //       IconButton(
-        //         icon: Icon(Icons.shopping_cart_outlined, color: AppColors.black),
-        //         onPressed: () {},
-        //       ),
-        //       Positioned(
-        //         top: 8,
-        //         right: 8,
-        //         child: Obx(() {
-        //           final itemCount = cartController.itemCount;
-        //           return itemCount > 0
-        //               ? Container(
-        //             padding: const EdgeInsets.all(4),
-        //             decoration: BoxDecoration(
-        //               color: Colors.redAccent,
-        //               shape: BoxShape.circle,
-        //             ),
-        //             constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
-        //             child: Text(
-        //               '$itemCount',
-        //               style: const TextStyle(
-        //                 color: Colors.white,
-        //                 fontSize: 12,
-        //                 fontWeight: FontWeight.bold,
-        //               ),
-        //               textAlign: TextAlign.center,
-        //             ),
-        //           )
-        //               : const SizedBox.shrink();
-        //         }),
-        //       ),
-        //     ],
-        //   ),
-        //   Padding(
-        //     padding: const EdgeInsets.only(right: 16),
-        //     child: CircleAvatar(
-        //       backgroundColor: AppColors.grey5,
-        //       radius: 16,
-        //       child: Icon(Icons.person, color: AppColors.grey2, size: 18),
-        //     ),
-        //   ),
-        // ],
       ),
       body: Obx(() {
         if (cartController.isLoading.value) {
@@ -280,7 +269,6 @@ class _CartPageState extends State<CartPage> {
                                         item.productId,
                                         item.variantId,
                                       );
-                                      cartController.getCartItems();
                                     }
                                   },
                                 ),
@@ -316,55 +304,47 @@ class _CartPageState extends State<CartPage> {
               ),
             ),
 
-            // Detailed Bill Toggle Row
             Obx(() => InkWell(
-              onTap: () => _showDetailedBill.value = !_showDetailedBill.value,
-              child: Container(
-                margin:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 6,
+                  onTap: () => _showDetailedBill.value = !_showDetailedBill.value,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 6,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _showDetailedBill.value
-                          ? 'Hide Detailed Bill'
-                          : 'Show Detailed Bill',
-                      style: TextStyle(
-                        color: AppColors.darkGreen,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _showDetailedBill.value ? 'Hide Detailed Bill' : 'Show Detailed Bill',
+                          style: TextStyle(
+                            color: AppColors.darkGreen,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Icon(
+                          _showDetailedBill.value ? Icons.expand_less : Icons.expand_more,
+                          color: AppColors.darkGreen,
+                        ),
+                      ],
                     ),
-                    Icon(
-                      _showDetailedBill.value
-                          ? Icons.expand_less
-                          : Icons.expand_more,
-                      color: AppColors.darkGreen,
-                    ),
-                  ],
-                ),
-              ),
-            )),
+                  ),
+                )),
 
-            // Detailed Bill Section
             Obx(() {
               if (!_showDetailedBill.value) return const SizedBox.shrink();
 
               return Container(
-                margin: const EdgeInsets.only(top: 12, bottom: 16),
-                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -378,8 +358,7 @@ class _CartPageState extends State<CartPage> {
                 ),
                 child: Column(
                   children: cartController.cartItems.map((item) {
-                    final itemTotal =
-                        (double.tryParse(item.variantPrice) ?? 0) * item.quantity;
+                    final itemTotal = (double.tryParse(item.variantPrice) ?? 0) * item.quantity;
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
@@ -393,8 +372,7 @@ class _CartPageState extends State<CartPage> {
                             ),
                           ),
                           Text('₹${itemTotal.toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w600)),
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                         ],
                       ),
                     );
@@ -403,14 +381,12 @@ class _CartPageState extends State<CartPage> {
               );
             }),
 
-            // Total price & Checkout Section
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(28),
-                    topRight: Radius.circular(28)),
+                    topLeft: Radius.circular(28), topRight: Radius.circular(28)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -421,17 +397,17 @@ class _CartPageState extends State<CartPage> {
               ),
               child: Column(
                 children: [
-                  _buildSummaryRow(
-                      'Subtotal', '₹${cartController.totalPrice.toStringAsFixed(2)}'),
+                  Obx(() => _buildSummaryRow(
+                      'Subtotal', '₹${cartController.totalPrice.toStringAsFixed(2)}')),
                   const SizedBox(height: 8),
                   _buildSummaryRow('Delivery', 'Free',
                       valueColor: Colors.green, valueFontWeight: FontWeight.bold),
                   const SizedBox(height: 20),
                   const Divider(height: 1),
                   const SizedBox(height: 20),
-                  _buildSummaryRow('Total',
-                      '₹${cartController.totalPrice.toStringAsFixed(2)}',
-                      valueFontSize: 22, valueFontWeight: FontWeight.bold),
+                  Obx(() => _buildSummaryRow(
+                      'Total', '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                      valueFontSize: 22, valueFontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
@@ -439,21 +415,18 @@ class _CartPageState extends State<CartPage> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.darkGreen,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
                       onPressed: _checkout,
                       child: const Text(
                         'Checkout',
-                        style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 40),
           ],
         );
       }),
@@ -461,12 +434,12 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buildSummaryRow(
-      String label,
-      String value, {
-        Color valueColor = Colors.black,
-        double valueFontSize = 16,
-        FontWeight valueFontWeight = FontWeight.normal,
-      }) {
+    String label,
+    String value, {
+    Color valueColor = Colors.black,
+    double valueFontSize = 16,
+    FontWeight valueFontWeight = FontWeight.normal,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
