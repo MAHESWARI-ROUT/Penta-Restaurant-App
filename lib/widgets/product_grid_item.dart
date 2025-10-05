@@ -24,8 +24,15 @@ class _ProductGridItemState extends State<ProductGridItem> {
   final FavoriteController favoriteController = Get.find<FavoriteController>();
 
   void toggleFavorite() {
-    favoriteController.toggleFavorite(widget.product);
+    // Assuming you pass userId via cartController or elsewhere for API calls
+    final userId = widget.cartController.userId;
+    if (userId.isEmpty) {
+      Get.snackbar('Error', 'Please log in to manage favorites');
+      return;
+    }
+    favoriteController.toggleFavorite(widget.product, userId);
   }
+
 
   void _showVariantSelectionDialog() {
     final variants = widget.product.variants;
@@ -332,12 +339,12 @@ class _ProductGridItemState extends State<ProductGridItem> {
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: AppColors.darkGrey.withAlpha(80),
+                          color: Colors.black45,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           isFav ? Icons.favorite : Icons.favorite_border,
-                          color: isFav ? Colors.redAccent : Colors.white,
+                          color: isFav ? Colors.red : Colors.white,
                           size: 20,
                         ),
                       ),

@@ -198,7 +198,7 @@ class ProductDetailsPage extends StatelessWidget {
                             final isFav = favoriteController.isFavorite(product);
                             return ElevatedButton(
                               onPressed: () {
-                                favoriteController.toggleFavorite(product);
+                                //favoriteController.toggleFavorite(product);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.darkGreen,
