@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
-import 'package:penta_restaurant/pages/cart_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/favorite_page.dart';
-import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
-import 'package:penta_restaurant/pages/profile/profile_page.dart';
+import 'package:penta_restaurant/pages/tabs/profile_page.dart';
+
+
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
@@ -34,11 +35,7 @@ class MainDrawer extends StatelessWidget {
       'icon': Icons.account_circle_outlined,
       'action': () => Get.to(() => ProfilePage()),
     },
-    {
-      'title': 'About Us',
-      'icon': Icons.card_giftcard_outlined,
-      'action': () => Get.to(() => AboutUsPage()),
-    },
+    {'title': 'Coupons', 'icon': Icons.card_giftcard_outlined, 'route': null},
     {
       'title': 'Notification',
       'icon': Icons.notification_add_outlined,

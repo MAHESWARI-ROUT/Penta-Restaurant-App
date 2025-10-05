@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import '../commons/appcolors.dart';
 import '../controller/cart_controller.dart';
 import '../controller/favorite_controller.dart';
 import '../models/product_model.dart';
-import '../pages/cart_page.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   final Product product;
@@ -233,7 +233,7 @@ class ProductDetailsPage extends StatelessWidget {
                           }),
                         ),
 
-                        SizedBox(width: 10),
+                        SizedBox(width: 10,),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () => Get.to(() => CartPage()),

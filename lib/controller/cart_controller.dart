@@ -9,42 +9,30 @@ class CartController extends GetxController {
   final CartService _cartService = CartService();
   final Rx<UserData?> currentUser = Rx<UserData?>(null);
 
-
-  // Observable cart items list
+  // Observable list of cart items
   final RxList<CartItem> cartItems = <CartItem>[].obs;
 
-  // Loading and error states
+  // Loading and error state observables
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
 
   final GetStorage _storage = GetStorage();
 
-  // Read userId from GetStorage, fallback to empty string or handle accordingly
+  // User ID getter from stored user data
   String get userId {
-    final userData = _storage.read('user_data');
-    print('Read user_data from storage: $userData');
-
-    if (userData != null ) {
-      currentUser.value = UserData.fromJson(userData);
+    final storedData = _storage.read('user_data');
+    if (storedData != null) {
+      currentUser.value = UserData.fromJson(storedData);
       final id = currentUser.value?.userId;
-      if (id != null && id is String && id.isNotEmpty) {
+      if (id != null && id.isNotEmpty) {
         return id;
       }
     }
     return '';
   }
 
-  // Calculate total price of all items in cart
-  double get totalPrice => cartItems.fold(
-    0,
-        (sum, item) => sum + item.totalPrice,
-  );
-
-  // Calculate total number of items in cart
-  int get itemCount => cartItems.fold(
-    0,
-        (sum, item) => sum + item.quantity,
-  );
+  double get totalPrice => cartItems.fold(0, (total, item) => total + item.totalPrice);
+  int get itemCount => cartItems.fold(0, (total, item) => total + item.quantity);
 
   @override
   void onInit() {
@@ -52,27 +40,26 @@ class CartController extends GetxController {
     if (userId.isNotEmpty) {
       getCartItems();
     } else {
-      print('User ID is empty on CartController init');
+      if (Get.isLogEnable) {
+        print('CartController init: User ID is empty.');
+      }
     }
   }
 
-  // Fetch cart items for the current user
   Future<void> getCartItems() async {
     isLoading.value = true;
     errorMessage.value = '';
-
     try {
       final items = await _cartService.getCartItems(userId);
       cartItems.value = items.map((item) => CartItem.fromJson(item)).toList();
     } catch (e) {
       errorMessage.value = 'Failed to load cart items: $e';
-      print(errorMessage.value);
+      if (Get.isLogEnable) print(errorMessage.value);
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Add a product to cart
   Future<bool> addToCart({
     required String productId,
     required String variantId,
@@ -85,21 +72,7 @@ class CartController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
 
-    print('AddToCart called with:');
-    print('userId: $userId');
-    print('productId: $productId');
-    print('variantId: $variantId');
-    print('variantQuantity: $quantity');
-    print('variantName: $variantName');
-    print('variantPrice: $variantPrice');
-    print('productName: $productName');
-
-    if (userId.isEmpty ||
-        productId.isEmpty ||
-        variantId.isEmpty ||
-        variantName.isEmpty ||
-        variantPrice.isEmpty ||
-        productName.isEmpty) {
+    if ([productId, variantId, productName, variantName, variantPrice, userId].any((s) => s.isEmpty)) {
       errorMessage.value = 'One or more required fields are empty';
       Get.snackbar(
         'Error',
@@ -114,28 +87,24 @@ class CartController extends GetxController {
     }
 
     try {
-      // Check if item already exists in cart
-      final existingItemIndex = cartItems.indexWhere(
+      final existingIndex = cartItems.indexWhere(
               (item) => item.productId == productId && item.variantId == variantId);
 
-      if (existingItemIndex >= 0) {
-        // Item exists, update quantity
-        final updatedQuantity = cartItems[existingItemIndex].quantity + quantity;
+      if (existingIndex >= 0) {
+        final updatedQty = cartItems[existingIndex].quantity + quantity;
 
-        // Call API to update
         final success = await _cartService.addToCart(
           productId: productId,
           userId: userId,
           variantId: variantId,
-          variantQuantity: updatedQuantity.toString(),
+          variantQuantity: updatedQty.toString(),
           variantName: variantName,
           variantPrice: variantPrice,
           productName: productName,
         );
 
         if (success) {
-          // Update local cart
-          cartItems[existingItemIndex].quantity = updatedQuantity;
+          cartItems[existingIndex].quantity = updatedQty;
           cartItems.refresh();
           Get.snackbar(
             'Added to Cart',
@@ -149,42 +118,41 @@ class CartController extends GetxController {
         }
 
         return success;
-      } else {
-        // New item
-        final success = await _cartService.addToCart(
+      }
+
+      // Add new item
+      final success = await _cartService.addToCart(
+        productId: productId,
+        userId: userId,
+        variantId: variantId,
+        variantQuantity: quantity.toString(),
+        variantName: variantName,
+        variantPrice: variantPrice,
+        productName: productName,
+      );
+
+      if (success) {
+        cartItems.add(CartItem(
           productId: productId,
-          userId: userId,
           variantId: variantId,
-          variantQuantity: quantity.toString(),
+          productName: productName,
           variantName: variantName,
           variantPrice: variantPrice,
-          productName: productName,
+          quantity: quantity,
+          imageUrl: imageUrl,
+        ));
+        Get.snackbar(
+          'Added to Cart',
+          'Item added to cart successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(10),
+          duration: const Duration(seconds: 2),
         );
-
-        if (success) {
-          // Add to local cart
-          cartItems.add(CartItem(
-            productId: productId,
-            variantId: variantId,
-            productName: productName,
-            variantName: variantName,
-            variantPrice: variantPrice,
-            quantity: quantity,
-            imageUrl: imageUrl,
-          ));
-          Get.snackbar(
-            'Added to Cart',
-            'Item added to cart successfully',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-            margin: const EdgeInsets.all(10),
-            duration: const Duration(seconds: 2),
-          );
-        }
-
-        return success;
       }
+
+      return success;
     } catch (e) {
       errorMessage.value = 'Failed to add item to cart: $e';
       Get.snackbar(
@@ -195,13 +163,13 @@ class CartController extends GetxController {
         colorText: Colors.white,
         margin: const EdgeInsets.all(10),
       );
+      if (Get.isLogEnable) print(errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Remove item from cart
   Future<bool> removeFromCart(String productId, String variantId) async {
     isLoading.value = true;
     errorMessage.value = '';
@@ -214,9 +182,13 @@ class CartController extends GetxController {
       );
 
       if (success) {
-        // Remove from local cart
-        cartItems.removeWhere(
-                (item) => item.productId == productId && item.variantId == variantId);
+        // Remove item from list
+        cartItems.removeWhere((item) =>
+        item.productId == productId && item.variantId == variantId);
+
+        // Important: refresh the observable list to update UI
+        cartItems.refresh();
+
         Get.snackbar(
           'Removed',
           'Item removed from cart',
@@ -231,17 +203,17 @@ class CartController extends GetxController {
       return success;
     } catch (e) {
       errorMessage.value = 'Failed to remove item from cart: $e';
-      print(errorMessage.value);
+      if (Get.isLogEnable) print(errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Update item quantity
+
   Future<bool> updateQuantity(String productId, String variantId, int newQuantity) async {
     if (newQuantity <= 0) {
-      return removeFromCart(productId, variantId);
+      return await removeFromCart(productId, variantId);
     }
 
     isLoading.value = true;
@@ -275,23 +247,24 @@ class CartController extends GetxController {
       return false;
     } catch (e) {
       errorMessage.value = 'Failed to update quantity: $e';
-      print(errorMessage.value);
+      if (Get.isLogEnable) print(errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Clear entire cart
   void clearCart() {
     cartItems.clear();
   }
-  
-  int getQuantity(String productId, String variantId) {
-    final item = cartItems.firstWhereOrNull(
-      (e) => e.productId == productId && e.variantId == variantId,
-    );
-    return item?.quantity ?? 0;
-  }
 
+  int getQuantity(String productId, String variantId) {
+    try {
+      return cartItems.firstWhere((item) =>
+      item.productId == productId && item.variantId == variantId).quantity;
+    } catch (_) {
+      return 0;
+    }
+  }
+ 
 }

@@ -66,14 +66,16 @@ class CartService {
   // Get user's cart items
   Future<List<dynamic>> getCartItems(String userId) async {
     try {
-      final response = await _dio.get(
-        '/JSON/cart.php',
-        queryParameters: {'user_id': userId}
+      final response = await _dio.post(
+        '/JSON/viewcart.php',
+        data: FormData.fromMap({
+          'user_id': userId,
+        }),
       );
 
       final responseData = json.decode(response.data.toString());
-      if (responseData['status'] == 'success') {
-        return responseData['data'] ?? [];
+      if (responseData['success']?.toString().toLowerCase() == 'true') {
+        return responseData['products'] ?? [];
       }
       return [];
     } catch (e) {

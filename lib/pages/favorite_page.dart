@@ -9,38 +9,80 @@ import 'package:penta_restaurant/widgets/product_grid_item.dart';
 class FavoritePage extends StatelessWidget {
   FavoritePage({super.key});
 
-  final FavoriteController favoriteController = Get.find<FavoriteController>();
+  final FavoriteController favoriteController = Get.put(FavoriteController());
   final CartController cartController = Get.find<CartController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
-        title: Text('Wishlist', style: TextStyle(color: AppColors.black)),
+        title: Text('Wishlist', style: TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 4,
+        iconTheme: IconThemeData(color: AppColors.darkGreen),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
       ),
       body: Obx(() {
         if (favoriteController.favorites.isEmpty) {
-          return const Center(child: Text('No items in Wishlist'));
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.favorite_border, color: AppColors.darkGreen, size: 60),
+                  const SizedBox(height: 24),
+                  Text(
+                    'No items in your Wishlist',
+                    style: TextStyle(
+                      color: AppColors.darkGreen,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Try exploring our delicious menu and add your favorites!',
+                    style: TextStyle(color: AppColors.labelSecondary, fontSize: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         return GridView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 3 / 4,
+            crossAxisSpacing: 18,
+            mainAxisSpacing: 18,
+            childAspectRatio: 3 / 4.3,
           ),
           itemCount: favoriteController.favorites.length,
           itemBuilder: (context, index) {
             final product = favoriteController.favorites[index];
-            return GestureDetector(
-              onTap: () {
-                Get.to(() => ProductDetailsPage(product: product,cartController: cartController,));
-              },
-              child: ProductGridItem(
-                product: product,
-                // You may not need cartController here, but if required:
-                cartController: cartController,
+            return Hero(
+              tag: 'favorite_${product.productId}',
+              child: Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(18),
+                elevation: 7,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(() => ProductDetailsPage(product: product, cartController: cartController));
+                  },
+                  child: ProductGridItem(
+                    product: product,
+                    cartController: cartController,
+                    // Optionally, add a trailing favorite badge or heart overlay
+                  ),
+                ),
               ),
             );
           },

@@ -17,9 +17,8 @@ class CartItem {
     required this.imageUrl,
   });
 
-  double get totalPrice => double.tryParse(variantPrice) != null
-      ? double.parse(variantPrice) * quantity
-      : 0.0;
+  double get totalPrice =>
+      double.tryParse(variantPrice) != null ? double.parse(variantPrice) * quantity : 0.0;
 
   Map<String, dynamic> toJson() {
     return {
@@ -34,14 +33,15 @@ class CartItem {
   }
 
   factory CartItem.fromJson(Map<String, dynamic> json) {
+    final variants = json['variants'] ?? {};
     return CartItem(
-      productId: json['product_id'] ?? '',
-      variantId: json['varient_id'] ?? '',
-      productName: json['product_name'] ?? '',
-      variantName: json['varient_name'] ?? '',
-      variantPrice: json['varient_price'] ?? '0',
-      quantity: int.tryParse(json['varient_quantity'] ?? '1') ?? 1,
-      imageUrl: json['image'] ?? '',
+      productId: json['productId']?.toString() ?? '',
+      variantId: variants['varientid']?.toString() ?? '',
+      productName: json['productName']?.toString() ?? '',
+      variantName: variants['variantname']?.toString() ?? '',
+      variantPrice: variants['varprice']?.toString() ?? '0',
+      quantity: int.tryParse(variants['varquantity']?.toString() ?? '1') ?? 1,
+      imageUrl: json['primaryimage']?.toString() ?? '',
     );
   }
 }
