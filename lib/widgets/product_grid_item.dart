@@ -35,9 +35,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
 
 
   void _showVariantSelectionDialog() {
-    // This function for the bottom sheet does not need changes
     final variants = widget.product.variants;
-    if (variants.isEmpty) return;
 
     showModalBottomSheet(
       context: context,
@@ -49,13 +47,128 @@ class _ProductGridItemState extends State<ProductGridItem> {
         int quantity = 1;
 
         return StatefulBuilder(
-          builder: (context, setModalState) {
+          builder: (context, setState) {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ... Your bottom sheet UI code goes here
+                  Text(
+                    'Select Variant & Quantity',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.darkGreen,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      // Variant dropdown takes 2/3 width
+                      Expanded(
+                        flex: 1,
+                        child: DropdownButton<int>(
+                          value: selectedVariantIndex,
+                          isExpanded: true,
+                          underline: Container(
+                            height: 2,
+                            color: AppColors.darkGreen.withOpacity(0.6),
+                          ),
+                          iconEnabledColor: AppColors.darkGreen,
+                          items: List.generate(variants.length, (index) {
+                            final v = variants[index];
+                            return DropdownMenuItem(
+                              value: index,
+                              child: Text('${v.variantName} - ₹${v.varPrice}',
+                                  style: const TextStyle(fontSize: 16)),
+                            );
+                          }),
+                          onChanged: (index) {
+                            setState(() {
+                              selectedVariantIndex = index!;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Quantity selector takes 1/3 width
+                      Expanded(
+                        flex: 1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(12),
+                                backgroundColor: AppColors.grey5,
+                                foregroundColor: AppColors.darkGreen,
+                                elevation: 0,
+                              ),
+                              onPressed: quantity > 1
+                                  ? () => setState(() => quantity--)
+                                  : null,
+                              child: const Icon(Icons.remove, size: 24),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: Text(
+                                quantity.toString(),
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: const CircleBorder(),
+                                padding: const EdgeInsets.all(12),
+                                backgroundColor: AppColors.darkGreen,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                              ),
+                              onPressed: () => setState(() => quantity++),
+                              child: const Icon(Icons.add, size: 24),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final selectedVariant = variants[selectedVariantIndex];
+                        await widget.cartController.addToCart(
+                          productId: widget.product.productId,
+                          variantId: selectedVariant.varId,
+                          productName: widget.product.productName,
+                          variantName: selectedVariant.variantName,
+                          variantPrice: selectedVariant.varPrice,
+                          imageUrl: widget.product.primaryImage,
+                          quantity: quantity,
+                        );
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.darkGreen,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        elevation: 2,
+                      ),
+                      child: const Text(
+                        'Add to Cart',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                 ],
               ),
             );
