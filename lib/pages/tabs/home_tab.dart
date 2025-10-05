@@ -9,19 +9,17 @@ import 'package:penta_restaurant/widgets/main_drawer.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 import '../favorite_page.dart';
 import '../search_page.dart';
-import 'cart_page.dart';
-import '../profile/edit_profile_page.dart';
-import 'profile_page.dart';
+
 
 class HomeTab extends StatefulWidget {
   final ProductController productController;
   final CartController cartController;
 
-  HomeTab({
-    Key? key,
+  const HomeTab({
+    super.key,
     required this.productController,
     required this.cartController,
-  }) : super(key: key);
+  }) ;
 
   @override
   State<HomeTab> createState() => _HomeTabState();
