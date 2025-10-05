@@ -3,14 +3,16 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/product_controller.dart';
+import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/widgets/category_card.dart';
+import 'package:penta_restaurant/widgets/main_drawer.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 import '../favorite_page.dart';
 import 'cart_page.dart';
 import '../profile/edit_profile_page.dart';
 import 'profile_page.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   final ProductController productController;
   final CartController cartController;
 
@@ -20,7 +22,20 @@ class HomeTab extends StatelessWidget {
     required this.cartController,
   }) : super(key: key);
 
+  @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
   final RxInt selectedCategoryIndex = 0.obs;
+  void _setScreen(String identifier) async {
+    Navigator.of(context).pop();
+    if (identifier == 'categories') {
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (ctx) => const HomePage()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,85 +43,7 @@ class HomeTab extends StatelessWidget {
     final itemWidth = (screenWidth / 2) - 24;
 
     return Scaffold(
-      drawer: Drawer(
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(color: AppColors.yellow),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      radius: 32,
-                      backgroundColor: AppColors.darkGreen,
-                      child: Icon(Icons.person, size: 36, color: Colors.white),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      "Hello, User",
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Text(
-                      "user@email.com",
-                      style: TextStyle(
-                        color: AppColors.grey3,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.person),
-                title: const Text('Profile'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Get.to(() => ProfilePage());
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.edit),
-                title: const Text('Edit Profile'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Get.to(() => EditProfilePage());
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.favorite_border),
-                title: const Text('Wishlist'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Get.to(() => FavoritePage());
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.shopping_cart),
-                title: const Text('Cart'),
-                onTap: () {
-                  Navigator.pop(context);
-                  Get.to(() => CartPage());
-                },
-              ),
-              const Spacer(),
-              ListTile(
-                leading: const Icon(Icons.logout),
-                title: const Text('Logout'),
-                onTap: () {
-                  Navigator.pop(context);
-                  // TODO: Implement logout logic
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
+      drawer: MainDrawer(onSelectScreen: _setScreen),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -235,7 +172,7 @@ class HomeTab extends StatelessWidget {
           SliverToBoxAdapter(
             child: CategorySelector(
               selectedCategoryIndex: selectedCategoryIndex,
-              controller: productController,
+              controller: widget.productController,
             ),
           ),
 
@@ -267,7 +204,7 @@ class HomeTab extends StatelessWidget {
           ),
 
           Obx(() {
-            if (productController.isLoading.value) {
+            if (widget.productController.isLoading.value) {
               return const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               );
@@ -276,11 +213,11 @@ class HomeTab extends StatelessWidget {
             List products;
             if (selectedCategoryIndex.value == 0) {
               products =
-                  productController.categories.expand((cat) => cat.products).toList();
-            } else if (productController.categories.length >
+                  widget.productController.categories.expand((cat) => cat.products).toList();
+            } else if (widget.productController.categories.length >
                 selectedCategoryIndex.value - 1) {
               products =
-                  productController.categories[selectedCategoryIndex.value - 1].products;
+                  widget.productController.categories[selectedCategoryIndex.value - 1].products;
             } else {
               products = [];
             }
@@ -296,7 +233,7 @@ class HomeTab extends StatelessWidget {
                       width: itemWidth,
                       child: ProductGridItem(
                         product: product,
-                        cartController: cartController,
+                        cartController: widget.cartController,
                       ),
                     );
                   }).toList(),

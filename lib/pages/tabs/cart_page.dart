@@ -39,7 +39,6 @@ class _CartPageState extends State<CartPage> {
       return;
     }
 
-    // TODO: Implement actual promo code validation logic here
     Get.snackbar(
       'Promo Code',
       'Promo code "$promoCode" applied (stub implementation)',
