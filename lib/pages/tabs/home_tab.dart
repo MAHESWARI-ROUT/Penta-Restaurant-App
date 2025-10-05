@@ -6,6 +6,7 @@ import 'package:penta_restaurant/controller/product_controller.dart';
 import 'package:penta_restaurant/widgets/category_card.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 import '../favorite_page.dart';
+import '../search_page.dart';
 import 'cart_page.dart';
 import '../profile/edit_profile_page.dart';
 import 'profile_page.dart';
@@ -132,7 +133,7 @@ class HomeTab extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.search, color: AppColors.black),
                 onPressed: () {
-                  // TODO: Implement search functionality
+                  Get.to(() => SearchPage());
                 },
                 tooltip: 'Search',
               ),
