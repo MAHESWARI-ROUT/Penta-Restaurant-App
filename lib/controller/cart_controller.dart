@@ -1,9 +1,12 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart' hide TabController;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:penta_restaurant/controller/tab_controller.dart';
 import '../models/auth_response.dart';
 import '../models/cart_model.dart';
 import '../services/cart_service.dart';
-import 'package:flutter/material.dart';
 
 class CartController extends GetxController {
   final CartService _cartService = CartService();
@@ -141,15 +144,31 @@ class CartController extends GetxController {
           quantity: quantity,
           imageUrl: imageUrl,
         ));
-        Get.snackbar(
-          'Added to Cart',
-          'Item added to cart successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          margin: const EdgeInsets.all(10),
-          duration: const Duration(seconds: 2),
-        );
+        Get.showSnackbar(GetSnackBar(
+          messageText: const Text(
+            'Item successfully added.',
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          animationDuration: const Duration(milliseconds: 300),
+          duration: const Duration(seconds: 4),
+          barBlur: 20,
+          backgroundColor: Colors.green.withAlpha(10),
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          borderRadius: 12,
+          snackStyle: SnackStyle.FLOATING,
+          mainButton: TextButton(
+            onPressed: () {
+              final tabController = Get.find<TabController>();
+
+              tabController.changeTab(1); // Switch to Cart tab
+              Get.back(); // Close snackbar immediately when pressed
+            },
+            child: const Text(
+              'Go to Cart',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ));
       }
 
       return success;
@@ -171,44 +190,43 @@ class CartController extends GetxController {
   }
 
   Future<bool> removeFromCart(String productId, String variantId) async {
+    print("[DEBUG] removeFromCart called for productId=$productId variantId=$variantId");
     isLoading.value = true;
     errorMessage.value = '';
 
     try {
-      final success = await _cartService.removeFromCart(
+      // 'response' is boolean success from service method
+      final bool success = await _cartService.removeFromCart(
         userId: userId,
         variantId: variantId,
         productId: productId,
       );
 
       if (success) {
-        // Remove item from list
-        cartItems.removeWhere((item) =>
-        item.productId == productId && item.variantId == variantId);
-
-        // Important: refresh the observable list to update UI
-        cartItems.refresh();
-
-        Get.snackbar(
-          'Removed',
-          'Item removed from cart',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          margin: const EdgeInsets.all(10),
-          duration: const Duration(seconds: 2),
-        );
+        final index = cartItems.indexWhere(
+                (item) => item.productId == productId && item.variantId == variantId);
+        if (index != -1) {
+          cartItems.removeAt(index);
+          cartItems.refresh();
+          Get.snackbar('Removed', 'Item removed from cart');
+          return true;
+        } else {
+          return true; // Server confirmed removal so consider success
+        }
+      } else {
+        Get.snackbar('Error', 'Failed to remove item from cart');
+        return false;
       }
-
-      return success;
     } catch (e) {
-      errorMessage.value = 'Failed to remove item from cart: $e';
-      if (Get.isLogEnable) print(errorMessage.value);
+      errorMessage.value = 'Exception: $e';
+      print(errorMessage.value);
+      Get.snackbar('Error', errorMessage.value);
       return false;
     } finally {
       isLoading.value = false;
     }
   }
+
 
 
   Future<bool> updateQuantity(String productId, String variantId, int newQuantity) async {

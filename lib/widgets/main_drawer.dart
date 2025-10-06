@@ -119,8 +119,8 @@ class MainDrawer extends StatelessWidget {
                   },
                 );
               }),
+              SizedBox(height: 30),
 
-              Spacer(),
               ListTile(
                 title: Text(
                   'SignOut',
@@ -135,6 +135,7 @@ class MainDrawer extends StatelessWidget {
                   Get.to(LoginPage());
                 },
               ),
+
             ],
           ),
         ],

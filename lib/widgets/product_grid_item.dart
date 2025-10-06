@@ -250,7 +250,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
-                    maxLines: 2, // Allow for longer names
+                    maxLines: 1, // Allow for longer names
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
