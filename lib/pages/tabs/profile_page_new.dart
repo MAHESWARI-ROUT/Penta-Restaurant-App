@@ -4,6 +4,8 @@ import 'package:get/utils.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
+import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
+import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -422,7 +424,34 @@ class ProfilePage extends StatelessWidget {
                               Text('About Us'),
                               Spacer(),
                               IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Get.to(() => const AboutUsPage());
+                                },
+                                icon: Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20.0,
+                            right: 20,
+                            top: 10,
+                            bottom: 10,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.help_outline),
+                              SizedBox(width: 5),
+                              Text('FAQ'),
+                              Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  Get.to(() => const FAQPage());
+                                },
                                 icon: Icon(Icons.arrow_forward_ios),
                               ),
                             ],

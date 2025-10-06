@@ -137,10 +137,7 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.black),
-          onPressed: () => Get.back(),
-        ),
+
         backgroundColor: AppColors.yellow,
         elevation: 0,
         title: Text(
@@ -148,6 +145,7 @@ class _CartPageState extends State<CartPage> {
           style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
+          automaticallyImplyLeading:false
       ),
       body: Obx(() {
         if (cartController.isLoading.value) {

@@ -1,102 +1,376 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:penta_restaurant/commons/app_Icon.dart';
+import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'faq_page.dart';
-import 'terms_page.dart';
+import 'package:penta_restaurant/controller/restaurant_controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsPage extends StatelessWidget {
-  const AboutUsPage({super.key});
+  const AboutUsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final RestaurantController restaurantController = Get.put(RestaurantController());
+
     return Scaffold(
+      backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        title: const Text('About Us'),
+        backgroundColor: AppColors.white,
+        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          onPressed: Get.back,
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage('https://i.pravatar.cc/150?u=a042581f4e29026704d'),
-            ),
+        title: const Text(
+          'About Us',
+          style: TextStyle(
+            color: AppColors.darkGreen,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Logo and Version Card
-            Card(
-              color: AppColors.grey1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32.0),
-                child: AppIcon(),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // About Us Text Section
-            const Text(
-              'About Us',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Our restaurant app is designed to make it easy for customers to discover and order from their favorite restaurants. With our user-friendly interface, customers can browse menus, place orders, and track delivery in real-time...',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 32),
-
-            // Navigation Tiles
-            _buildInfoTile(
-              context,
-              title: "What's New?",
-              onTap: () {},
-            ),
-            _buildInfoTile(
-              context,
-              title: 'Terms of Use',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => const TermsPage()));
-              },
-            ),
-            _buildInfoTile(
-              context,
-              title: 'Privacy',
-              onTap: () {},
-            ),
-            _buildInfoTile(
-                context,
-                title: 'FAQ',
-                onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const FaqPage()));
-                }
-            ),
-          ],
         ),
+        centerTitle: true,
       ),
-      // REMOVED: The entire bottomNavigationBar which contained the copyright text
-      bottomNavigationBar: null,
+      body: Obx(() {
+        if (restaurantController.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.darkGreen,
+            ),
+          );
+        }
+
+        if (restaurantController.errorMessage.value.isNotEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: Colors.red,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Failed to load restaurant details',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  restaurantController.errorMessage.value,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.grey2),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: restaurantController.refreshRestaurantDetails,
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.darkGreen),
+                  child: const Text('Retry', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              if (restaurantController.restaurantImages.isNotEmpty)
+                Container(
+                  height: 170,
+                  margin: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  child: Image.network(
+                    restaurantController.restaurantImages.first,
+                    fit: BoxFit.fitWidth,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: AppColors.grey5,
+                      child: const Icon(Icons.restaurant, size: 64, color: AppColors.grey3),
+                    ),
+                  ),
+                ),
+
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    _buildInfoCard(
+                      icon: Icons.restaurant,
+                      title: restaurantController.restaurantName,
+                      subtitle: restaurantController.cleanDescription,
+                      color: AppColors.darkGreen,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    _buildInfoCard(
+                      icon: Icons.location_on,
+                      title: 'Address',
+                      subtitle: restaurantController.restaurantAddress,
+                      color: Colors.blue,
+                      onTap: () {
+                        final lat = restaurantController.restaurantDetail.value?.lat ?? '';
+                        final lon = restaurantController.restaurantDetail.value?.lon ?? '';
+                        if (lat.isNotEmpty && lon.isNotEmpty) {
+                          _openMap(lat, lon);
+                        } else {
+                          _showErrorSnack('Map coordinates not available');
+                        }
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInfoCard(
+                            icon: Icons.phone,
+                            title: 'Call Us',
+                            subtitle: restaurantController.restaurantPhone,
+                            color: Colors.green,
+                            onTap: () {
+                              final phone = restaurantController.restaurantPhone;
+                              if (phone.isNotEmpty) {
+                                _makePhoneCall(phone);
+                              } else {
+                                _showErrorSnack('Phone number not available');
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildInfoCard(
+                            icon: Icons.web,
+                            title: 'Website',
+                            subtitle: 'Visit Our Site',
+                            color: Colors.purple,
+                            onTap: () {
+                              final url = restaurantController.restaurantWeb;
+                              if (url.startsWith('http')) {
+                                _openWebsite(url);
+                              } else {
+                                _showErrorSnack('Invalid website URL');
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    _buildInfoCard(
+                      icon: Icons.access_time,
+                      title: 'Operating Hours',
+                      subtitle: restaurantController.restaurantTime,
+                      color: Colors.orange,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    _buildServiceDetailsCard(restaurantController),
+
+                    const SizedBox(height: 16),
+
+                    if (restaurantController.deliveryCities.isNotEmpty)
+                      _buildDeliveryAreasCard(restaurantController),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
     );
   }
 
-  Widget _buildInfoTile(BuildContext context, {required String title, required VoidCallback onTap}) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: onTap,
+  Widget _buildInfoCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.darkGreen),
+                ),
+                const SizedBox(height: 4),
+                Text(subtitle, style: TextStyle(fontSize: 14, color: AppColors.grey2), maxLines: 3, overflow: TextOverflow.ellipsis),
+              ]),
+            ),
+            if (onTap != null)
+              const Icon(
+                Icons.arrow_forward_ios,
+                color: AppColors.grey3,
+                size: 16,
+              ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildServiceDetailsCard(RestaurantController controller) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: AppColors.yellow.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+            child: const Icon(Icons.info_outline, color: AppColors.darkGreen, size: 24),
+          ),
+          const SizedBox(width: 16),
+          const Text('Service Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+        ]),
+        const SizedBox(height: 20),
+        Row(children: [
+          Expanded(
+            child: _buildServiceItem('Currency', controller.restaurantCurrency, Icons.currency_rupee),
+          ),
+          Expanded(
+            child: _buildServiceItem('Tax', '${controller.restaurantTax}%', Icons.receipt),
+          ),
+        ]),
+        const SizedBox(height: 16),
+        _buildServiceItem('Minimum Order', '${controller.restaurantCurrency} ${controller.restaurantMinOrder}', Icons.shopping_cart),
+      ]),
+    );
+  }
+
+  Widget _buildServiceItem(String label, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(right: 8),
+      decoration: BoxDecoration(color: AppColors.fillSecondary, borderRadius: BorderRadius.circular(8)),
+      child: Column(children: [
+        Icon(icon, color: AppColors.darkGreen, size: 20),
+        const SizedBox(height: 8),
+        Text(label, style: TextStyle(fontSize: 12, color: AppColors.grey2)),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+      ]),
+    );
+  }
+
+  Widget _buildDeliveryAreasCard(RestaurantController controller) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.green.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+            child: const Icon(Icons.delivery_dining, color: Colors.green, size: 24),
+          ),
+          const SizedBox(width: 16),
+          const Text('Delivery Areas', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+        ]),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: controller.deliveryCities.map((pincode) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.darkGreen.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.darkGreen.withOpacity(0.3)),
+              ),
+              child: Text(pincode,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.darkGreen)),
+            );
+          }).toList(),
+        ),
+      ]),
+    );
+  }
+
+  void _makePhoneCall(String phoneNumber) async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    } else {
+      _showErrorSnack('Could not launch phone dialer');
+    }
+  }
+
+  void _openWebsite(String url) async {
+    if (url.isEmpty) {
+      _showErrorSnack('Website URL is empty');
+      return;
+    }
+    final Uri webUri = Uri.parse(url);
+    if (await canLaunchUrl(webUri)) {
+      await launchUrl(webUri, mode: LaunchMode.externalApplication);
+    } else {
+      _showErrorSnack('Could not open website');
+    }
+  }
+
+  void _openMap(String lat, String lon) async {
+    if (lat.isEmpty || lon.isEmpty) {
+      _showErrorSnack('Location coordinates are empty');
+      return;
+    }
+    final Uri mapUri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lon');
+    if (await canLaunchUrl(mapUri)) {
+      await launchUrl(mapUri, mode: LaunchMode.externalApplication);
+    } else {
+      _showErrorSnack('Could not open maps');
+    }
+  }
+
+  void _showErrorSnack(String message) {
+    Get.snackbar(
+      'Error',
+      message,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
     );
   }
 }
