@@ -56,7 +56,7 @@ class CartService {
       );
 
       final responseData = json.decode(response.data.toString());
-      return responseData['status'] == 'success';
+      return responseData['success']?.toString().toLowerCase() == 'true';
     } catch (e) {
       print('Error removing from cart: $e');
       return false;

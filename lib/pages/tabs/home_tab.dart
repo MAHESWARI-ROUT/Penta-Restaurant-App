@@ -7,6 +7,8 @@ import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/widgets/category_card.dart';
 import 'package:penta_restaurant/widgets/main_drawer.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
+import '../../widgets/main_drawer.dart';
+import '../../widgets/promo_carousal.dart';
 import '../favorite_page.dart';
 import '../search_page.dart';
 
@@ -42,7 +44,7 @@ class _HomeTabState extends State<HomeTab> {
     final itemWidth = (screenWidth / 2) - 24;
 
     return Scaffold(
-      drawer: MainDrawer(onSelectScreen: _setScreen),
+      drawer: MainDrawer(onSelectScreen: (String identifier) {  },),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -78,95 +80,14 @@ class _HomeTabState extends State<HomeTab> {
           // Your other slivers including promo, categories, recommendation, products, and bottom padding
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: AppColors.darkGreen,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('Hello! User',
-                                    style: TextStyle(
-                                        color: AppColors.white, fontSize: 13)),
-                                SizedBox(height: 4),
-                                SizedBox(
-                                  width: 90,
-                                  child: Text(
-                                    "Eat gelato like there's no tomorrow!",
-                                    style: TextStyle(
-                                        color: AppColors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 8.0),
-                            child: CircleAvatar(
-                              radius: 32,
-                              backgroundImage: AssetImage('assets/images/icecreame.jpg'),
-                              backgroundColor: AppColors.yellow,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Container(
-                    width: 90,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: AppColors.fillPrimary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Discount',
-                          style: TextStyle(
-                              color: AppColors.darkGreen,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '50%',
-                          style: TextStyle(
-                              color: AppColors.yellow,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'All Asian Food',
-                          style: TextStyle(
-                            color: AppColors.darkGreen,
-                            fontSize: 10,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: SizedBox(
+                height: 180,
+                child: PromoCarousel(),
               ),
             ),
           ),
+
 
           SliverToBoxAdapter(
             child: CategorySelector(

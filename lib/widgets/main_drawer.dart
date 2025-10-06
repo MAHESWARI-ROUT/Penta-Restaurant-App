@@ -73,17 +73,17 @@ class MainDrawer extends StatelessWidget {
                       fontSize: 18,
                     ),
                   ),
-                  Text(
-                    "user@email.com",
-                    style: TextStyle(color: AppColors.darkGrey, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
+                  leading: Icon(item['icon'], color: AppColors.white),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    final action = item['action'] as VoidCallback?;
+                    if (action != null) action();
+                  },
+                );
+              }),
+              SizedBox(height: 30),
 
-            SizedBox(height: 30),
-            ...drawerItems.map((item) {
-              return ListTile(
+              ListTile(
                 title: Text(
                   item['title'],
                   style: TextStyle(
@@ -111,13 +111,10 @@ class MainDrawer extends StatelessWidget {
                   color: Colors.red,
                 ),
               ),
-              leading: const Icon(Icons.logout, color: Colors.red),
-              onTap: () {
-                Get.to(LoginPage());
-              },
-            ),
-          ],
-        ),
+
+            ],
+          ),
+        ],
       ),
     );
   }

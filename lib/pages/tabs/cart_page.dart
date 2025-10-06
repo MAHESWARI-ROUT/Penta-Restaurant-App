@@ -6,7 +6,11 @@ import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/pages/my_order_page.dart';
-import 'package:penta_restaurant/widgets/add_new_address_page.dart';
+import 'package:penta_restaurant/pages/shipping_details_page.dart';
+
+// Import the new files you created
+import 'package:penta_restaurant/widgets/address_bottom_sheet.dart';
+
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -19,6 +23,21 @@ class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find<CartController>();
   final OrderController orderController = Get.put(OrderController());
   final RxBool _showDetailedBill = false.obs;
+  final RxList<String> savedAddresses = <String>[
+    '123 Main Street, City',
+    '456 Park Avenue, City',
+  ].obs; // Sample addresses, replace with real data source
+
+  final RxString selectedAddress = ''.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    if (savedAddresses.isNotEmpty) {
+      selectedAddress.value = savedAddresses[0];
+    }
+  }
+
 
   void _showOrderSuccessDialog() {
     Get.dialog(
@@ -47,52 +66,73 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  void _checkout() async {
-    final AuthController authController = Get.find<AuthController>();
-
-    final String realUserId = authController.userId;
-
-    if (realUserId.isEmpty) {
-      Get.snackbar('Error', 'You must be logged in to place an order.');
-      return;
-    }
-
-    final result = await Get.to(() => const AddNewAddressPage());
-
-    if (result != null && result is Map) {
-      final String address = result['address'];
-      final String phone = result['phone'];
-
-      Get.dialog(const Center(child: CircularProgressIndicator()), barrierDismissible: false);
-
-      final orderResponse = await orderController.placeOrder(
-        userId: realUserId,
-        
-        cartId: 'cart_abc', 
-        address: address,
-        phone: phone,
-        total: cartController.totalPrice.toString(),
-        paymentRef: 'REF${DateTime.now().millisecondsSinceEpoch}',
-        payStatus: 'Pending',
-        paymentMode: 'COD',
-        orderRemark: 'Handle with care',
-      );
-
-      Get.back(); // Close loading dialog
-
-      if (orderResponse != null && orderResponse.success) {
-        _showOrderSuccessDialog();
-      } else {
-        Get.snackbar(
-          'Order Failed',
-          orderController.errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    }
+  // This method now navigates to the shipping details page
+  void _checkout() {
+    Get.to(() => const ShippingDetailsPage());
   }
+  void _showAddAddressSheet() {
+    final TextEditingController _addressController = TextEditingController();
+
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.only(
+          top: 24,
+          left: 24,
+          right: 24,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(28),
+            topRight: Radius.circular(28),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Add New Address',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: AppColors.darkGreen)),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _addressController,
+              maxLines: 2,
+              decoration: const InputDecoration(
+                labelText: 'Address',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.darkGreen,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  String newAddress = _addressController.text.trim();
+                  if (newAddress.isNotEmpty) {
+                    savedAddresses.add(newAddress);
+                    selectedAddress.value = newAddress;
+                    Get.back();
+                  } else {
+                    Get.snackbar('Error', 'Please enter an address',
+                        backgroundColor: Colors.red, colorText: Colors.white);
+                  }
+                },
+                child: const Text('Save Address', style: TextStyle(fontSize: 16)),
+              ),
+            )
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -166,6 +206,7 @@ class _CartPageState extends State<CartPage> {
 
         return Column(
           children: [
+            //cart items
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -287,6 +328,8 @@ class _CartPageState extends State<CartPage> {
                 },
               ),
             ),
+
+            //show detailed bill section
             Obx(() => InkWell(
                   onTap: () => _showDetailedBill.value = !_showDetailedBill.value,
                   child: Container(
@@ -312,6 +355,8 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                 )),
+
+            //detailed bill section
             Obx(() {
               if (!_showDetailedBill.value) return const SizedBox.shrink();
               return Container(
@@ -346,6 +391,8 @@ class _CartPageState extends State<CartPage> {
                 ),
               );
             }),
+
+            //summary row
             Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               decoration: BoxDecoration(
@@ -382,6 +429,8 @@ class _CartPageState extends State<CartPage> {
                 ],
               ),
             ),
+
+            SizedBox(height: 100,)
           ],
         );
       }),
@@ -410,4 +459,48 @@ class _CartPageState extends State<CartPage> {
       ],
     );
   }
+  Widget _buildAddressSelector() {
+    return Obx(() {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedAddress.value.isEmpty ? null : selectedAddress.value,
+                  hint: const Text('Select delivery address'),
+                  items: savedAddresses
+                      .map((addr) => DropdownMenuItem(
+                    value: addr,
+                    child: Text(addr, overflow: TextOverflow.ellipsis),
+                  ))
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) selectedAddress.value = val;
+                  },
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.add_location_alt, color: AppColors.darkGreen),
+              onPressed: () {
+                _showAddAddressSheet();
+              },
+              tooltip: 'Add New Address',
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
 }
