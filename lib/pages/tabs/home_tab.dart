@@ -3,27 +3,40 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/product_controller.dart';
+import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/widgets/category_card.dart';
+import 'package:penta_restaurant/widgets/main_drawer.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 import '../../widgets/main_drawer.dart';
 import '../../widgets/promo_carousal.dart';
 import '../favorite_page.dart';
 import '../search_page.dart';
-import 'cart_page.dart';
-import '../profile/edit_profile_page.dart';
-import 'profile_page.dart';
 
-class HomeTab extends StatelessWidget {
+
+class HomeTab extends StatefulWidget {
   final ProductController productController;
   final CartController cartController;
 
-  HomeTab({
-    Key? key,
+  const HomeTab({
+    super.key,
     required this.productController,
     required this.cartController,
-  }) : super(key: key);
+  }) ;
 
+  @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
   final RxInt selectedCategoryIndex = 0.obs;
+  void _setScreen(String identifier) async {
+    Navigator.of(context).pop();
+    if (identifier == 'categories') {
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (ctx) => const HomePage()));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +92,7 @@ class HomeTab extends StatelessWidget {
           SliverToBoxAdapter(
             child: CategorySelector(
               selectedCategoryIndex: selectedCategoryIndex,
-              controller: productController,
+              controller: widget.productController,
             ),
           ),
 
@@ -111,7 +124,7 @@ class HomeTab extends StatelessWidget {
           ),
 
           Obx(() {
-            if (productController.isLoading.value) {
+            if (widget.productController.isLoading.value) {
               return const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               );
@@ -120,11 +133,11 @@ class HomeTab extends StatelessWidget {
             List products;
             if (selectedCategoryIndex.value == 0) {
               products =
-                  productController.categories.expand((cat) => cat.products).toList();
-            } else if (productController.categories.length >
+                  widget.productController.categories.expand((cat) => cat.products).toList();
+            } else if (widget.productController.categories.length >
                 selectedCategoryIndex.value - 1) {
               products =
-                  productController.categories[selectedCategoryIndex.value - 1].products;
+                  widget.productController.categories[selectedCategoryIndex.value - 1].products;
             } else {
               products = [];
             }
@@ -140,7 +153,7 @@ class HomeTab extends StatelessWidget {
                       width: itemWidth,
                       child: ProductGridItem(
                         product: product,
-                        cartController: cartController,
+                        cartController: widget.cartController,
                       ),
                     );
                   }).toList(),

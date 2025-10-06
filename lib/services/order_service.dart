@@ -1,6 +1,7 @@
+import 'dart:convert'; 
 import 'package:dio/dio.dart';
-import '../services/dio_client.dart';
-import '../models/order_response.dart';
+import 'package:penta_restaurant/models/order_response.dart';
+import 'package:penta_restaurant/services/dio_client.dart';
 
 class OrderService {
   final Dio _dio = DioClient().dio;
@@ -13,11 +14,11 @@ class OrderService {
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
-      if (response.data is String) {
-        return OrderResponse.fromJson(response.data as Map<String, dynamic>);
-      } else {
-        return OrderResponse.fromJson(response.data);
-      }
+      final data = response.data is String
+          ? json.decode(response.data)
+          : response.data;
+      return OrderResponse.fromJson(data);
+
     } catch (e) {
       print('Error fetching my orders: $e');
       return null;
@@ -32,11 +33,11 @@ class OrderService {
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
-      if (response.data is String) {
-        return OrderResponse.fromJson(response.data as Map<String, dynamic>);
-      } else {
-        return OrderResponse.fromJson(response.data);
-      }
+      final data = response.data is String
+          ? json.decode(response.data)
+          : response.data;
+      return OrderResponse.fromJson(data);
+
     } catch (e) {
       print('Error fetching assigned orders: $e');
       return null;
@@ -71,11 +72,11 @@ class OrderService {
         options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
-      if (response.data is String) {
-        return OrderResponse.fromJson(response.data as Map<String, dynamic>);
-      } else {
-        return OrderResponse.fromJson(response.data);
-      }
+      final data = response.data is String
+          ? json.decode(response.data)
+          : response.data;
+      return OrderResponse.fromJson(data);
+
     } catch (e) {
       print('Error adding order: $e');
       return null;

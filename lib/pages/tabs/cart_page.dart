@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/pages/my_order_page.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
 
 // Import the new files you created
 import 'package:penta_restaurant/widgets/address_bottom_sheet.dart';
 
+
 class CartPage extends StatefulWidget {
-  const CartPage({Key? key}) : super(key: key);
+  const CartPage({super.key});
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
-  final TextEditingController _promoController = TextEditingController();
   final CartController cartController = Get.find<CartController>();
+  final OrderController orderController = Get.put(OrderController());
   final RxBool _showDetailedBill = false.obs;
   final RxList<String> savedAddresses = <String>[
     '123 Main Street, City',
@@ -36,36 +39,6 @@ class _CartPageState extends State<CartPage> {
   }
 
 
-  @override
-  void dispose() {
-    _promoController.dispose();
-    super.dispose();
-  }
-
-  void _applyPromo() {
-    final promoCode = _promoController.text.trim();
-    if (promoCode.isEmpty) {
-      Get.snackbar(
-        'Promo Code',
-        'Please enter a promo code',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
-    // TODO: Implement actual promo code validation logic here
-    Get.snackbar(
-      'Promo Code',
-      'Promo code "$promoCode" applied (stub implementation)',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-    );
-  }
-
-  // Helper method to show the success dialog after address confirmation
   void _showOrderSuccessDialog() {
     Get.dialog(
       AlertDialog(
@@ -81,15 +54,15 @@ class _CartPageState extends State<CartPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Get.back(); // Close the dialog
-              cartController.clearCart(); // Empty the cart
-              Get.off(() => const MyOrdersPage()); // Go to MyOrdersPage, replacing the cart screen
+              Get.back(); 
+              cartController.clearCart();
+              Get.offAll(() => const MyOrdersPage());
             },
-            child: Text('OK', style: TextStyle(color: AppColors.darkGreen, fontSize: 16)),
+            child: Text('View My Orders', style: TextStyle(color: AppColors.darkGreen, fontSize: 16)),
           ),
         ],
       ),
-      barrierDismissible: false, // Prevent closing by tapping outside
+      barrierDismissible: false,
     );
   }
 
@@ -165,7 +138,10 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppColors.black),
+          onPressed: () => Get.back(),
+        ),
         backgroundColor: AppColors.yellow,
         elevation: 0,
         title: Text(
@@ -268,16 +244,6 @@ class _CartPageState extends State<CartPage> {
                               width: 92,
                               height: 92,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: AppColors.grey5,
-                                child: const Center(
-                                  child: SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  ),
-                                ),
-                              ),
                               errorWidget: (context, url, error) => Container(
                                 color: AppColors.grey5,
                                 child: Icon(Icons.fastfood, color: AppColors.grey3, size: 30),
@@ -329,16 +295,9 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                   onPressed: () {
                                     if (item.quantity > 1) {
-                                      cartController.updateQuantity(
-                                        item.productId,
-                                        item.variantId,
-                                        item.quantity - 1,
-                                      );
+                                      cartController.updateQuantity(item.productId, item.variantId, item.quantity - 1);
                                     } else {
-                                      cartController.removeFromCart(
-                                        item.productId,
-                                        item.variantId,
-                                      );
+                                      cartController.removeFromCart(item.productId, item.variantId);
                                     }
                                   },
                                 ),
@@ -356,11 +315,7 @@ class _CartPageState extends State<CartPage> {
                                     child: const Icon(Icons.add, color: Colors.white, size: 18),
                                   ),
                                   onPressed: () {
-                                    cartController.updateQuantity(
-                                      item.productId,
-                                      item.variantId,
-                                      item.quantity + 1,
-                                    );
+                                    cartController.updateQuantity(item.productId, item.variantId, item.quantity + 1);
                                   },
                                 ),
                               ],
@@ -383,23 +338,14 @@ class _CartPageState extends State<CartPage> {
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 6,
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           _showDetailedBill.value ? 'Hide Detailed Bill' : 'Show Detailed Bill',
-                          style: TextStyle(
-                            color: AppColors.darkGreen,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                          style: TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         Icon(
                           _showDetailedBill.value ? Icons.expand_less : Icons.expand_more,
@@ -413,20 +359,13 @@ class _CartPageState extends State<CartPage> {
             //detailed bill section
             Obx(() {
               if (!_showDetailedBill.value) return const SizedBox.shrink();
-
               return Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
                 ),
                 child: Column(
                   children: cartController.cartItems.map((item) {
@@ -460,27 +399,17 @@ class _CartPageState extends State<CartPage> {
                 color: AppColors.white,
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(28), topRight: Radius.circular(28)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 12,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, -5))],
               ),
               child: Column(
                 children: [
-                  Obx(() => _buildSummaryRow(
-                      'Subtotal', '₹${cartController.totalPrice.toStringAsFixed(2)}')),
+                  Obx(() => _buildSummaryRow('Subtotal', '₹${cartController.totalPrice.toStringAsFixed(2)}')),
                   const SizedBox(height: 8),
-                  _buildSummaryRow('Delivery', 'Free',
-                      valueColor: Colors.green, valueFontWeight: FontWeight.bold),
+                  _buildSummaryRow('Delivery', 'Free', valueColor: Colors.green, valueFontWeight: FontWeight.bold),
                   const SizedBox(height: 20),
                   const Divider(height: 1),
                   const SizedBox(height: 20),
-                  Obx(() => _buildSummaryRow(
-                      'Total', '₹${cartController.totalPrice.toStringAsFixed(2)}',
-                      valueFontSize: 22, valueFontWeight: FontWeight.bold)),
+                  Obx(() => _buildSummaryRow('Total', '₹${cartController.totalPrice.toStringAsFixed(2)}', valueFontSize: 22, valueFontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,

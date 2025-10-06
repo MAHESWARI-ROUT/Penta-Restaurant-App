@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
+import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
+import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/favorite_page.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page.dart';
-
-
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
@@ -18,7 +17,7 @@ class MainDrawer extends StatelessWidget {
     {
       'title': 'Login',
       'icon': Icons.login,
-      'action': () => Get.to(() => LoginPage()), // or null if no navigation
+      'action': () => Get.to(() => LoginPage()),
     },
     {
       'title': 'My Cart',
@@ -27,88 +26,51 @@ class MainDrawer extends StatelessWidget {
     },
     {
       'title': 'Wishlist',
-      'icon': Icons.favorite,
+      'icon': Icons.favorite_border,
       'action': () => Get.to(() => FavoritePage()),
     },
     {
-      'title': 'Profile',
-      'icon': Icons.account_circle_outlined,
-      'action': () => Get.to(() => ProfilePage()),
+      'title': 'Edit Profile',
+      'icon': Icons.edit,
+      'action': () => Get.to(() => EditProfilePage()),
     },
-    {'title': 'Coupons', 'icon': Icons.card_giftcard_outlined, 'route': null},
+    {
+      'title': 'About Us',
+      'icon': Icons.info_outline,
+      'action': () => Get.to(() => AboutUsPage()),
+    },
     {
       'title': 'Notification',
       'icon': Icons.notification_add_outlined,
-      'route': null,
+      'action': null,
     },
-    {'title': 'Help', 'icon': Icons.help_outline_rounded, 'route': null},
+    {'title': 'Help', 'icon': Icons.help_outline_rounded, 'action': null},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: 250,
-      backgroundColor: const Color.fromARGB(100, 0, 0, 0),
-      child: Stack(
-        children: [
-          BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30.0, sigmaY: 30.0),
-            child: Container(color: Colors.black.withOpacity(0.3)),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 42),
-              IconButton(
-                icon: const Icon(
-                  Icons.close,
-                  color: AppColors.backgroundPrimary,
-                  size: 26,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-                tooltip: 'Close Drawer',
-              ),
-              SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Hey,',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.white,
-                    ),
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: AppColors.yellow),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: AppColors.darkGreen,
+                    child: Icon(Icons.person, size: 36, color: Colors.black),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Foodie!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 30),
-              ...drawerItems.map((item) {
-                return ListTile(
-                  title: Text(
-                    item['title'],
+                  const SizedBox(height: 12),
+                  Text(
+                    "Hello, User",
                     style: TextStyle(
-                      fontSize: 16,
+                      color: AppColors.black,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.white,
+                      fontSize: 18,
                     ),
                   ),
                   leading: Icon(item['icon'], color: AppColors.white),
@@ -123,17 +85,31 @@ class MainDrawer extends StatelessWidget {
 
               ListTile(
                 title: Text(
-                  'SignOut',
+                  item['title'],
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.red,
+                    color: AppColors.black,
                   ),
                 ),
-                leading: const Icon(Icons.logout, color: Colors.red),
+                leading: Icon(item['icon'], color: AppColors.black),
                 onTap: () {
-                  Get.to(LoginPage());
+                  Navigator.of(context).pop();
+                  final action = item['action'] as VoidCallback?;
+                  if (action != null) action();
                 },
+              );
+            }),
+
+            Spacer(),
+            ListTile(
+              title: Text(
+                'SignOut',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
               ),
 
             ],

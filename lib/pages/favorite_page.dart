@@ -57,7 +57,7 @@ class FavoritePage extends StatelessWidget {
         }
 
         return GridView.builder(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(10),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 18,
