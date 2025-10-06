@@ -4,9 +4,13 @@ import 'package:get/utils.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
-import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
-import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
+
 import 'package:penta_restaurant/controller/profile_controller.dart';
+import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
+
+import '../info_pages/about_us_page.dart';
+import '../info_pages/faq_page.dart';
+import '../info_pages/terms_conditions_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -19,51 +23,16 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       body: Obx(() {
         if (profileController.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.darkGreen,
-            ),
+          return ShimmerEffect(
+            child: const ProfileShimmer(),
           );
         }
 
         if (profileController.errorMessage.value.isNotEmpty && !profileController.hasProfile) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Failed to load profile',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  profileController.errorMessage.value,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.grey2),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => profileController.refreshProfile(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.darkGreen,
-                  ),
-                  child: const Text(
-                    'Retry',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
+          return ErrorStateWidget(
+            message: profileController.errorMessage.value,
+            onRetry: () => profileController.refreshProfile(),
+            icon: Icons.person_outline,
           );
         }
 
@@ -451,6 +420,31 @@ class ProfilePage extends StatelessWidget {
                               IconButton(
                                 onPressed: () {
                                   Get.to(() => const FAQPage());
+                                },
+                                icon: Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20.0,
+                            right: 20,
+                            top: 10,
+                            bottom: 10,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.gavel),
+                              SizedBox(width: 5),
+                              Text('Terms & Conditions'),
+                              Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  Get.to(() => const TermsConditionsPage());
                                 },
                                 icon: Icon(Icons.arrow_forward_ios),
                               ),

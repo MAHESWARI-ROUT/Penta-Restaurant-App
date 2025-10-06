@@ -7,8 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/pages/my_order_page.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
-
-// Import the new files you created
+import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
 
 
 class CartPage extends StatefulWidget {
@@ -37,7 +36,6 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-
   void _showOrderSuccessDialog() {
     Get.dialog(
       AlertDialog(
@@ -53,7 +51,7 @@ class _CartPageState extends State<CartPage> {
         actions: [
           TextButton(
             onPressed: () {
-              Get.back(); 
+              Get.back();
               cartController.clearCart();
               Get.offAll(() => const MyOrdersPage());
             },
@@ -69,6 +67,7 @@ class _CartPageState extends State<CartPage> {
   void _checkout() {
     Get.to(() => const ShippingDetailsPage());
   }
+
   void _showAddAddressSheet() {
     final TextEditingController _addressController = TextEditingController();
 
@@ -131,13 +130,11 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-
         backgroundColor: AppColors.yellow,
         elevation: 0,
         title: Text(
@@ -145,11 +142,29 @@ class _CartPageState extends State<CartPage> {
           style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: false,
-          automaticallyImplyLeading:false
+        automaticallyImplyLeading: false,
       ),
       body: Obx(() {
         if (cartController.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ShimmerEffect(
+                  child: Column(
+                    children: List.generate(4, (index) => const CartItemShimmer()),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (cartController.errorMessage.value.isNotEmpty) {
+          return ErrorStateWidget(
+            message: cartController.errorMessage.value,
+            onRetry: () => cartController.getCartItems(),
+            icon: Icons.shopping_cart_outlined,
+          );
         }
 
         if (cartController.cartItems.isEmpty) {
