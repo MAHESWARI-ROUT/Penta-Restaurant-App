@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/models/my_order_model.dart';
@@ -12,20 +13,29 @@ class MyOrdersPage extends StatefulWidget {
 }
 
 class _MyOrdersPageState extends State<MyOrdersPage> {
-  final OrderController orderController = Get.find<OrderController>();
+  final OrderController orderController = Get.put(OrderController());
+
+  final GetStorage _storage = GetStorage();
+
+  String get userId {
+    final storedData = _storage.read('user_data');
+    if (storedData != null && storedData['userId'] != null) {
+      return storedData['userId'] as String;
+    }
+    return '';
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-       _fetchOrders();
+      _fetchOrders();
     });
   }
 
   Future<void> _fetchOrders() async {
-    await orderController.fetchMyOrders('123');
+    await orderController.fetchMyOrders(userId);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +43,6 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         title: Text('My Orders', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
         backgroundColor: AppColors.yellow,
         iconTheme: const IconThemeData(color: Colors.black),
-        automaticallyImplyLeading: false,
       ),
       body: Obx(() {
         if (orderController.isLoadingMyOrders.value && orderController.myOrders.isEmpty) {

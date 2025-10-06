@@ -9,7 +9,6 @@ import 'package:penta_restaurant/pages/my_order_page.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
 
 // Import the new files you created
-import 'package:penta_restaurant/widgets/address_bottom_sheet.dart';
 
 
 class CartPage extends StatefulWidget {
