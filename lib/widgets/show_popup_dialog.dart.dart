@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/tabs/profile_page.dart';
 
+import '../pages/tabs/profile_page_new.dart';
+
 void showPopupDialog(BuildContext context) {
   showDialog(
     context: context,

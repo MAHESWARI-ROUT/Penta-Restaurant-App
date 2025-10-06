@@ -10,6 +10,7 @@ import '../pages/my_order_page.dart';
 import '../pages/profile/edit_profile_page.dart';
 import '../pages/tabs/cart_page.dart';
 import '../pages/tabs/profile_page.dart';
+import '../pages/tabs/profile_page_new.dart';
 
 
 class MainDrawer extends StatelessWidget {

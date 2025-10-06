@@ -8,6 +8,7 @@ import 'package:penta_restaurant/controller/product_controller.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/tabs/home_tab.dart';
 import 'package:penta_restaurant/pages/tabs/profile_page.dart';
+import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
 
 import '../controller/tab_controller.dart';
 
