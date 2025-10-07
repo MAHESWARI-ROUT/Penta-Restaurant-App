@@ -7,6 +7,7 @@ import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/models/my_order_model.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
+import 'package:penta_restaurant/pages/verification_error_page.dart';
 
 class MyOrdersPage extends StatefulWidget {
   const MyOrdersPage({super.key});
@@ -17,7 +18,7 @@ class MyOrdersPage extends StatefulWidget {
 
 class _MyOrdersPageState extends State<MyOrdersPage> {
   final OrderController orderController = Get.put(OrderController());
-  final ProfileController profileController = Get.put(ProfileController());
+  final ProfileController profileController = Get.find<ProfileController>();
   final GetStorage _storage = GetStorage();
 
   String get userId {
@@ -32,22 +33,33 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _fetchOrders();
+      if (userId.isNotEmpty) {
+        _fetchOrders();
+      }
     });
   }
 
   Future<void> _fetchOrders() async {
-    await orderController.fetchMyOrders(userId);
+    if (userId.isNotEmpty) {
+      await orderController.fetchMyOrders(userId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!profileController.isVerified.value) {
+      return VerificationErrorPage(
+        userName: profileController.displayName,
+        userEmail: profileController.displayEmail,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Get.to(() => HomePage());
+            Get.to(() => const HomePage());
           },
         ),
         title: Text(
@@ -59,10 +71,10 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       ),
       body: Obx(() {
         final profile = profileController.userProfile.value;
+        final isLoggedIn = profile != null && profile.success;
 
-        if (profile == null ||
-            !profile.success ||
-            !profile.message.toLowerCase().contains('user verified')) {
+        // Show login/verify prompt for logged-out users
+        if (!isLoggedIn) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -72,8 +84,8 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                   Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
                   const SizedBox(height: 20),
                   Text(
-                    'You need to sign up and verify your account to view your orders.',
-                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                    'Please login or verify your account to view your orders.',
+                    style: const TextStyle(fontSize: 18, color: AppColors.grey2),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 28),
@@ -86,9 +98,9 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                       ),
                       elevation: 4,
                     ),
-                    onPressed: () => Get.to(() => LoginPage()),
+                    onPressed: () => Get.to(() => const LoginPage()),
                     child: const Text(
-                      'Sign Up / Verify',
+                      'Login / Verify',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
@@ -98,12 +110,13 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           );
         }
 
-        if (orderController.isLoadingMyOrders.value &&
-            orderController.myOrders.isEmpty) {
+        // Show loader while fetching orders
+        if (orderController.isLoadingMyOrders.value && orderController.myOrders.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (orderController.errorMessage.value.isNotEmpty &&
-            orderController.myOrders.isEmpty) {
+
+        // Show error if fetch fails
+        if (orderController.errorMessage.value.isNotEmpty && orderController.myOrders.isEmpty) {
           return Center(
             child: Text(
               orderController.errorMessage.value,
@@ -111,16 +124,14 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
             ),
           );
         }
+
+        // Show empty state if no orders
         if (orderController.myOrders.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.receipt_long_outlined,
-                  size: 80,
-                  color: AppColors.grey3,
-                ),
+                Icon(Icons.receipt_long_outlined, size: 80, color: AppColors.grey3),
                 const SizedBox(height: 16),
                 Text(
                   'No orders yet',
@@ -140,6 +151,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           );
         }
 
+        // Show orders list
         return RefreshIndicator(
           onRefresh: _fetchOrders,
           child: ListView.builder(
@@ -149,9 +161,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
               final MyOrder order = orderController.myOrders[index];
               return Card(
                 margin: const EdgeInsets.only(bottom: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 4,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -163,18 +173,12 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                         children: [
                           Text(
                             order.orderId,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           Chip(
                             label: Text(
                               order.status,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                             backgroundColor: AppColors.darkGreen,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -182,17 +186,12 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        order.createdAt,
-                        style: TextStyle(color: AppColors.grey2, fontSize: 12),
-                      ),
+                      Text(order.createdAt, style: TextStyle(color: AppColors.grey2, fontSize: 12)),
                       const Divider(height: 24),
                       ...order.products.map(
                         (product) => Padding(
                           padding: const EdgeInsets.only(bottom: 6.0),
-                          child: Text(
-                            '${product.productName} (${product.variantName}) x ${product.quantity}',
-                          ),
+                          child: Text('${product.productName} (${product.variantName}) x ${product.quantity}'),
                         ),
                       ),
                       const Divider(height: 24),
@@ -202,10 +201,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                           const Text('Total: ', style: TextStyle(fontSize: 16)),
                           Text(
                             '₹${order.totalAmount}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

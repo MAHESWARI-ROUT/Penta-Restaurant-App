@@ -167,12 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Get.to(() => HomePage());
-                    },
-                    child: Text('skip login',style: TextStyle(color: AppColors.white),),
-                  ),
+                  
                 ],
               ),
             ),

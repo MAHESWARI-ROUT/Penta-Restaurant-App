@@ -15,7 +15,7 @@ class VerificationPage extends StatelessWidget {
   });
 
   Future<void> _sendWhatsAppVerification() async {
-    final phone = '9163707 93232'; 
+    final phone = '916370793232';
     final message =
         'Verification Request:\n\nName: $name\nEmail: $email\n\nPlease verify this user.';
 

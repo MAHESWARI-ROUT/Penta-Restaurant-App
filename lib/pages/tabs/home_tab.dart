@@ -129,15 +129,13 @@ class _HomeTabState extends State<HomeTab> {
                     );
                   }
 
-                  if (widget.productController.errorMessage.value.isNotEmpty) {
-                    return Center(
-                      child: ErrorStateWidget(
-                        message: widget.productController.errorMessage.value,
-                        onRetry: () => widget.productController.fetchDataAndLink(),
-                        icon: Icons.restaurant_menu,
-                      ),
-                    );
-                  }
+                  // if (widget.productController.errorMessage.value.isNotEmpty) {
+                  //   return ErrorStateWidget(
+                  //     message: widget.productController.errorMessage.value,
+                  //     onRetry: () => widget.productController.fetchDataAndLink(),
+                  //     icon: Icons.restaurant_menu,
+                  //   );
+                  // }
 
                   List products;
                   if (selectedCategoryIndex.value == 0) {
