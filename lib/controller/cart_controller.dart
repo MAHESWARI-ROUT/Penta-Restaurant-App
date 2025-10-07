@@ -86,7 +86,9 @@ class CartController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: AppColors.darkGreen,
         colorText: Colors.white,
-        onTap: (snack) => LoginPage(),
+        onTap: (_) {
+          Get.to(() => LoginPage());
+        },
       );
       isLoading.value = false;
       return false;

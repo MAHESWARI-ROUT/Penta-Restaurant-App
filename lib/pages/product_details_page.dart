@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import '../commons/appcolors.dart';
 import '../controller/cart_controller.dart';
@@ -20,6 +22,7 @@ class ProductDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final FavoriteController favoriteController =
         Get.find<FavoriteController>();
+    final ProfileController profileController = Get.find<ProfileController>();
     int selectedVariantIndex = 0;
     final variant = product.variants.isNotEmpty
         ? product.variants[selectedVariantIndex]
@@ -31,7 +34,6 @@ class ProductDetailsPage extends StatelessWidget {
         children: [
           Column(
             children: [
-              // Header and image
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -71,7 +73,6 @@ class ProductDetailsPage extends StatelessWidget {
                         ),
                       ),
 
-                      // Replace your Obx widget for quantity/add button with this:
                       Obx(() {
                         final qty = variant != null
                             ? cartController.getQuantity(
@@ -80,7 +81,6 @@ class ProductDetailsPage extends StatelessWidget {
                               )
                             : 0;
 
-                        // Wrap in a SizedBox to avoid layout issues
                         return SizedBox(
                           width: double.infinity,
                           child: qty == 0
@@ -207,8 +207,25 @@ class ProductDetailsPage extends StatelessWidget {
                               product,
                             );
                             return ElevatedButton(
-                              onPressed: () {
-                                //favoriteController.toggleFavorite(product);
+                              onPressed: () async {
+                                if (!profileController.isVerified.value) {
+                                  Get.snackbar(
+                                    'Verification required',
+                                    'Please verify your account first.',
+                                    backgroundColor: Colors.red,
+                                    colorText: Colors.white,
+                                    snackPosition: SnackPosition.BOTTOM,
+                                    onTap: (_) {
+                                      Get.to(() => LoginPage());
+                                    },
+                                  );
+                                  return;
+                                }
+
+                                await favoriteController.toggleFavorite(
+                                  product,
+                                  profileController.userId,
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.darkGreen,
@@ -232,8 +249,7 @@ class ProductDetailsPage extends StatelessWidget {
                             );
                           }),
                         ),
-
-                        SizedBox(width: 10,),
+                        SizedBox(width: 10),
                         Expanded(
                           child: ElevatedButton(
                             onPressed: () => Get.to(() => CartPage()),
