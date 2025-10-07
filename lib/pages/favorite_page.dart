@@ -3,21 +3,37 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/favorite_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
+import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 
 class FavoritePage extends StatelessWidget {
   FavoritePage({super.key});
 
-  final FavoriteController favoriteController = Get.put(FavoriteController());
+  final FavoriteController favoriteController = Get.find<FavoriteController>();
   final CartController cartController = Get.find<CartController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   @override
   Widget build(BuildContext context) {
+    // If user is not verified
+    if (!profileController.isVerified.value) {
+      return VerificationErrorPage(
+        userName: profileController.displayName,
+        userEmail: profileController.displayEmail,
+      );
+    }
+
+    // Normal wishlist UI for logged-in users
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
-        title: Text('Wishlist', style: TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Wishlist',
+          style: TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 4,
@@ -56,6 +72,7 @@ class FavoritePage extends StatelessWidget {
           );
         }
 
+        // Grid of favorite products
         return GridView.builder(
           padding: const EdgeInsets.all(10),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -75,12 +92,14 @@ class FavoritePage extends StatelessWidget {
                 elevation: 7,
                 child: GestureDetector(
                   onTap: () {
-                    Get.to(() => ProductDetailsPage(product: product, cartController: cartController));
+                    Get.to(() => ProductDetailsPage(
+                          product: product,
+                          cartController: cartController,
+                        ));
                   },
                   child: ProductGridItem(
                     product: product,
                     cartController: cartController,
-                    // Optionally, add a trailing favorite badge or heart overlay
                   ),
                 ),
               ),

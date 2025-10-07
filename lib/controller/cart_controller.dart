@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart' hide TabController;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/tab_controller.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import '../models/auth_response.dart';
 import '../models/cart_model.dart';
 import '../services/cart_service.dart';
@@ -34,8 +36,10 @@ class CartController extends GetxController {
     return '';
   }
 
-  double get totalPrice => cartItems.fold(0, (total, item) => total + item.totalPrice);
-  int get itemCount => cartItems.fold(0, (total, item) => total + item.quantity);
+  double get totalPrice =>
+      cartItems.fold(0, (total, item) => total + item.totalPrice);
+  int get itemCount =>
+      cartItems.fold(0, (total, item) => total + item.quantity);
 
   @override
   void onInit() {
@@ -75,15 +79,28 @@ class CartController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
 
-    if ([productId, variantId, productName, variantName, variantPrice, userId].any((s) => s.isEmpty)) {
-      errorMessage.value = 'One or more required fields are empty';
+    if (userId.isEmpty) {
+      Get.snackbar(
+        'Not Verified',
+        'Please login and verify to proceed further.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.darkGreen,
+        colorText: Colors.white,
+        onTap: (_) {
+          Get.to(() => LoginPage());
+        },
+      );
+      isLoading.value = false;
+      return false;
+    }
+
+    if (productId.isEmpty || productName.isEmpty || variantPrice.isEmpty) {
       Get.snackbar(
         'Error',
-        errorMessage.value,
+        'Cannot add item to cart. Missing required information.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        margin: const EdgeInsets.all(10),
       );
       isLoading.value = false;
       return false;
@@ -91,7 +108,8 @@ class CartController extends GetxController {
 
     try {
       final existingIndex = cartItems.indexWhere(
-              (item) => item.productId == productId && item.variantId == variantId);
+        (item) => item.productId == productId && item.variantId == variantId,
+      );
 
       if (existingIndex >= 0) {
         final updatedQty = cartItems[existingIndex].quantity + quantity;
@@ -135,40 +153,47 @@ class CartController extends GetxController {
       );
 
       if (success) {
-        cartItems.add(CartItem(
-          productId: productId,
-          variantId: variantId,
-          productName: productName,
-          variantName: variantName,
-          variantPrice: variantPrice,
-          quantity: quantity,
-          imageUrl: imageUrl,
-        ));
-        Get.showSnackbar(GetSnackBar(
-          messageText: const Text(
-            'Item successfully added.',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+        cartItems.add(
+          CartItem(
+            productId: productId,
+            variantId: variantId,
+            productName: productName,
+            variantName: variantName,
+            variantPrice: variantPrice,
+            quantity: quantity,
+            imageUrl: imageUrl,
           ),
-          animationDuration: const Duration(milliseconds: 300),
-          duration: const Duration(seconds: 4),
-          barBlur: 20,
-          backgroundColor: Colors.green.withAlpha(10),
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          borderRadius: 12,
-          snackStyle: SnackStyle.FLOATING,
-          mainButton: TextButton(
-            onPressed: () {
-              final tabController = Get.find<TabController>();
+        );
+        Get.showSnackbar(
+          GetSnackBar(
+            messageText: const Text(
+              'Item successfully added.',
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+            animationDuration: const Duration(milliseconds: 300),
+            duration: const Duration(seconds: 4),
+            barBlur: 20,
+            backgroundColor: Colors.green.withAlpha(10),
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            borderRadius: 12,
+            snackStyle: SnackStyle.FLOATING,
+            mainButton: TextButton(
+              onPressed: () {
+                final tabController = Get.find<TabController>();
 
-              tabController.changeTab(1); // Switch to Cart tab
-              Get.back(); // Close snackbar immediately when pressed
-            },
-            child: const Text(
-              'Go to Cart',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                tabController.changeTab(1); // Switch to Cart tab
+                Get.back(); // Close snackbar immediately when pressed
+              },
+              child: const Text(
+                'Go to Cart',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-        ));
+        );
       }
 
       return success;
@@ -190,7 +215,9 @@ class CartController extends GetxController {
   }
 
   Future<bool> removeFromCart(String productId, String variantId) async {
-    print("[DEBUG] removeFromCart called for productId=$productId variantId=$variantId");
+    print(
+      "[DEBUG] removeFromCart called for productId=$productId variantId=$variantId",
+    );
     isLoading.value = true;
     errorMessage.value = '';
 
@@ -204,7 +231,8 @@ class CartController extends GetxController {
 
       if (success) {
         final index = cartItems.indexWhere(
-                (item) => item.productId == productId && item.variantId == variantId);
+          (item) => item.productId == productId && item.variantId == variantId,
+        );
         if (index != -1) {
           cartItems.removeAt(index);
           cartItems.refresh();
@@ -227,9 +255,11 @@ class CartController extends GetxController {
     }
   }
 
-
-
-  Future<bool> updateQuantity(String productId, String variantId, int newQuantity) async {
+  Future<bool> updateQuantity(
+    String productId,
+    String variantId,
+    int newQuantity,
+  ) async {
     if (newQuantity <= 0) {
       return await removeFromCart(productId, variantId);
     }
@@ -239,7 +269,8 @@ class CartController extends GetxController {
 
     try {
       final index = cartItems.indexWhere(
-              (item) => item.productId == productId && item.variantId == variantId);
+        (item) => item.productId == productId && item.variantId == variantId,
+      );
 
       if (index >= 0) {
         final item = cartItems[index];
@@ -278,11 +309,14 @@ class CartController extends GetxController {
 
   int getQuantity(String productId, String variantId) {
     try {
-      return cartItems.firstWhere((item) =>
-      item.productId == productId && item.variantId == variantId).quantity;
+      return cartItems
+          .firstWhere(
+            (item) =>
+                item.productId == productId && item.variantId == variantId,
+          )
+          .quantity;
     } catch (_) {
       return 0;
     }
   }
- 
 }

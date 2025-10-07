@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/models/product_model.dart';
 import '../services/dio_client.dart'; // Assuming you have a DioClient
 
@@ -9,6 +10,15 @@ class FavoriteController extends GetxController {
   final RxList<Product> favorites = <Product>[].obs;
   final dio = DioClient().dio;
 
+  @override
+  void onInit() {
+    super.onInit();
+    final ProfileController profileController = Get.put(ProfileController());
+    final userId = profileController.userId;
+    if (userId.isNotEmpty) {
+      fetchWishList(userId.toString());
+    }
+  }
   // Call backend to add item to wishlist
   Future<bool> addToWishList(String productId, String userId) async {
     try {
@@ -58,21 +68,28 @@ class FavoriteController extends GetxController {
         data: {
           'user_id': userId,
         },
+        options: Options(contentType: Headers.formUrlEncodedContentType),
       );
 
-      final data = response.data;
-      if (data['status'] == 'success' && data['products'] != null) {
-        // Convert product JSONs in response to Product objects
-        final List<Product> loaded = [];
-        for (var prodJson in data['products']) {
-          loaded.add(Product.fromJson(prodJson));
-        }
+      final data = response.data is String ? json.decode(response.data) : response.data;
+      print('fetchWishList response data: $data');
+
+      if (data['success'].toString() == 'true' && data['product'] != null) { // <-- change here
+        final List<Product> loaded = (data['product'] as List)
+            .map((prodJson) => Product.fromJson(prodJson))
+            .toList();
+
         favorites.value = loaded;
+      } else {
+        favorites.clear();
+        if (Get.isLogEnable) print('Wishlist fetch failed or no products: ${data['message']}');
       }
     } catch (e) {
       print('Error fetching wishlist: $e');
     }
   }
+
+
 
   // Toggle favorite status (adds or removes locally and calls backend)
   Future<void> toggleFavorite(Product product, String userId) async {

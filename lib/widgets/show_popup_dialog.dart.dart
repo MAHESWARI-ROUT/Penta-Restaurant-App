@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page.dart';
+import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
 
-import '../pages/tabs/profile_page_new.dart';
 
 void showPopupDialog(BuildContext context) {
   showDialog(
     context: context,
     barrierDismissible: false, // prevent closing by tapping outside
     builder: (BuildContext context) {
-      // Start the delay as soon as the dialog is shown
       Future.delayed(const Duration(seconds: 3), () {
-        Navigator.of(context).pop(); // close the dialog
-        Get.to(() => const ProfilePage()); // navigate to ProfilePage
+        Navigator.of(context).pop(); 
+        Get.to(() => const ProfilePage()); 
       });
 
       return AlertDialog(

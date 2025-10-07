@@ -1,41 +1,106 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/utils.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
+import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
+import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
+import 'package:penta_restaurant/pages/info_pages/terms_conditions_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
-
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-import '../info_pages/about_us_page.dart';
-import '../info_pages/faq_page.dart';
-import '../info_pages/terms_conditions_page.dart';
+import '../authentication/verification_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initialize the ProfileController
     final ProfileController profileController = Get.put(ProfileController());
 
     return Scaffold(
       body: Obx(() {
+        // Show shimmer while loading
         if (profileController.isLoading.value) {
-          return ShimmerEffect(
-            child: const ProfileShimmer(),
-          );
+          return ShimmerEffect(child: const ProfileShimmer());
         }
 
-        if (profileController.errorMessage.value.isNotEmpty && !profileController.hasProfile) {
-          return ErrorStateWidget(
-            message: profileController.errorMessage.value,
-            onRetry: () => profileController.refreshProfile(),
-            icon: Icons.person_outline,
+        final isLoggedIn = profileController.userProfile.value != null;
+        final profile = profileController.userProfile.value;
+
+        // User not logged in or not verified
+        if (!profileController.isVerified.value) {
+          return Scaffold(
+            backgroundColor: AppColors.backgroundSecondary,
+            appBar: AppBar(
+              backgroundColor: AppColors.yellow,
+              elevation: 0,
+              title: Text('My Profile', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
+              centerTitle: false,
+              automaticallyImplyLeading: false,
+            ),
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Please verify your email to continue.',
+                      style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.darkGreen,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 4,
+                      ),
+                      onPressed: () async {
+                        final phone = '916370793232';
+                        final message =
+                            'Verification Request:\n\nName: ${profileController.displayName}\nEmail: ${profileController.displayEmail}\n\nPlease verify this user.';
+
+                        final url = 'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                        } else {
+                          Get.snackbar(
+                            'Error',
+                            'Could not open WhatsApp.',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Verify Now',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+              ),
+            ),
           );
         }
-
+        // Logged-in and verified user UI
         return RefreshIndicator(
           onRefresh: () async => profileController.refreshProfile(),
           color: AppColors.darkGreen,
@@ -50,14 +115,14 @@ class ProfilePage extends StatelessWidget {
                       height: 260,
                       decoration: BoxDecoration(
                         color: AppColors.yellow,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(50),
                           bottomRight: Radius.circular(50),
                         ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          top: 40.0,
+                          top: 40,
                           left: 20,
                           right: 20,
                         ),
@@ -67,33 +132,28 @@ class ProfilePage extends StatelessWidget {
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: const Color.fromARGB(255, 247, 199, 127),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      247,
+                                      199,
+                                      127,
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: IconButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    icon: Icon(Icons.arrow_back),
+                                    onPressed: () => Get.back(),
+                                    icon: const Icon(Icons.arrow_back),
                                   ),
                                 ),
-                                SizedBox(width: 10),
-                                Text('Profile', style: TextStyle(fontSize: 16)),
-                                Spacer(),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.lightYellow,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.shopping_cart),
-                                  ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'Profile',
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                                SizedBox(width: 10),
+                                const Spacer(),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               children: [
                                 Container(
@@ -103,43 +163,42 @@ class ProfilePage extends StatelessWidget {
                                     shape: BoxShape.circle,
                                     color: AppColors.lightYellow,
                                   ),
-                                  child: profileController.hasProfile
-                                      ? Center(
-                                          child: Text(
-                                            profileController.displayName.isNotEmpty
-                                                ? profileController.displayName[0].toUpperCase()
-                                                : 'U',
-                                            style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.darkGreen,
-                                            ),
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.person,
-                                          size: 30,
-                                          color: AppColors.darkGreen,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      profileController.displayName.isNotEmpty
+                                          ? profileController.displayName[0]
+                                                .toUpperCase()
+                                          : 'U',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.darkGreen,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                SizedBox(width: 20),
+                                const SizedBox(width: 20),
                                 Expanded(
                                   child: Text.rich(
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: '${profileController.displayName}\n',
-                                          style: TextStyle(
+                                          text:
+                                              '${profileController.displayName}\n',
+                                          style: const TextStyle(
                                             color: AppColors.black,
                                             fontSize: 22,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         TextSpan(
-                                          text: profileController.displayEmail.isNotEmpty
+                                          text:
+                                              profileController
+                                                  .displayEmail
+                                                  .isNotEmpty
                                               ? profileController.displayEmail
                                               : profileController.displayMobile,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: AppColors.black,
                                             fontSize: 14,
                                           ),
@@ -157,14 +216,16 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                   child: IconButton(
                                     padding: EdgeInsets.zero,
-                                    constraints: BoxConstraints(),
+                                    constraints: const BoxConstraints(),
                                     onPressed: () {
-                                      Get.to(() => EditProfilePage())?.then((_) {
-                                        // Refresh profile when returning from edit page
-                                        profileController.refreshProfile();
-                                      });
+                                      Get.to(
+                                        () => const EditProfilePage(),
+                                      )?.then(
+                                        (_) =>
+                                            profileController.refreshProfile(),
+                                      );
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.edit,
                                       color: AppColors.black,
                                       size: 20,
@@ -181,291 +242,99 @@ class ProfilePage extends StatelessWidget {
                       top: 190,
                       left: 20,
                       right: 20,
-                      child: Container(
-                        height: 100,
-                        width: 400,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              offset: Offset(0, 10),
-                            ),
-                          ],
-                          color: AppColors.backgroundSecondary,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20.0,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Spacer(),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${profileController.ongoingOrders.value}\n',
-                                      style: TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'Ongoing',
-                                      style: TextStyle(
-                                        color: AppColors.grey1,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
+                      child: Obx(
+                        () => Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundSecondary,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 10),
                               ),
-                              Spacer(),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${profileController.deliveredOrders.value}\n',
-                                      style: TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'Delivery',
-                                      style: TextStyle(
-                                        color: AppColors.grey1,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              Spacer(),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${profileController.completedOrders.value}\n',
-                                      style: TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: 'Complete',
-                                      style: TextStyle(
-                                        color: AppColors.grey1,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              Spacer(),
                             ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildOrderInfo(
+                                  'Ongoing',
+                                  profileController.ongoingOrders.value,
+                                ),
+                                _buildOrderInfo(
+                                  'Delivery',
+                                  profileController.deliveredOrders.value,
+                                ),
+                                _buildOrderInfo(
+                                  'Complete',
+                                  profileController.completedOrders.value,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 70),
+                const SizedBox(height: 70),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.wallet),
-                              SizedBox(width: 5),
-                              Text('Payment Method'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
+                      _buildMenuCard(Icons.wallet, 'Payment Method', () {}),
+                      const SizedBox(height: 10),
+                      _buildMenuCard(
+                        Icons.shopping_bag_outlined,
+                        'Order History',
+                        () {},
                       ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.shopping_bag_outlined),
-                              SizedBox(width: 5),
-                              Text('Order History'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(height: 10),
+                      _buildMenuCard(
+                        Icons.location_on_outlined,
+                        'My Address',
+                        () {},
                       ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.location_on_outlined),
-                              SizedBox(width: 5),
-                              Text('My Address'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(height: 10),
+                      _buildMenuCard(
+                        Icons.favorite_border_outlined,
+                        'My Favorite',
+                        () {},
                       ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.favorite_border_outlined),
-                              SizedBox(width: 5),
-                              Text('My favorite'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
+                      const SizedBox(height: 10),
+                      _buildMenuCard(
+                        Icons.card_giftcard_rounded,
+                        'About Us',
+                        () {
+                          Get.to(() => const AboutUsPage());
+                        },
                       ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.card_giftcard_rounded),
-                              SizedBox(width: 5),
-                              Text('About Us'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const AboutUsPage());
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.help_outline),
-                              SizedBox(width: 5),
-                              Text('FAQ'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const FAQPage());
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.gavel),
-                              SizedBox(width: 5),
-                              Text('Terms & Conditions'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const TermsConditionsPage());
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
+                      _buildMenuCard(Icons.help_outline, 'FAQ', () {
+                        Get.to(() => const FAQPage());
+                      }),
+                      const SizedBox(height: 10),
+                      _buildMenuCard(Icons.gavel, 'Terms & Conditions', () {
+                        Get.to(() => const TermsConditionsPage());
+                      }),
+                      const SizedBox(height: 10),
                       InkWell(
-                        onTap: () {
-                          Get.to(LoginPage());
+                        onTap: () async {
+                          final authController = Get.find<AuthController>();
+                          await authController.logout();
+                          Get.offAll(LoginPage());
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10.0,
-                            right: 10,
-                            top: 10,
-                            bottom: 10,
-                          ),
+                          padding: const EdgeInsets.all(10),
                           child: Row(
-                            children: [
+                            children: const [
                               Icon(Icons.logout_outlined, color: Colors.red),
                               SizedBox(width: 5),
                               Text(
@@ -487,6 +356,45 @@ class ProfilePage extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildOrderInfo(String label, int count) {
+    return Column(
+      children: [
+        Text(
+          '$count',
+          style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: AppColors.grey1, fontSize: 16),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuCard(IconData icon, String title, VoidCallback onTap) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            Icon(icon),
+            const SizedBox(width: 5),
+            Text(title),
+            const Spacer(),
+            IconButton(
+              onPressed: onTap,
+              icon: const Icon(Icons.arrow_forward_ios),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

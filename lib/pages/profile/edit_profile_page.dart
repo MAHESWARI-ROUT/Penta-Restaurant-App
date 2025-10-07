@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/instance_manager.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'package:penta_restaurant/pages/home_page.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
-import 'package:penta_restaurant/widgets/ctextform_field.dart';
 import 'package:penta_restaurant/widgets/show_popup_dialog.dart.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -18,7 +15,6 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   final ProfileController profileController = Get.find<ProfileController>();
 
-  // Text editing controllers
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController mobileController;
@@ -33,7 +29,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with current profile data
+    final profile = profileController.userProfile.value;
+
     nameController = TextEditingController(text: profileController.displayName);
     emailController = TextEditingController(text: profileController.displayEmail);
     mobileController = TextEditingController(text: profileController.displayMobile);
@@ -48,7 +45,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void dispose() {
-    // Dispose all controllers
     nameController.dispose();
     emailController.dispose();
     mobileController.dispose();
@@ -80,9 +76,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (success) {
       showPopupDialog(context);
-      // Navigate back after 2 seconds
       Future.delayed(const Duration(seconds: 2), () {
-        Get.back(); // Go back to profile page
+        Get.back();
       });
     } else {
       Get.snackbar(
@@ -102,14 +97,54 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       body: Obx(() {
-        if (profileController.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.darkGreen,
+        final profile = profileController.userProfile.value;
+        final isLoggedIn = profile != null && profile.success;
+
+        // Show login/verify prompt if user not logged in or verified
+        if (!isLoggedIn) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Please login or verify your account to edit your profile.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
+                    ),
+                    onPressed: () => Get.to(() => const LoginPage()),
+                    child: const Text(
+                      'Login / Verify',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         }
 
+        // Show loading spinner while fetching profile
+        if (profileController.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.darkGreen),
+          );
+        }
+
+        // Logged-in user edit profile UI
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -120,49 +155,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     height: 200,
                     decoration: BoxDecoration(
                       color: AppColors.yellow,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 40.0,
-                        left: 20,
-                        right: 20,
-                      ),
-                      child: Column(
+                      padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                      child: Row(
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color.fromARGB(255, 247, 199, 127),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: IconButton(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  icon: Icon(Icons.arrow_back),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Text('Edit Profile', style: TextStyle(fontSize: 16)),
-                              Spacer(),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.lightYellow,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(Icons.shopping_cart),
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                            ],
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 247, 199, 127),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              onPressed: () => Get.back(),
+                              icon: const Icon(Icons.arrow_back),
+                            ),
                           ),
+                          const SizedBox(width: 10),
+                          const Text('Edit Profile', style: TextStyle(fontSize: 16)),
+                          const Spacer(),
                         ],
                       ),
                     ),
@@ -176,10 +190,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.lightYellow,
-                        border: Border.all(
-                          color: AppColors.backgroundPrimary,
-                          width: 3,
-                        ),
+                        border: Border.all(color: AppColors.backgroundPrimary, width: 3),
                       ),
                       child: profileController.hasProfile && profileController.displayName.isNotEmpty
                           ? Center(
@@ -195,42 +206,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           : const Icon(Icons.person, size: 60, color: AppColors.grey1),
                     ),
                   ),
-                  Positioned(
-                    top: 209,
-                    left: 202,
-                    child: Icon(
-                      Icons.add_circle,
-                      size: 40,
-                      color: AppColors.yellow,
-                    ),
-                  ),
                 ],
               ),
-              SizedBox(height: 60),
+              const SizedBox(height: 60),
               Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Column(
                   children: [
                     _buildTextField('Full Name', nameController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('E-mail', emailController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('Mobile phone', mobileController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('Gender', genderController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('City', cityController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('Locality', localityController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('Flat/House No', flatController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('Pincode', pincodeController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('State', stateController),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTextField('Landmark', landmarkController),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -238,16 +240,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.yellow,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text(
                           'Update Profile',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -267,13 +264,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       children: [
         Align(
           alignment: Alignment.bottomLeft,
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-            ),
-          ),
+          child: Text(label, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14)),
         ),
         const SizedBox(height: 8),
         TextField(

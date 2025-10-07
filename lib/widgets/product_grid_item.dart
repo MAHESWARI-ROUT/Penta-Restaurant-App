@@ -6,6 +6,9 @@ import 'package:penta_restaurant/controller/favorite_controller.dart';
 import 'package:penta_restaurant/models/product_model.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 
+import '../controller/profile_controller.dart';
+import '../pages/verification_error_page.dart';
+
 class ProductGridItem extends StatefulWidget {
   final Product product;
   final CartController cartController;
@@ -22,6 +25,7 @@ class ProductGridItem extends StatefulWidget {
 
 class _ProductGridItemState extends State<ProductGridItem> {
   final FavoriteController favoriteController = Get.find<FavoriteController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   void toggleFavorite() {
     // Assuming you pass userId via cartController or elsewhere for API calls
@@ -32,7 +36,6 @@ class _ProductGridItemState extends State<ProductGridItem> {
     }
     favoriteController.toggleFavorite(widget.product, userId);
   }
-
 
   void _showVariantSelectionDialog() {
     final variants = widget.product.variants;
@@ -80,8 +83,10 @@ class _ProductGridItemState extends State<ProductGridItem> {
                             final v = variants[index];
                             return DropdownMenuItem(
                               value: index,
-                              child: Text('${v.variantName} - ₹${v.varPrice}',
-                                  style: const TextStyle(fontSize: 16)),
+                              child: Text(
+                                '${v.variantName} - ₹${v.varPrice}',
+                                style: const TextStyle(fontSize: 16),
+                              ),
                             );
                           }),
                           onChanged: (index) {
@@ -112,7 +117,9 @@ class _ProductGridItemState extends State<ProductGridItem> {
                               child: const Icon(Icons.remove, size: 24),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                              ),
                               child: Text(
                                 quantity.toString(),
                                 style: const TextStyle(
@@ -134,7 +141,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                             ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(height: 30),
@@ -164,7 +171,11 @@ class _ProductGridItemState extends State<ProductGridItem> {
                       ),
                       child: const Text(
                         'Add to Cart',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: Colors.white),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -181,8 +192,9 @@ class _ProductGridItemState extends State<ProductGridItem> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-    final cleanDescription =
-        product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim();
+    final cleanDescription = product.description
+        .replaceAll(RegExp(r'<[^>]*>'), '')
+        .trim();
 
     return Card(
       color: AppColors.white,
@@ -190,12 +202,15 @@ class _ProductGridItemState extends State<ProductGridItem> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => Get.to(() => ProductDetailsPage(
-              product: widget.product,
-              cartController: widget.cartController,
-            )),
+        onTap: () => Get.to(
+          () => ProductDetailsPage(
+            product: widget.product,
+            cartController: widget.cartController,
+          ),
+        ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Important: Allows column to shrink-wrap
+          mainAxisSize:
+              MainAxisSize.min, // Important: Allows column to shrink-wrap
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Image with fixed height
@@ -209,7 +224,11 @@ class _ProductGridItemState extends State<ProductGridItem> {
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 120,
                     color: AppColors.grey5,
-                    child: const Icon(Icons.fastfood, color: Colors.grey, size: 32),
+                    child: const Icon(
+                      Icons.fastfood,
+                      color: Colors.grey,
+                      size: 32,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -236,7 +255,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                 ),
               ],
             ),
-            
+
             // Content section - no Expanded or Spacer needed
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -276,7 +295,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
     String priceDisplay = product.variants.isNotEmpty
         ? product.variants[0].varPrice
         : product.plimit;
-      
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -292,12 +311,23 @@ class _ProductGridItemState extends State<ProductGridItem> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.darkGreen,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             minimumSize: const Size(0, 30),
           ),
-          onPressed: _showVariantSelectionDialog,
+          onPressed: () {
+            if (!profileController.isVerified.value) {
+              showDialog(
+                context: context,
+                builder: (_) => const UnverifiedUserDialog(),
+              );
+            } else {
+              _showVariantSelectionDialog();
+            }
+          },
           child: const Text(
             'Add',
             style: TextStyle(

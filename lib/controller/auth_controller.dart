@@ -11,6 +11,7 @@ class AuthController extends GetxController {
   // Observable states
   final RxBool isLoading = false.obs;
   final RxBool isLoggedIn = false.obs;
+  final RxBool isVerified = false.obs;
   final RxString errorMessage = ''.obs;
   final Rx<UserData?> currentUser = Rx<UserData?>(null);
 
@@ -25,11 +26,14 @@ class AuthController extends GetxController {
   void _checkLoginStatus() {
     print('Checking login status...');
     final userData = _storage.read('user_data');
-    print('Read user_data from storage: $userData');
+    final verified = _storage.read('is_verified') ?? false;
+    print('Read user_data from storage: $userData, verified: $verified');
+
     if (userData != null) {
       currentUser.value = UserData.fromJson(userData);
       isLoggedIn.value = true;
-      print('User is logged in with ID: ${currentUser.value?.userId}');
+      isVerified.value = verified;
+      print('User is logged in with ID: ${currentUser.value?.userId}, verified: $verified');
     } else {
       print('No user data found, user is not logged in');
     }
@@ -64,9 +68,16 @@ class AuthController extends GetxController {
         );
 
         await _storage.write('user_data', user.toJson());
+
+        // Track verification status
+        final verified = (response.message.toLowerCase() == 'verified');
+        await _storage.write('is_verified', verified);
+
         currentUser.value = user;
         isLoggedIn.value = true;
-        print('Login successful, user stored in local storage');
+        isVerified.value = verified;
+
+        print('Login successful, user stored in local storage, verified: $verified');
 
         Get.snackbar(
           'Success',
@@ -140,9 +151,16 @@ class AuthController extends GetxController {
         );
 
         await _storage.write('user_data', user.toJson());
+
+        // Track verification status
+        final verified = (response.message.toLowerCase() == 'verified');
+        await _storage.write('is_verified', verified);
+
         currentUser.value = user;
         isLoggedIn.value = true;
-        print('Signup successful, user stored in local storage');
+        isVerified.value = verified;
+
+        print('Signup successful, user stored in local storage, verified: $verified');
 
         Get.snackbar(
           'Success',
@@ -185,8 +203,10 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     print('Logout requested');
     await _storage.remove('user_data');
+    await _storage.remove('is_verified');
     currentUser.value = null;
     isLoggedIn.value = false;
+    isVerified.value = false;
     print('User data removed from storage, logged out');
 
     Get.snackbar(
