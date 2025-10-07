@@ -6,6 +6,7 @@ import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/controller/product_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/tabs/home_tab.dart';
 import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
   final ProductController productController = Get.put(ProductController());
   final CartController cartController = Get.put(CartController());
   final OrderController orderController = Get.put(OrderController());
+  final ProfileController profileController = Get.put(ProfileController());
   late final List<Widget> pages;
 
   @override

@@ -50,15 +50,16 @@ class ProfileController extends GetxController {
 
     if (profile != null) {
       // Check verification based on success and message
-      if (profile.success && profile.message.toLowerCase().contains('user verified')) {
+      if (profile.success && profile.message.toLowerCase().contains('verified')) {
         isVerified.value = true;
+        print("[profile]: profile is verified");
+        await _storage.write('is_verified', isVerified.value);
       } else {
         isVerified.value = false;
         errorMessage.value = 'Please signup and verify to proceed';
       }
 
       userProfile.value = profile;
-
       // Store profile locally
       _storage.write('user_profile', {
         'name': profile.name,

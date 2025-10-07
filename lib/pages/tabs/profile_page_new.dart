@@ -27,7 +27,8 @@ class ProfilePage extends StatelessWidget {
 
         if (profile == null ||
             !profile.success ||
-            !profile.message.toLowerCase().contains('user verified')) {
+            !profile.message.toLowerCase().contains('verified')) {
+          print(profile?.message);
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),

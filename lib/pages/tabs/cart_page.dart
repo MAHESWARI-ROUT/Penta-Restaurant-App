@@ -181,9 +181,7 @@ class _CartPageState extends State<CartPage> {
       body: Obx(() {
         final profile = profileController.userProfile.value;
 
-        if (profile == null ||
-            !profile.success ||
-            !profile.message.toLowerCase().contains('user verified')) {
+        if (profile == null || !profile.success) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
