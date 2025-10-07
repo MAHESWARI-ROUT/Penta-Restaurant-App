@@ -12,7 +12,7 @@ import 'package:penta_restaurant/widgets/product_grid_item.dart';
 class FavoritePage extends StatelessWidget {
   FavoritePage({super.key});
 
-  final FavoriteController favoriteController = Get.put(FavoriteController());
+  final FavoriteController favoriteController = Get.find<FavoriteController>();
   final CartController cartController = Get.find<CartController>();
   final ProfileController profileController = Get.find<ProfileController>();
 

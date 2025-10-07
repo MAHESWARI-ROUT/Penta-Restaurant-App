@@ -9,7 +9,6 @@ import 'package:penta_restaurant/pages/preload_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
-  Get.put(FavoriteController());
   Get.put(AuthController());
   
   runApp(const MyApp());
