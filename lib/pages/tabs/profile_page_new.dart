@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
 import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
@@ -34,18 +35,28 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+                  const Icon(
+                    Icons.lock_outline,
+                    size: 80,
+                    color: AppColors.grey3,
+                  ),
                   const SizedBox(height: 20),
                   Text(
                     'Please login or verify your account to continue.',
-                    style: const TextStyle(fontSize: 18, color: AppColors.grey2),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      color: AppColors.grey2,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 28),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkGreen,
-                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 28,
+                        vertical: 14,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
@@ -88,14 +99,23 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                        padding: const EdgeInsets.only(
+                          top: 40,
+                          left: 20,
+                          right: 20,
+                        ),
                         child: Column(
                           children: [
                             Row(
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: const Color.fromARGB(255, 247, 199, 127),
+                                    color: const Color.fromARGB(
+                                      255,
+                                      247,
+                                      199,
+                                      127,
+                                    ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: IconButton(
@@ -104,7 +124,10 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                const Text('Profile', style: TextStyle(fontSize: 16)),
+                                const Text(
+                                  'Profile',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                                 const Spacer(),
                               ],
                             ),
@@ -121,7 +144,8 @@ class ProfilePage extends StatelessWidget {
                                   child: Center(
                                     child: Text(
                                       profileController.displayName.isNotEmpty
-                                          ? profileController.displayName[0].toUpperCase()
+                                          ? profileController.displayName[0]
+                                                .toUpperCase()
                                           : 'U',
                                       style: const TextStyle(
                                         fontSize: 24,
@@ -137,7 +161,8 @@ class ProfilePage extends StatelessWidget {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: '${profileController.displayName}\n',
+                                          text:
+                                              '${profileController.displayName}\n',
                                           style: const TextStyle(
                                             color: AppColors.black,
                                             fontSize: 22,
@@ -145,7 +170,10 @@ class ProfilePage extends StatelessWidget {
                                           ),
                                         ),
                                         TextSpan(
-                                          text: profileController.displayEmail.isNotEmpty
+                                          text:
+                                              profileController
+                                                  .displayEmail
+                                                  .isNotEmpty
                                               ? profileController.displayEmail
                                               : profileController.displayMobile,
                                           style: const TextStyle(
@@ -168,10 +196,18 @@ class ProfilePage extends StatelessWidget {
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                     onPressed: () {
-                                      Get.to(() => const EditProfilePage())
-                                          ?.then((_) => profileController.refreshProfile());
+                                      Get.to(
+                                        () => const EditProfilePage(),
+                                      )?.then(
+                                        (_) =>
+                                            profileController.refreshProfile(),
+                                      );
                                     },
-                                    icon: const Icon(Icons.edit, color: AppColors.black, size: 20),
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: AppColors.black,
+                                      size: 20,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -184,31 +220,45 @@ class ProfilePage extends StatelessWidget {
                       top: 190,
                       left: 20,
                       right: 20,
-                      child: Obx(() => Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: AppColors.backgroundSecondary,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 10),
+                      child: Obx(
+                        () => Container(
+                          height: 100,
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundSecondary,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildOrderInfo(
+                                  'Ongoing',
+                                  profileController.ongoingOrders.value,
+                                ),
+                                _buildOrderInfo(
+                                  'Delivery',
+                                  profileController.deliveredOrders.value,
+                                ),
+                                _buildOrderInfo(
+                                  'Complete',
+                                  profileController.completedOrders.value,
                                 ),
                               ],
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  _buildOrderInfo('Ongoing', profileController.ongoingOrders.value),
-                                  _buildOrderInfo('Delivery', profileController.deliveredOrders.value),
-                                  _buildOrderInfo('Complete', profileController.completedOrders.value),
-                                ],
-                              ),
-                            ),
-                          )),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -219,15 +269,31 @@ class ProfilePage extends StatelessWidget {
                     children: [
                       _buildMenuCard(Icons.wallet, 'Payment Method', () {}),
                       const SizedBox(height: 10),
-                      _buildMenuCard(Icons.shopping_bag_outlined, 'Order History', () {}),
+                      _buildMenuCard(
+                        Icons.shopping_bag_outlined,
+                        'Order History',
+                        () {},
+                      ),
                       const SizedBox(height: 10),
-                      _buildMenuCard(Icons.location_on_outlined, 'My Address', () {}),
+                      _buildMenuCard(
+                        Icons.location_on_outlined,
+                        'My Address',
+                        () {},
+                      ),
                       const SizedBox(height: 10),
-                      _buildMenuCard(Icons.favorite_border_outlined, 'My Favorite', () {}),
+                      _buildMenuCard(
+                        Icons.favorite_border_outlined,
+                        'My Favorite',
+                        () {},
+                      ),
                       const SizedBox(height: 10),
-                      _buildMenuCard(Icons.card_giftcard_rounded, 'About Us', () {
-                        Get.to(() => const AboutUsPage());
-                      }),
+                      _buildMenuCard(
+                        Icons.card_giftcard_rounded,
+                        'About Us',
+                        () {
+                          Get.to(() => const AboutUsPage());
+                        },
+                      ),
                       const SizedBox(height: 10),
                       _buildMenuCard(Icons.help_outline, 'FAQ', () {
                         Get.to(() => const FAQPage());
@@ -238,7 +304,11 @@ class ProfilePage extends StatelessWidget {
                       }),
                       const SizedBox(height: 10),
                       InkWell(
-                        onTap: () => Get.to(() => const LoginPage()),
+                        onTap: () async {
+                          final authController = Get.find<AuthController>();
+                          await authController.logout();
+                          Get.offAll(LoginPage());
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Row(
@@ -272,7 +342,11 @@ class ProfilePage extends StatelessWidget {
       children: [
         Text(
           '$count',
-          style: const TextStyle(color: AppColors.black, fontSize: 20, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         Text(
           label,
