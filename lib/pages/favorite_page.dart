@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/favorite_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 
@@ -11,6 +13,7 @@ class FavoritePage extends StatelessWidget {
 
   final FavoriteController favoriteController = Get.put(FavoriteController());
   final CartController cartController = Get.find<CartController>();
+  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +30,48 @@ class FavoritePage extends StatelessWidget {
         ),
       ),
       body: Obx(() {
+        final profile = profileController.userProfile.value;
+
+        // Restriction: show login/signup prompt if user not verified
+        if (profile == null ||
+            !profile.success ||
+            !profile.message.toLowerCase().contains('user verified')) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+                  const SizedBox(height: 20),
+                  Text(
+                    'You need to sign up and verify your account to access your wishlist.',
+                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
+                    ),
+                    onPressed: () => Get.to(() => LoginPage()),
+                    child: const Text(
+                      'Sign Up / Verify',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Normal wishlist rendering
         if (favoriteController.favorites.isEmpty) {
           return Center(
             child: Padding(
@@ -80,7 +125,6 @@ class FavoritePage extends StatelessWidget {
                   child: ProductGridItem(
                     product: product,
                     cartController: cartController,
-                    // Optionally, add a trailing favorite badge or heart overlay
                   ),
                 ),
               ),

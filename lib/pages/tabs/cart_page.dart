@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:penta_restaurant/controller/order_controller.dart';
-import 'package:penta_restaurant/pages/my_order_page.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CartPage extends StatefulWidget {
   const CartPage({super.key});
@@ -19,13 +17,12 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   final CartController cartController = Get.find<CartController>();
-  final OrderController orderController = Get.put(OrderController());
+  final ProfileController profileController = Get.put(ProfileController());
   final RxBool _showDetailedBill = false.obs;
   final RxList<String> savedAddresses = <String>[
     '123 Main Street, City',
     '456 Park Avenue, City',
-  ].obs; // Sample addresses, replace with real data source
-
+  ].obs;
   final RxString selectedAddress = ''.obs;
 
   @override
@@ -36,34 +33,6 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
-  void _showOrderSuccessDialog() {
-    Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: Colors.green, size: 28),
-            SizedBox(width: 12),
-            Text('Order Placed!'),
-          ],
-        ),
-        content: const Text('Your order was placed successfully.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.back();
-              cartController.clearCart();
-              Get.offAll(() => const MyOrdersPage());
-            },
-            child: Text('View My Orders', style: TextStyle(color: AppColors.darkGreen, fontSize: 16)),
-          ),
-        ],
-      ),
-      barrierDismissible: false,
-    );
-  }
-
-  // This method now navigates to the shipping details page
   void _checkout() {
     Get.to(() => const ShippingDetailsPage());
   }
@@ -130,6 +99,71 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  Widget _buildSummaryRow(
+    String label,
+    String value, {
+    Color valueColor = Colors.black,
+    double valueFontSize = 16,
+    FontWeight valueFontWeight = FontWeight.normal,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: TextStyle(color: AppColors.grey2, fontSize: 16)),
+        Text(
+          value,
+          style: TextStyle(
+            color: valueColor,
+            fontSize: valueFontSize,
+            fontWeight: valueFontWeight,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddressSelector() {
+    return Obx(() {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedAddress.value.isEmpty ? null : selectedAddress.value,
+                  hint: const Text('Select delivery address'),
+                  items: savedAddresses
+                      .map((addr) => DropdownMenuItem(
+                            value: addr,
+                            child: Text(addr, overflow: TextOverflow.ellipsis),
+                          ))
+                      .toList(),
+                  onChanged: (val) {
+                    if (val != null) selectedAddress.value = val;
+                  },
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.add_location_alt, color: AppColors.darkGreen),
+              onPressed: _showAddAddressSheet,
+              tooltip: 'Add New Address',
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,6 +179,47 @@ class _CartPageState extends State<CartPage> {
         automaticallyImplyLeading: false,
       ),
       body: Obx(() {
+        final profile = profileController.userProfile.value;
+
+        if (profile == null ||
+            !profile.success ||
+            !profile.message.toLowerCase().contains('user verified')) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+                  const SizedBox(height: 20),
+                  Text(
+                    'You need to sign up and verify your account to access the cart.',
+                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
+                    ),
+                    onPressed: () => Get.to(() => LoginPage()),
+                    child: const Text(
+                      'Sign Up / Verify',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        
         if (cartController.isLoading.value) {
           return SingleChildScrollView(
             child: Column(
@@ -174,19 +249,11 @@ class _CartPageState extends State<CartPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 80,
-                    color: AppColors.grey3,
-                  ),
+                  Icon(Icons.shopping_cart_outlined, size: 80, color: AppColors.grey3),
                   const SizedBox(height: 20),
                   Text(
                     'Your cart is empty',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.grey2,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.grey2),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -218,7 +285,10 @@ class _CartPageState extends State<CartPage> {
 
         return Column(
           children: [
-            //cart items
+           
+            _buildAddressSelector(),
+
+          
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -229,119 +299,102 @@ class _CartPageState extends State<CartPage> {
                   return Card(
                     elevation: 3,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    child: Dismissible(
-                      key: Key(item.variantId),
-                      direction: DismissDirection.endToStart,
-                      background: Container(
-                        padding: const EdgeInsets.only(right: 20),
-                        alignment: Alignment.centerRight,
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.circular(20),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            bottomLeft: Radius.circular(20),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: item.imageUrl,
+                            width: 92,
+                            height: 92,
+                            fit: BoxFit.cover,
+                            errorWidget: (context, url, error) => Container(
+                              color: AppColors.grey5,
+                              child: Icon(Icons.fastfood, color: AppColors.grey3, size: 30),
+                            ),
+                          ),
                         ),
-                        child: const Icon(Icons.delete_forever, color: Colors.white, size: 30),
-                      ),
-                      onDismissed: (_) {
-                        cartController.removeFromCart(item.productId, item.variantId);
-                      },
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              bottomLeft: Radius.circular(20),
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: item.imageUrl,
-                              width: 92,
-                              height: 92,
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => Container(
-                                color: AppColors.grey5,
-                                child: Icon(Icons.fastfood, color: AppColors.grey3, size: 30),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.productName,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.variantName,
-                                    style: TextStyle(color: AppColors.grey2, fontSize: 15),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '₹${item.variantPrice}',
-                                    style: TextStyle(
-                                      color: AppColors.yellow,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Row(
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                IconButton(
-                                  icon: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.grey5,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(Icons.remove, color: AppColors.darkGreen, size: 18),
-                                  ),
-                                  onPressed: () {
-                                    if (item.quantity > 1) {
-                                      cartController.updateQuantity(item.productId, item.variantId, item.quantity - 1);
-                                    } else {
-                                      cartController.removeFromCart(item.productId, item.variantId);
-                                    }
-                                  },
-                                ),
                                 Text(
-                                  '${item.quantity}',
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  item.productName,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                IconButton(
-                                  icon: Container(
-                                    padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.darkGreen,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(Icons.add, color: Colors.white, size: 18),
+                                const SizedBox(height: 4),
+                                Text(
+                                  item.variantName,
+                                  style: TextStyle(color: AppColors.grey2, fontSize: 15),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  '₹${item.variantPrice}',
+                                  style: TextStyle(
+                                    color: AppColors.yellow,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
                                   ),
-                                  onPressed: () {
-                                    cartController.updateQuantity(item.productId, item.variantId, item.quantity + 1);
-                                  },
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey5,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(Icons.remove, color: AppColors.darkGreen, size: 18),
+                                ),
+                                onPressed: () {
+                                  if (item.quantity > 1) {
+                                    cartController.updateQuantity(item.productId, item.variantId, item.quantity - 1);
+                                  } else {
+                                    cartController.removeFromCart(item.productId, item.variantId);
+                                  }
+                                },
+                              ),
+                              Text(
+                                '${item.quantity}',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              IconButton(
+                                icon: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.darkGreen,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.add, color: Colors.white, size: 18),
+                                ),
+                                onPressed: () {
+                                  cartController.updateQuantity(item.productId, item.variantId, item.quantity + 1);
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
             ),
 
-            //show detailed bill section
             Obx(() => InkWell(
                   onTap: () => _showDetailedBill.value = !_showDetailedBill.value,
                   child: Container(
@@ -368,7 +421,7 @@ class _CartPageState extends State<CartPage> {
                   ),
                 )),
 
-            //detailed bill section
+          
             Obx(() {
               if (!_showDetailedBill.value) return const SizedBox.shrink();
               return Container(
@@ -404,13 +457,12 @@ class _CartPageState extends State<CartPage> {
               );
             }),
 
-            //summary row
+            
             Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               decoration: BoxDecoration(
                 color: AppColors.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(28), topRight: Radius.circular(28)),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(28), topRight: Radius.circular(28)),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, -5))],
               ),
               child: Column(
@@ -421,7 +473,9 @@ class _CartPageState extends State<CartPage> {
                   const SizedBox(height: 20),
                   const Divider(height: 1),
                   const SizedBox(height: 20),
-                  Obx(() => _buildSummaryRow('Total', '₹${cartController.totalPrice.toStringAsFixed(2)}', valueFontSize: 22, valueFontWeight: FontWeight.bold)),
+                  Obx(() => _buildSummaryRow(
+                      'Total', '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                      valueFontSize: 22, valueFontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
@@ -441,78 +495,10 @@ class _CartPageState extends State<CartPage> {
                 ],
               ),
             ),
-
-            SizedBox(height: 100,)
+            const SizedBox(height: 100),
           ],
         );
       }),
     );
   }
-
-  Widget _buildSummaryRow(
-    String label,
-    String value, {
-    Color valueColor = Colors.black,
-    double valueFontSize = 16,
-    FontWeight valueFontWeight = FontWeight.normal,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(label, style: TextStyle(color: AppColors.grey2, fontSize: 16)),
-        Text(
-          value,
-          style: TextStyle(
-            color: valueColor,
-            fontSize: valueFontSize,
-            fontWeight: valueFontWeight,
-          ),
-        ),
-      ],
-    );
-  }
-  Widget _buildAddressSelector() {
-    return Obx(() {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedAddress.value.isEmpty ? null : selectedAddress.value,
-                  hint: const Text('Select delivery address'),
-                  items: savedAddresses
-                      .map((addr) => DropdownMenuItem(
-                    value: addr,
-                    child: Text(addr, overflow: TextOverflow.ellipsis),
-                  ))
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) selectedAddress.value = val;
-                  },
-                ),
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.add_location_alt, color: AppColors.darkGreen),
-              onPressed: () {
-                _showAddAddressSheet();
-              },
-              tooltip: 'Add New Address',
-            ),
-          ],
-        ),
-      );
-    });
-  }
-
 }

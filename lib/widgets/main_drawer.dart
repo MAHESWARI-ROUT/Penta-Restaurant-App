@@ -5,16 +5,16 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
+import 'package:penta_restaurant/pages/favorite_page.dart';
+import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
+import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
+import 'package:penta_restaurant/pages/info_pages/terms_conditions_page.dart';
+import 'package:penta_restaurant/pages/my_order_page.dart';
+import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_page.dart';
+import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
 
-import '../pages/info_pages/about_us_page.dart';
-import '../pages/info_pages/faq_page.dart';
-import '../pages/favorite_page.dart';
-import '../pages/info_pages/terms_conditions_page.dart';
-import '../pages/my_order_page.dart';
-import '../pages/profile/edit_profile_page.dart';
-import '../pages/tabs/cart_page.dart';
-import '../pages/tabs/profile_page.dart';
-import '../pages/tabs/profile_page_new.dart';
+
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});

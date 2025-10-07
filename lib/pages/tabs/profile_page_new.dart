@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
+import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
+import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
+import 'package:penta_restaurant/pages/info_pages/terms_conditions_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
+
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -18,9 +22,12 @@ class ProfilePage extends StatelessWidget {
         if (profileController.isLoading.value) {
           return ShimmerEffect(child: const ProfileShimmer());
         }
-      final profile = profileController.userProfile.value;
-        // If user is not verified
-       if (profile == null || !profile.success || !profile.message.toLowerCase().contains('user verified')) {
+
+        final profile = profileController.userProfile.value;
+
+        if (profile == null ||
+            !profile.success ||
+            !profile.message.toLowerCase().contains('user verified')) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -42,7 +49,10 @@ class ProfilePage extends StatelessWidget {
                     onPressed: () {
                       Get.to(() => const LoginPage());
                     },
-                    child: const Text('Signup & Verify'),
+                    child: const Text(
+                      'Signup & Verify',
+                      style: TextStyle(color: AppColors.white),
+                    ),
                   ),
                 ],
               ),
@@ -50,7 +60,6 @@ class ProfilePage extends StatelessWidget {
           );
         }
 
-        // Verified user — show profile
         return RefreshIndicator(
           onRefresh: () async => profileController.refreshProfile(),
           color: AppColors.darkGreen,
@@ -93,7 +102,10 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                const Text('Profile', style: TextStyle(fontSize: 16)),
+                                const Text(
+                                  'Profile',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                                 const Spacer(),
                                 Container(
                                   decoration: BoxDecoration(
@@ -174,7 +186,7 @@ class ProfilePage extends StatelessWidget {
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                     onPressed: () {
-                                      Get.to(() => EditProfilePage())?.then((_) {
+                                      Get.to(() => const EditProfilePage())?.then((_) {
                                         profileController.refreshProfile();
                                       });
                                     },
@@ -300,19 +312,144 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      // ... all your Card widgets (Payment Method, Order History, etc.)
-                      // ... Sign Out button
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.wallet),
+                              const SizedBox(width: 5),
+                              const Text('Payment Method'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.shopping_bag_outlined),
+                              const SizedBox(width: 5),
+                              const Text('Order History'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.location_on_outlined),
+                              const SizedBox(width: 5),
+                              const Text('My Address'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.favorite_border_outlined),
+                              const SizedBox(width: 5),
+                              const Text('My Favorite'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.card_giftcard_rounded),
+                              const SizedBox(width: 5),
+                              const Text('About Us'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  Get.to(() => const AboutUsPage());
+                                },
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.help_outline),
+                              const SizedBox(width: 5),
+                              const Text('FAQ'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  Get.to(() => const FAQPage());
+                                },
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.gavel),
+                              const SizedBox(width: 5),
+                              const Text('Terms & Conditions'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: () {
+                                  Get.to(() => const TermsConditionsPage());
+                                },
+                                icon: const Icon(Icons.arrow_forward_ios),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
                       InkWell(
                         onTap: () {
-                          Get.to(LoginPage());
+                          Get.to(() => const LoginPage());
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 10.0,
-                            right: 10,
-                            top: 10,
-                            bottom: 10,
-                          ),
+                          padding: const EdgeInsets.all(10),
                           child: Row(
                             children: const [
                               Icon(Icons.logout_outlined, color: Colors.red),

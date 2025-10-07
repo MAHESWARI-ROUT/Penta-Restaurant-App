@@ -3,11 +3,13 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/models/my_order_model.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
+import 'package:penta_restaurant/pages/authentication/login_page.dart';
 
 class MyOrdersPage extends StatefulWidget {
-  const MyOrdersPage({Key? key}) : super(key: key);
+  const MyOrdersPage({super.key});
 
   @override
   State<MyOrdersPage> createState() => _MyOrdersPageState();
@@ -15,7 +17,7 @@ class MyOrdersPage extends StatefulWidget {
 
 class _MyOrdersPageState extends State<MyOrdersPage> {
   final OrderController orderController = Get.put(OrderController());
-
+  final ProfileController profileController = Get.put(ProfileController());
   final GetStorage _storage = GetStorage();
 
   String get userId {
@@ -56,6 +58,46 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Obx(() {
+        final profile = profileController.userProfile.value;
+
+        if (profile == null ||
+            !profile.success ||
+            !profile.message.toLowerCase().contains('user verified')) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+                  const SizedBox(height: 20),
+                  Text(
+                    'You need to sign up and verify your account to view your orders.',
+                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
+                    ),
+                    onPressed: () => Get.to(() => LoginPage()),
+                    child: const Text(
+                      'Sign Up / Verify',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
         if (orderController.isLoadingMyOrders.value &&
             orderController.myOrders.isEmpty) {
           return const Center(child: CircularProgressIndicator());
@@ -145,25 +187,19 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                         style: TextStyle(color: AppColors.grey2, fontSize: 12),
                       ),
                       const Divider(height: 24),
-
-                      // Use the 'products' list from your model
                       ...order.products.map(
                         (product) => Padding(
                           padding: const EdgeInsets.only(bottom: 6.0),
-                          // Use 'productName', 'variantName', and 'quantity' from your OrderProduct model
                           child: Text(
                             '${product.productName} (${product.variantName}) x ${product.quantity}',
                           ),
                         ),
                       ),
-
                       const Divider(height: 24),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           const Text('Total: ', style: TextStyle(fontSize: 16)),
-                          // Use the 'totalAmount' property from your model
                           Text(
                             '₹${order.totalAmount}',
                             style: const TextStyle(
