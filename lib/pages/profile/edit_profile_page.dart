@@ -30,6 +30,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void initState() {
     super.initState();
     final profile = profileController.userProfile.value;
+
     nameController = TextEditingController(text: profileController.displayName);
     emailController = TextEditingController(text: profileController.displayEmail);
     mobileController = TextEditingController(text: profileController.displayMobile);
@@ -97,10 +98,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       backgroundColor: AppColors.backgroundSecondary,
       body: Obx(() {
         final profile = profileController.userProfile.value;
+        final isLoggedIn = profile != null && profile.success;
 
-        if (profile == null ||
-            !profile.success ||
-            !profile.message.toLowerCase().contains('user verified')) {
+        // Show login/verify prompt if user not logged in or verified
+        if (!isLoggedIn) {
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
@@ -109,10 +110,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 children: [
                   Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
                   const SizedBox(height: 20),
-                  Text(
-                    'You need to sign up and verify your account to edit your profile.',
-                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
+                  const Text(
+                    'Please login or verify your account to edit your profile.',
                     textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 18, color: AppColors.grey2),
                   ),
                   const SizedBox(height: 28),
                   ElevatedButton(
@@ -124,9 +125,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       elevation: 4,
                     ),
-                    onPressed: () => Get.to(() => LoginPage()),
+                    onPressed: () => Get.to(() => const LoginPage()),
                     child: const Text(
-                      'Sign Up / Verify',
+                      'Login / Verify',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ),
@@ -136,14 +137,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
           );
         }
 
+        // Show loading spinner while fetching profile
         if (profileController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.darkGreen,
-            ),
+            child: CircularProgressIndicator(color: AppColors.darkGreen),
           );
         }
 
+        // Logged-in user edit profile UI
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -189,10 +190,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: AppColors.lightYellow,
-                        border: Border.all(
-                          color: AppColors.backgroundPrimary,
-                          width: 3,
-                        ),
+                        border: Border.all(color: AppColors.backgroundPrimary, width: 3),
                       ),
                       child: profileController.hasProfile && profileController.displayName.isNotEmpty
                           ? Center(
@@ -242,16 +240,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.yellow,
                           padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text(
                           'Update Profile',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

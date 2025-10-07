@@ -9,7 +9,6 @@ import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
 
-
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -19,39 +18,47 @@ class ProfilePage extends StatelessWidget {
 
     return Scaffold(
       body: Obx(() {
+        // Show shimmer while loading
         if (profileController.isLoading.value) {
           return ShimmerEffect(child: const ProfileShimmer());
         }
 
+        final isLoggedIn = profileController.userProfile.value != null;
         final profile = profileController.userProfile.value;
 
-        if (profile == null ||
-            !profile.success ||
-            !profile.message.toLowerCase().contains('user verified')) {
+        // User not logged in or not verified
+        if (!isLoggedIn || !(profile?.success ?? false)) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(24.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  const Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
                   const SizedBox(height: 20),
-                  const Text(
-                    'You need to signup and verify your account to proceed.',
+                  Text(
+                    'Please login or verify your account to continue.',
+                    style: const TextStyle(fontSize: 18, color: AppColors.grey2),
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 28),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 4,
                     ),
-                    onPressed: () {
-                      Get.to(() => const LoginPage());
-                    },
+                    onPressed: () => Get.to(() => const LoginPage()),
                     child: const Text(
-                      'Signup & Verify',
-                      style: TextStyle(color: AppColors.white),
+                      'Login / Verify',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -60,6 +67,7 @@ class ProfilePage extends StatelessWidget {
           );
         }
 
+        // Logged-in and verified user UI
         return RefreshIndicator(
           onRefresh: () async => profileController.refreshProfile(),
           color: AppColors.darkGreen,
@@ -80,11 +88,7 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 40.0,
-                          left: 20,
-                          right: 20,
-                        ),
+                        padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
                         child: Column(
                           children: [
                             Row(
@@ -95,29 +99,13 @@ class ProfilePage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: IconButton(
-                                    onPressed: () {
-                                      Get.back();
-                                    },
+                                    onPressed: () => Get.back(),
                                     icon: const Icon(Icons.arrow_back),
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                const Text(
-                                  'Profile',
-                                  style: TextStyle(fontSize: 16),
-                                ),
+                                const Text('Profile', style: TextStyle(fontSize: 16)),
                                 const Spacer(),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.lightYellow,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.shopping_cart),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
                               ],
                             ),
                             const SizedBox(height: 20),
@@ -130,24 +118,18 @@ class ProfilePage extends StatelessWidget {
                                     shape: BoxShape.circle,
                                     color: AppColors.lightYellow,
                                   ),
-                                  child: profileController.hasProfile
-                                      ? Center(
-                                          child: Text(
-                                            profileController.displayName.isNotEmpty
-                                                ? profileController.displayName[0].toUpperCase()
-                                                : 'U',
-                                            style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.darkGreen,
-                                            ),
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.person,
-                                          size: 30,
-                                          color: AppColors.darkGreen,
-                                        ),
+                                  child: Center(
+                                    child: Text(
+                                      profileController.displayName.isNotEmpty
+                                          ? profileController.displayName[0].toUpperCase()
+                                          : 'U',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.darkGreen,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(width: 20),
                                 Expanded(
@@ -186,15 +168,10 @@ class ProfilePage extends StatelessWidget {
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
                                     onPressed: () {
-                                      Get.to(() => const EditProfilePage())?.then((_) {
-                                        profileController.refreshProfile();
-                                      });
+                                      Get.to(() => const EditProfilePage())
+                                          ?.then((_) => profileController.refreshProfile());
                                     },
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: AppColors.black,
-                                      size: 20,
-                                    ),
+                                    icon: const Icon(Icons.edit, color: AppColors.black, size: 20),
                                   ),
                                 ),
                               ],
@@ -207,103 +184,31 @@ class ProfilePage extends StatelessWidget {
                       top: 190,
                       left: 20,
                       right: 20,
-                      child: Container(
-                        height: 100,
-                        width: 400,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 10,
-                              offset: const Offset(0, 10),
+                      child: Obx(() => Container(
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: AppColors.backgroundSecondary,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
                             ),
-                          ],
-                          color: AppColors.backgroundSecondary,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20.0,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              const Spacer(),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${profileController.ongoingOrders.value}\n',
-                                      style: const TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: 'Ongoing',
-                                      style: TextStyle(
-                                        color: AppColors.grey1,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildOrderInfo('Ongoing', profileController.ongoingOrders.value),
+                                  _buildOrderInfo('Delivery', profileController.deliveredOrders.value),
+                                  _buildOrderInfo('Complete', profileController.completedOrders.value),
+                                ],
                               ),
-                              const Spacer(),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${profileController.deliveredOrders.value}\n',
-                                      style: const TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: 'Delivery',
-                                      style: TextStyle(
-                                        color: AppColors.grey1,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const Spacer(),
-                              Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${profileController.completedOrders.value}\n',
-                                      style: const TextStyle(
-                                        color: AppColors.black,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const TextSpan(
-                                      text: 'Complete',
-                                      style: TextStyle(
-                                        color: AppColors.grey1,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
-                        ),
-                      ),
+                            ),
+                          )),
                     ),
                   ],
                 ),
@@ -312,142 +217,28 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.wallet),
-                              const SizedBox(width: 5),
-                              const Text('Payment Method'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.wallet, 'Payment Method', () {}),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.shopping_bag_outlined),
-                              const SizedBox(width: 5),
-                              const Text('Order History'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.shopping_bag_outlined, 'Order History', () {}),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.location_on_outlined),
-                              const SizedBox(width: 5),
-                              const Text('My Address'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.location_on_outlined, 'My Address', () {}),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.favorite_border_outlined),
-                              const SizedBox(width: 5),
-                              const Text('My Favorite'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.favorite_border_outlined, 'My Favorite', () {}),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.card_giftcard_rounded),
-                              const SizedBox(width: 5),
-                              const Text('About Us'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const AboutUsPage());
-                                },
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.card_giftcard_rounded, 'About Us', () {
+                        Get.to(() => const AboutUsPage());
+                      }),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.help_outline),
-                              const SizedBox(width: 5),
-                              const Text('FAQ'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const FAQPage());
-                                },
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.help_outline, 'FAQ', () {
+                        Get.to(() => const FAQPage());
+                      }),
                       const SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.gavel),
-                              const SizedBox(width: 5),
-                              const Text('Terms & Conditions'),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const TermsConditionsPage());
-                                },
-                                icon: const Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildMenuCard(Icons.gavel, 'Terms & Conditions', () {
+                        Get.to(() => const TermsConditionsPage());
+                      }),
                       const SizedBox(height: 10),
                       InkWell(
-                        onTap: () {
-                          Get.to(() => const LoginPage());
-                        },
+                        onTap: () => Get.to(() => const LoginPage()),
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Row(
@@ -473,6 +264,41 @@ class ProfilePage extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildOrderInfo(String label, int count) {
+    return Column(
+      children: [
+        Text(
+          '$count',
+          style: const TextStyle(color: AppColors.black, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: AppColors.grey1, fontSize: 16),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuCard(IconData icon, String title, VoidCallback onTap) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            Icon(icon),
+            const SizedBox(width: 5),
+            Text(title),
+            const Spacer(),
+            IconButton(
+              onPressed: onTap,
+              icon: const Icon(Icons.arrow_forward_ios),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
