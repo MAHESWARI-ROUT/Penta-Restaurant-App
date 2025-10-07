@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 
 import '../pages/info_pages/about_us_page.dart';
@@ -14,7 +15,6 @@ import '../pages/profile/edit_profile_page.dart';
 import '../pages/tabs/cart_page.dart';
 import '../pages/tabs/profile_page.dart';
 import '../pages/tabs/profile_page_new.dart';
-
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
@@ -29,7 +29,7 @@ class MainDrawer extends StatelessWidget {
     {
       'title': 'Wishlist',
       'icon': Icons.favorite,
-      'action': () => Get.to(() =>  FavoritePage()),
+      'action': () => Get.to(() => FavoritePage()),
     },
     {
       'title': 'Orders',
@@ -59,19 +59,17 @@ class MainDrawer extends StatelessWidget {
     {
       'title': 'Faq',
       'icon': Icons.question_answer_outlined,
-      'action':() => Get.to(() => const FAQPage()),
+      'action': () => Get.to(() => const FAQPage()),
     },
     {
       'title': 'About Us',
       'icon': Icons.info_outline,
-      'action':() => Get.to(() => const AboutUsPage()),
-
+      'action': () => Get.to(() => const AboutUsPage()),
     },
     {
       'title': 'Terms & Conditions',
       'icon': Icons.settings,
       'action': () => Get.to(() => const TermsConditionsPage()),
-
     },
   ];
 
@@ -131,7 +129,7 @@ class MainDrawer extends StatelessWidget {
                     ],
                   ),
                 ),
-            
+
                 SizedBox(height: 30),
                 ...drawerItems.map((item) {
                   return ListTile(
@@ -151,8 +149,8 @@ class MainDrawer extends StatelessWidget {
                     },
                   );
                 }),
-            
-                SizedBox(height: 50,),
+
+                SizedBox(height: 50),
                 ListTile(
                   title: Text(
                     'SignOut',
@@ -163,12 +161,13 @@ class MainDrawer extends StatelessWidget {
                     ),
                   ),
                   leading: const Icon(Icons.logout, color: Colors.red),
-                  onTap: () {
-                    Get.to(LoginPage());
+                  onTap: () async {
+                    final authController = Get.find<AuthController>();
+                    await authController.logout();
+                    Get.offAll(LoginPage());
                   },
                 ),
-                SizedBox(height: 100,),
-
+                SizedBox(height: 100),
               ],
             ),
           ),

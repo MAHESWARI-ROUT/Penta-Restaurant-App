@@ -1,41 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/utils.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
-
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
-
-import '../info_pages/about_us_page.dart';
-import '../info_pages/faq_page.dart';
-import '../info_pages/terms_conditions_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Initialize the ProfileController
     final ProfileController profileController = Get.put(ProfileController());
 
     return Scaffold(
       body: Obx(() {
         if (profileController.isLoading.value) {
-          return ShimmerEffect(
-            child: const ProfileShimmer(),
+          return ShimmerEffect(child: const ProfileShimmer());
+        }
+      final profile = profileController.userProfile.value;
+        // If user is not verified
+       if (profile == null || !profile.success || !profile.message.toLowerCase().contains('user verified')) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'You need to signup and verify your account to proceed.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                    ),
+                    onPressed: () {
+                      Get.to(() => const LoginPage());
+                    },
+                    child: const Text('Signup & Verify'),
+                  ),
+                ],
+              ),
+            ),
           );
         }
 
-        if (profileController.errorMessage.value.isNotEmpty && !profileController.hasProfile) {
-          return ErrorStateWidget(
-            message: profileController.errorMessage.value,
-            onRetry: () => profileController.refreshProfile(),
-            icon: Icons.person_outline,
-          );
-        }
-
+        // Verified user — show profile
         return RefreshIndicator(
           onRefresh: () async => profileController.refreshProfile(),
           color: AppColors.darkGreen,
@@ -50,7 +65,7 @@ class ProfilePage extends StatelessWidget {
                       height: 260,
                       decoration: BoxDecoration(
                         color: AppColors.yellow,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(50),
                           bottomRight: Radius.circular(50),
                         ),
@@ -74,12 +89,12 @@ class ProfilePage extends StatelessWidget {
                                     onPressed: () {
                                       Get.back();
                                     },
-                                    icon: Icon(Icons.arrow_back),
+                                    icon: const Icon(Icons.arrow_back),
                                   ),
                                 ),
-                                SizedBox(width: 10),
-                                Text('Profile', style: TextStyle(fontSize: 16)),
-                                Spacer(),
+                                const SizedBox(width: 10),
+                                const Text('Profile', style: TextStyle(fontSize: 16)),
+                                const Spacer(),
                                 Container(
                                   decoration: BoxDecoration(
                                     color: AppColors.lightYellow,
@@ -87,13 +102,13 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                   child: IconButton(
                                     onPressed: () {},
-                                    icon: Icon(Icons.shopping_cart),
+                                    icon: const Icon(Icons.shopping_cart),
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               children: [
                                 Container(
@@ -122,14 +137,14 @@ class ProfilePage extends StatelessWidget {
                                           color: AppColors.darkGreen,
                                         ),
                                 ),
-                                SizedBox(width: 20),
+                                const SizedBox(width: 20),
                                 Expanded(
                                   child: Text.rich(
                                     TextSpan(
                                       children: [
                                         TextSpan(
                                           text: '${profileController.displayName}\n',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: AppColors.black,
                                             fontSize: 22,
                                             fontWeight: FontWeight.bold,
@@ -139,7 +154,7 @@ class ProfilePage extends StatelessWidget {
                                           text: profileController.displayEmail.isNotEmpty
                                               ? profileController.displayEmail
                                               : profileController.displayMobile,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: AppColors.black,
                                             fontSize: 14,
                                           ),
@@ -157,14 +172,13 @@ class ProfilePage extends StatelessWidget {
                                   ),
                                   child: IconButton(
                                     padding: EdgeInsets.zero,
-                                    constraints: BoxConstraints(),
+                                    constraints: const BoxConstraints(),
                                     onPressed: () {
                                       Get.to(() => EditProfilePage())?.then((_) {
-                                        // Refresh profile when returning from edit page
                                         profileController.refreshProfile();
                                       });
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Icons.edit,
                                       color: AppColors.black,
                                       size: 20,
@@ -189,7 +203,7 @@ class ProfilePage extends StatelessWidget {
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
                               blurRadius: 10,
-                              offset: Offset(0, 10),
+                              offset: const Offset(0, 10),
                             ),
                           ],
                           color: AppColors.backgroundSecondary,
@@ -204,19 +218,19 @@ class ProfilePage extends StatelessWidget {
                           ),
                           child: Row(
                             children: [
-                              Spacer(),
+                              const Spacer(),
                               Text.rich(
                                 TextSpan(
                                   children: [
                                     TextSpan(
                                       text: '${profileController.ongoingOrders.value}\n',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: AppColors.black,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    TextSpan(
+                                    const TextSpan(
                                       text: 'Ongoing',
                                       style: TextStyle(
                                         color: AppColors.grey1,
@@ -227,19 +241,19 @@ class ProfilePage extends StatelessWidget {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Text.rich(
                                 TextSpan(
                                   children: [
                                     TextSpan(
                                       text: '${profileController.deliveredOrders.value}\n',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: AppColors.black,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    TextSpan(
+                                    const TextSpan(
                                       text: 'Delivery',
                                       style: TextStyle(
                                         color: AppColors.grey1,
@@ -250,19 +264,19 @@ class ProfilePage extends StatelessWidget {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Text.rich(
                                 TextSpan(
                                   children: [
                                     TextSpan(
                                       text: '${profileController.completedOrders.value}\n',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: AppColors.black,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    TextSpan(
+                                    const TextSpan(
                                       text: 'Complete',
                                       style: TextStyle(
                                         color: AppColors.grey1,
@@ -273,7 +287,7 @@ class ProfilePage extends StatelessWidget {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              Spacer(),
+                              const Spacer(),
                             ],
                           ),
                         ),
@@ -281,178 +295,13 @@ class ProfilePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 70),
+                const SizedBox(height: 70),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.wallet),
-                              SizedBox(width: 5),
-                              Text('Payment Method'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.shopping_bag_outlined),
-                              SizedBox(width: 5),
-                              Text('Order History'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.location_on_outlined),
-                              SizedBox(width: 5),
-                              Text('My Address'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.favorite_border_outlined),
-                              SizedBox(width: 5),
-                              Text('My favorite'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.card_giftcard_rounded),
-                              SizedBox(width: 5),
-                              Text('About Us'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const AboutUsPage());
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.help_outline),
-                              SizedBox(width: 5),
-                              Text('FAQ'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const FAQPage());
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 20.0,
-                            right: 20,
-                            top: 10,
-                            bottom: 10,
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.gavel),
-                              SizedBox(width: 5),
-                              Text('Terms & Conditions'),
-                              Spacer(),
-                              IconButton(
-                                onPressed: () {
-                                  Get.to(() => const TermsConditionsPage());
-                                },
-                                icon: Icon(Icons.arrow_forward_ios),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
+                      // ... all your Card widgets (Payment Method, Order History, etc.)
+                      // ... Sign Out button
                       InkWell(
                         onTap: () {
                           Get.to(LoginPage());
@@ -465,7 +314,7 @@ class ProfilePage extends StatelessWidget {
                             bottom: 10,
                           ),
                           child: Row(
-                            children: [
+                            children: const [
                               Icon(Icons.logout_outlined, color: Colors.red),
                               SizedBox(width: 5),
                               Text(

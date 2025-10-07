@@ -12,6 +12,9 @@ class ProfileController extends GetxController {
   final Rx<UserProfile?> userProfile = Rx<UserProfile?>(null);
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
+  final RxBool isVerified = false.obs;
+
+
 
   // Profile statistics
   final RxInt ongoingOrders = 0.obs;
@@ -39,36 +42,48 @@ class ProfileController extends GetxController {
   }
 
   Future<void> fetchProfile() async {
-    try {
-      isLoading.value = true;
-      errorMessage.value = '';
+  try {
+    isLoading.value = true;
+    errorMessage.value = '';
 
-      final profile = await _profileService.getProfile(userId);
-      if (profile != null) {
-        userProfile.value = profile;
-        // Store the profile data locally
-        _storage.write('user_profile', {
-          'name': profile.name,
-          'email': profile.email,
-          'mobile': profile.mobile,
-          'gender': profile.gender,
-          'city': profile.city,
-          'locality': profile.locality,
-          'flat': profile.flat,
-          'pincode': profile.pincode,
-          'state': profile.state,
-          'landmark': profile.landmark,
-        });
+    final profile = await _profileService.getProfile(userId);
+
+    if (profile != null) {
+      // Check verification based on success and message
+      if (profile.success && profile.message.toLowerCase().contains('user verified')) {
+        isVerified.value = true;
+      } else {
+        isVerified.value = false;
+        errorMessage.value = 'Please signup and verify to proceed';
       }
-    } catch (e) {
-      errorMessage.value = e.toString();
-      if (Get.isLogEnable) {
-        print('Error fetching profile: $e');
-      }
-    } finally {
-      isLoading.value = false;
+
+      userProfile.value = profile;
+
+      // Store profile locally
+      _storage.write('user_profile', {
+        'name': profile.name,
+        'email': profile.email,
+        'mobile': profile.mobile,
+        'gender': profile.gender,
+        'city': profile.city,
+        'locality': profile.locality,
+        'flat': profile.flat,
+        'pincode': profile.pincode,
+        'state': profile.state,
+        'landmark': profile.landmark,
+      });
+    } else {
+      isVerified.value = false;
+      errorMessage.value = 'Failed to fetch profile';
     }
+  } catch (e) {
+    errorMessage.value = e.toString();
+    isVerified.value = false;
+    if (Get.isLogEnable) print('Error fetching profile: $e');
+  } finally {
+    isLoading.value = false;
   }
+}
 
   Future<bool> updateProfile(Map<String, dynamic> profileData) async {
     try {

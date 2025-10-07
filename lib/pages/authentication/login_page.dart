@@ -111,34 +111,40 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(height: 24),
-                  Obx(() => Container(
-                    width: double.infinity,
-                    height: 54,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: AppColors.yellow,
+                  Obx(
+                    () => Container(
+                      width: double.infinity,
+                      height: 54,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: AppColors.yellow,
+                      ),
+                      child: TextButton(
+                        onPressed: authController.isLoading.value
+                            ? null
+                            : _handleLogin,
+                        child: authController.isLoading.value
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                'Login',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
                     ),
-                    child: TextButton(
-                      onPressed: authController.isLoading.value ? null : _handleLogin,
-                      child: authController.isLoading.value
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : Text(
-                            'Login',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                    ),
-                  )),
+                  ),
                   SizedBox(height: 32),
                   Text(
                     "Don't have an Account",
@@ -160,6 +166,12 @@ class _LoginPageState extends State<LoginPage> {
                         height: 0,
                       ),
                     ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Get.to(() => HomePage());
+                    },
+                    child: Text('skip login',style: TextStyle(color: AppColors.white),),
                   ),
                 ],
               ),
