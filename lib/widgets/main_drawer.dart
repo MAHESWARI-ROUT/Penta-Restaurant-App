@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
@@ -13,8 +12,6 @@ import 'package:penta_restaurant/pages/my_order_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/pages/tabs/cart_page.dart';
 import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
-
-
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
@@ -36,11 +33,6 @@ class MainDrawer extends StatelessWidget {
       'icon': Icons.receipt_long,
       'action': () => Get.to(() => const MyOrdersPage()),
     },
-    // {
-    //   'title': 'Coupons',
-    //   'icon': Icons.card_giftcard_outlined,
-    //   'action': () => Get.to(() => const CouponsPage()),
-    // },
     {
       'title': 'Notifications',
       'icon': Icons.notification_add_outlined,
@@ -75,8 +67,11 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Drawer(
-      width: 250,
+      width: 300, 
       backgroundColor: const Color.fromARGB(100, 0, 0, 0),
       child: Stack(
         children: [
@@ -88,7 +83,7 @@ class MainDrawer extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 42),
+                SizedBox(height: screenHeight * 0.05),
                 IconButton(
                   icon: const Icon(
                     Icons.close,
@@ -98,45 +93,36 @@ class MainDrawer extends StatelessWidget {
                   onPressed: () => Navigator.of(context).pop(),
                   tooltip: 'Close Drawer',
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: screenHeight * 0.015),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Hey,',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.white,
-                      ),
+                  child: Text(
+                    'Hey,',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.045,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.white,
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Foodie!',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    'Foodie!',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.045,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.white,
+                    ),
                   ),
                 ),
-
-                SizedBox(height: 30),
+                SizedBox(height: screenHeight * 0.04),
                 ...drawerItems.map((item) {
                   return ListTile(
                     title: Text(
                       item['title'],
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: screenWidth * 0.042,
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
                       ),
@@ -149,13 +135,12 @@ class MainDrawer extends StatelessWidget {
                     },
                   );
                 }),
-
-                SizedBox(height: 50),
+                SizedBox(height: screenHeight * 0.05),
                 ListTile(
                   title: Text(
                     'SignOut',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: screenWidth * 0.042,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
                     ),
@@ -167,7 +152,7 @@ class MainDrawer extends StatelessWidget {
                     Get.offAll(LoginPage());
                   },
                 ),
-                SizedBox(height: 100),
+                SizedBox(height: screenHeight * 0.1),
               ],
             ),
           ),

@@ -13,8 +13,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  final ProfileController profileController = Get.find<ProfileController>();
-
+late final ProfileController profileController;
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController mobileController;
@@ -29,6 +28,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
+    profileController = Get.find<ProfileController>();
     final profile = profileController.userProfile.value;
 
     nameController = TextEditingController(text: profileController.displayName);

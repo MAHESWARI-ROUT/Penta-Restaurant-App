@@ -34,56 +34,75 @@ class VerificationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = size.width / 390; // scales text proportionally
+
     return Scaffold(
       backgroundColor: AppColors.darkGreen,
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 200),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.all(size.width * 0.05),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: size.height * 0.15),
+              Text(
                 'Please verify your account!',
                 style: TextStyle(
                   color: AppColors.backgroundPrimary,
-                  fontSize: 26,
+                  fontSize: 26 * textScale,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-            const SizedBox(height: 30),
-            _buildDisplayField('Name', name),
-            const SizedBox(height: 16),
-            _buildDisplayField('Email', email),
-            const SizedBox(height: 40),
+              SizedBox(height: size.height * 0.04),
 
-            ElevatedButton(
-              onPressed: _sendWhatsAppVerification,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.yellow,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              _buildDisplayField('Name', name),
+              SizedBox(height: size.height * 0.02),
+              _buildDisplayField('Email', email),
+              SizedBox(height: size.height * 0.05),
+
+              Center(
+                child: ElevatedButton(
+                  onPressed: _sendWhatsAppVerification,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.yellow,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * 0.12,
+                      vertical: size.height * 0.018,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    'Send WhatsApp Verification',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16 * textScale,
+                    ),
+                  ),
                 ),
               ),
-              child: const Text(
-                'Send WhatsApp Verification',
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ),
-            const SizedBox(height: 20),
+              SizedBox(height: size.height * 0.03),
 
-            TextButton(
-              onPressed: () {
-                Get.offAll(() => const HomePage(), arguments: {'verified': false});
-              },
-              child: const Text(
-                'Skip verification',
-                style: TextStyle(color: Colors.white),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Get.offAll(() => const HomePage(), arguments: {'verified': false});
+                  },
+                  child: Text(
+                    'Skip verification',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14 * textScale,
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: size.height * 0.05),
+            ],
+          ),
         ),
       ),
     );
@@ -100,7 +119,10 @@ class VerificationPage extends StatelessWidget {
           label == 'Name' ? Icons.person : Icons.email,
           color: Colors.grey,
         ),
-        title: Text(value),
+        title: Text(
+          value,
+          style: const TextStyle(color: Colors.black),
+        ),
       ),
     );
   }

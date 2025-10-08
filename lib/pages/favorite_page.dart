@@ -4,7 +4,6 @@ import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/favorite_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
-import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';

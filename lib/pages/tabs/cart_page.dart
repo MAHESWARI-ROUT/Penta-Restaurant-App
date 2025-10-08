@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
-import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CartPage extends StatefulWidget {
@@ -17,8 +17,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final CartController cartController = Get.find<CartController>();
-  final ProfileController profileController = Get.find<ProfileController>();
+  late final CartController cartController;
+  late final ProfileController profileController;
   final RxBool _showDetailedBill = false.obs;
   final RxList<String> savedAddresses = <String>[
     '123 Main Street, City',
@@ -29,13 +29,23 @@ class _CartPageState extends State<CartPage> {
   @override
   void initState() {
     super.initState();
-
+    cartController = Get.find<CartController>();
+    profileController = Get.find<ProfileController>();
     if (savedAddresses.isNotEmpty) {
       selectedAddress.value = savedAddresses[0];
     }
   }
 
   void _checkout() {
+    if (selectedAddress.value.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please select a delivery address',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
     Get.to(() => const ShippingDetailsPage());
   }
 
@@ -156,13 +166,17 @@ class _CartPageState extends State<CartPage> {
             Expanded(
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: selectedAddress.value.isEmpty ? null : selectedAddress.value,
+                  value: selectedAddress.value.isEmpty
+                      ? null
+                      : selectedAddress.value,
                   hint: const Text('Select delivery address'),
                   items: savedAddresses
-                      .map((addr) => DropdownMenuItem(
-                            value: addr,
-                            child: Text(addr, overflow: TextOverflow.ellipsis),
-                          ))
+                      .map(
+                        (addr) => DropdownMenuItem(
+                          value: addr,
+                          child: Text(addr, overflow: TextOverflow.ellipsis),
+                        ),
+                      )
                       .toList(),
                   onChanged: (val) {
                     if (val != null) selectedAddress.value = val;
@@ -190,7 +204,13 @@ class _CartPageState extends State<CartPage> {
         appBar: AppBar(
           backgroundColor: AppColors.yellow,
           elevation: 0,
-          title: Text('My Cart', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
+          title: Text(
+            'My Cart',
+            style: TextStyle(
+              color: AppColors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           centerTitle: false,
           automaticallyImplyLeading: false,
         ),
@@ -225,9 +245,13 @@ class _CartPageState extends State<CartPage> {
                     final message =
                         'Verification Request:\n\nName: ${profileController.displayName}\nEmail: ${profileController.displayEmail}\n\nPlease verify this user.';
 
-                    final url = 'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
+                    final url =
+                        'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
                     if (await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        Uri.parse(url),
+                        mode: LaunchMode.externalApplication,
+                      );
                     } else {
                       Get.snackbar(
                         'Error',
@@ -246,7 +270,6 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -260,7 +283,10 @@ class _CartPageState extends State<CartPage> {
       appBar: AppBar(
         backgroundColor: AppColors.yellow,
         elevation: 0,
-        title: Text('My Cart', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
+        title: Text(
+          'My Cart',
+          style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
+        ),
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
@@ -280,19 +306,27 @@ class _CartPageState extends State<CartPage> {
               }
               if (cartController.cartItems.isEmpty) {
                 return Center(
-                  child: Text('Your cart is empty', style: TextStyle(fontSize: 18)),
+                  child: Text(
+                    'Your cart is empty',
+                    style: TextStyle(fontSize: 18),
+                  ),
                 );
               }
 
               return ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 itemCount: cartController.cartItems.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final item = cartController.cartItems[index];
                   return Card(
                     elevation: 3,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Row(
                       children: [
                         ClipRRect(
@@ -307,21 +341,47 @@ class _CartPageState extends State<CartPage> {
                             fit: BoxFit.cover,
                             errorWidget: (context, url, error) => Container(
                               color: AppColors.grey5,
-                              child: Icon(Icons.fastfood, color: AppColors.grey3, size: 30),
+                              child: Icon(
+                                Icons.fastfood,
+                                color: AppColors.grey3,
+                                size: 30,
+                              ),
                             ),
                           ),
                         ),
                         Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(item.productName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+                                Text(
+                                  item.productName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
-                                Text(item.variantName, style: TextStyle(color: AppColors.grey2, fontSize: 15)),
+                                Text(
+                                  item.variantName,
+                                  style: TextStyle(
+                                    color: AppColors.grey2,
+                                    fontSize: 15,
+                                  ),
+                                ),
                                 const SizedBox(height: 8),
-                                Text('₹${item.variantPrice}', style: TextStyle(color: AppColors.yellow, fontWeight: FontWeight.bold, fontSize: 17)),
+                                Text(
+                                  '₹${item.variantPrice}',
+                                  style: TextStyle(
+                                    color: AppColors.yellow,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -333,26 +393,68 @@ class _CartPageState extends State<CartPage> {
                               IconButton(
                                 icon: Container(
                                   padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(color: AppColors.grey5, shape: BoxShape.circle),
-                                  child: Icon(Icons.remove, color: AppColors.darkGreen, size: 18),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.grey5,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.remove,
+                                    color: AppColors.darkGreen,
+                                    size: 18,
+                                  ),
                                 ),
                                 onPressed: () {
-                                  if (item.quantity > 1) {
-                                    cartController.updateQuantity(item.productId, item.variantId, item.quantity - 1);
+                                  if (item.quantity == 1) {
+                                    Get.defaultDialog(
+                                      title: 'Remove Item?',
+                                      middleText:
+                                          'Do you want to remove this item from the cart?',
+                                      textConfirm: 'Yes',
+                                      textCancel: 'No',
+                                      confirmTextColor: Colors.white,
+                                      onConfirm: () {
+                                        cartController.removeFromCart(
+                                          item.productId,
+                                          item.variantId,
+                                        );
+                                        Get.back(); 
+                                      },
+                                    );
                                   } else {
-                                    cartController.removeFromCart(item.productId, item.variantId);
+                                    cartController.updateQuantity(
+                                      item.productId,
+                                      item.variantId,
+                                      item.quantity - 1,
+                                    );
                                   }
                                 },
                               ),
-                              Text('${item.quantity}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                              Text(
+                                '${item.quantity}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                               IconButton(
                                 icon: Container(
                                   padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(color: AppColors.darkGreen, shape: BoxShape.circle),
-                                  child: const Icon(Icons.add, color: Colors.white, size: 18),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.darkGreen,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
                                 ),
                                 onPressed: () {
-                                  cartController.updateQuantity(item.productId, item.variantId, item.quantity + 1);
+                                  cartController.updateQuantity(
+                                    item.productId,
+                                    item.variantId,
+                                    item.quantity + 1,
+                                  );
                                 },
                               ),
                             ],
@@ -369,19 +471,43 @@ class _CartPageState extends State<CartPage> {
             () => InkWell(
               onTap: () => _showDetailedBill.value = !_showDetailedBill.value,
               child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 16,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 6,
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(_showDetailedBill.value ? 'Hide Detailed Bill' : 'Show Detailed Bill',
-                        style: TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.bold, fontSize: 16)),
-                    Icon(_showDetailedBill.value ? Icons.expand_less : Icons.expand_more, color: AppColors.darkGreen),
+                    Text(
+                      _showDetailedBill.value
+                          ? 'Hide Detailed Bill'
+                          : 'Show Detailed Bill',
+                      style: TextStyle(
+                        color: AppColors.darkGreen,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Icon(
+                      _showDetailedBill.value
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      color: AppColors.darkGreen,
+                    ),
                   ],
                 ),
               ),
@@ -390,23 +516,40 @@ class _CartPageState extends State<CartPage> {
           Obx(() {
             if (!_showDetailedBill.value) return const SizedBox.shrink();
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
+              margin: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ).copyWith(bottom: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Column(
                 children: cartController.cartItems.map((item) {
-                  final itemTotal = (double.tryParse(item.variantPrice) ?? 0) * item.quantity;
+                  final itemTotal =
+                      (double.tryParse(item.variantPrice) ?? 0) * item.quantity;
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(child: Text('${item.productName} (${item.variantName}) x${item.quantity}', overflow: TextOverflow.ellipsis)),
-                        Text('₹${itemTotal.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                        Expanded(
+                          child: Text(
+                            '${item.productName} (${item.variantName}) x${item.quantity}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          '₹${itemTotal.toStringAsFixed(2)}',
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
                       ],
                     ),
                   );
@@ -418,18 +561,44 @@ class _CartPageState extends State<CartPage> {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
             decoration: BoxDecoration(
               color: AppColors.white,
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(28), topRight: Radius.circular(28)),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12, offset: const Offset(0, -5))],
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(28),
+                topRight: Radius.circular(28),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 12,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
             child: Column(
               children: [
-                Obx(() => _buildSummaryRow('Subtotal', '₹${cartController.totalPrice.toStringAsFixed(2)}')),
+                Obx(
+                  () => _buildSummaryRow(
+                    'Subtotal',
+                    '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                  ),
+                ),
                 const SizedBox(height: 8),
-                _buildSummaryRow('Delivery', 'Free', valueColor: Colors.green, valueFontWeight: FontWeight.bold),
+                _buildSummaryRow(
+                  'Delivery',
+                  'Free',
+                  valueColor: Colors.green,
+                  valueFontWeight: FontWeight.bold,
+                ),
                 const SizedBox(height: 20),
                 const Divider(height: 1),
                 const SizedBox(height: 20),
-                Obx(() => _buildSummaryRow('Total', '₹${cartController.totalPrice.toStringAsFixed(2)}', valueFontSize: 22, valueFontWeight: FontWeight.bold)),
+                Obx(
+                  () => _buildSummaryRow(
+                    'Total',
+                    '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                    valueFontSize: 22,
+                    valueFontWeight: FontWeight.bold,
+                  ),
+                ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
@@ -437,10 +606,19 @@ class _CartPageState extends State<CartPage> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkGreen,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                     onPressed: _checkout,
-                    child: const Text('Checkout', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                    child: const Text(
+                      'Checkout',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ],

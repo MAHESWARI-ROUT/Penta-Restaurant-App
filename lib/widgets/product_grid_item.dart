@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/favorite_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/models/product_model.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
+import 'package:penta_restaurant/pages/verification_error_page.dart';
 
-import '../controller/profile_controller.dart';
-import '../pages/verification_error_page.dart';
+
 
 class ProductGridItem extends StatefulWidget {
   final Product product;
@@ -28,7 +29,6 @@ class _ProductGridItemState extends State<ProductGridItem> {
   final ProfileController profileController = Get.find<ProfileController>();
 
   void toggleFavorite() {
-    // Assuming you pass userId via cartController or elsewhere for API calls
     final userId = widget.cartController.userId;
     if (userId.isEmpty) {
       Get.snackbar('Error', 'Please log in to manage favorites');
@@ -48,27 +48,31 @@ class _ProductGridItemState extends State<ProductGridItem> {
       builder: (context) {
         int selectedVariantIndex = 0;
         int quantity = 1;
+        final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
 
         return StatefulBuilder(
           builder: (context, setState) {
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05,
+                vertical: screenHeight * 0.03,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     'Select Variant & Quantity',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.bold,
                       color: AppColors.darkGreen,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: screenHeight * 0.02),
                   Row(
                     children: [
-                      // Variant dropdown takes 2/3 width
                       Expanded(
                         flex: 1,
                         child: DropdownButton<int>(
@@ -85,7 +89,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                               value: index,
                               child: Text(
                                 '${v.variantName} - ₹${v.varPrice}',
-                                style: const TextStyle(fontSize: 16),
+                                style: TextStyle(fontSize: screenWidth * 0.04),
                               ),
                             );
                           }),
@@ -96,55 +100,60 @@ class _ProductGridItemState extends State<ProductGridItem> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      // Quantity selector takes 1/3 width
-                      Expanded(
+                      SizedBox(width: screenWidth * 0.04),
+                      Flexible(
                         flex: 1,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(12),
-                                backgroundColor: AppColors.grey5,
-                                foregroundColor: AppColors.darkGreen,
-                                elevation: 0,
+                            Flexible(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.all(screenWidth * 0.02),
+                                  backgroundColor: AppColors.grey5,
+                                  foregroundColor: AppColors.darkGreen,
+                                  elevation: 0,
+                                ),
+                                onPressed: quantity > 1
+                                    ? () => setState(() => quantity--)
+                                    : null,
+                                child: Icon(Icons.remove, size: screenWidth * 0.06),
                               ),
-                              onPressed: quantity > 1
-                                  ? () => setState(() => quantity--)
-                                  : null,
-                              child: const Icon(Icons.remove, size: 24),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                              ),
-                              child: Text(
-                                quantity.toString(),
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                            Flexible(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: screenWidth * 0.02,
+                                ),
+                                child: Text(
+                                  quantity.toString(),
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.05,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                shape: const CircleBorder(),
-                                padding: const EdgeInsets.all(12),
-                                backgroundColor: AppColors.darkGreen,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
+                            Flexible(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: EdgeInsets.all(screenWidth * 0.025),
+                                  backgroundColor: AppColors.darkGreen,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                ),
+                                onPressed: () => setState(() => quantity++),
+                                child: Icon(Icons.add, size: screenWidth * 0.06),
                               ),
-                              onPressed: () => setState(() => quantity++),
-                              child: const Icon(Icons.add, size: 24),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: screenHeight * 0.03),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -163,23 +172,23 @@ class _ProductGridItemState extends State<ProductGridItem> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.darkGreen,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                         ),
                         elevation: 2,
                       ),
-                      child: const Text(
+                      child: Text(
                         'Add to Cart',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: screenWidth * 0.045,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: screenHeight * 0.015),
                 ],
               ),
             );
@@ -192,9 +201,8 @@ class _ProductGridItemState extends State<ProductGridItem> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-    final cleanDescription = product.description
-        .replaceAll(RegExp(r'<[^>]*>'), '')
-        .trim();
+    final cleanDescription = product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim();
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Card(
       color: AppColors.white,
@@ -209,37 +217,35 @@ class _ProductGridItemState extends State<ProductGridItem> {
           ),
         ),
         child: Column(
-          mainAxisSize:
-              MainAxisSize.min, // Important: Allows column to shrink-wrap
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image with fixed height
             Stack(
               children: [
                 Image.network(
                   product.primaryImage,
-                  height: 120,
+                  height: screenWidth * 0.35,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    height: 120,
+                    height: screenWidth * 0.35,
                     color: AppColors.grey5,
-                    child: const Icon(
+                    child: Icon(
                       Icons.fastfood,
                       color: Colors.grey,
-                      size: 32,
+                      size: screenWidth * 0.08,
                     ),
                   ),
                 ),
                 Positioned(
-                  top: 8,
-                  right: 8,
+                  top: screenWidth * 0.02,
+                  right: screenWidth * 0.02,
                   child: Obx(() {
                     final isFav = favoriteController.isFavorite(product);
                     return GestureDetector(
                       onTap: toggleFavorite,
                       child: Container(
-                        padding: const EdgeInsets.all(6),
+                        padding: EdgeInsets.all(screenWidth * 0.02),
                         decoration: BoxDecoration(
                           color: Colors.black45,
                           shape: BoxShape.circle,
@@ -247,7 +253,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                         child: Icon(
                           isFav ? Icons.favorite : Icons.favorite_border,
                           color: isFav ? Colors.red : Colors.white,
-                          size: 20,
+                          size: screenWidth * 0.05,
                         ),
                       ),
                     );
@@ -255,33 +261,31 @@ class _ProductGridItemState extends State<ProductGridItem> {
                 ),
               ],
             ),
-
-            // Content section - no Expanded or Spacer needed
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(screenWidth * 0.03),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.productName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: screenWidth * 0.04,
                     ),
-                    maxLines: 1, // Allow for longer names
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: screenWidth * 0.015),
                   if (cleanDescription.isNotEmpty)
                     Text(
                       cleanDescription,
-                      style: TextStyle(color: AppColors.grey2, fontSize: 12),
+                      style: TextStyle(color: AppColors.grey2, fontSize: screenWidth * 0.035),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  const SizedBox(height: 8),
-                  _buildPriceAndAddRow(product),
+                  SizedBox(height: screenWidth * 0.02),
+                  _buildPriceAndAddRow(product, screenWidth),
                 ],
               ),
             ),
@@ -291,21 +295,20 @@ class _ProductGridItemState extends State<ProductGridItem> {
     );
   }
 
-  Widget _buildPriceAndAddRow(Product product) {
-    String priceDisplay = product.variants.isNotEmpty
-        ? product.variants[0].varPrice
-        : product.plimit;
+  Widget _buildPriceAndAddRow(Product product, double screenWidth) {
+    String priceDisplay = product.variants.isNotEmpty ? product.variants[0].varPrice : product.plimit;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          '₹ $priceDisplay',
-          style: const TextStyle(
-            color: AppColors.yellow,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
+        Expanded(
+          child: Text(
+            '₹ $priceDisplay',
+            style: TextStyle(
+              color: AppColors.yellow,
+              fontWeight: FontWeight.bold,
+              fontSize: screenWidth * 0.04,
+            ),
           ),
         ),
         ElevatedButton(
@@ -314,9 +317,9 @@ class _ProductGridItemState extends State<ProductGridItem> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            minimumSize: const Size(0, 30),
+            minimumSize: Size(0, screenWidth * 0.08),
           ),
           onPressed: () {
             if (!profileController.isVerified.value) {
@@ -328,11 +331,11 @@ class _ProductGridItemState extends State<ProductGridItem> {
               _showVariantSelectionDialog();
             }
           },
-          child: const Text(
+          child: Text(
             'Add',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: screenWidth * 0.035,
               fontWeight: FontWeight.bold,
             ),
           ),

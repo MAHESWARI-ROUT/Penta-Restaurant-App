@@ -26,83 +26,100 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final textScale = size.width / 390; // responsive text scaling
+
     return Scaffold(
       backgroundColor: AppColors.darkGreen,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 32),
-                  const AppIcon(),
-                  const SizedBox(height: 40),
-                  const Align(
-                    alignment: Alignment.centerLeft,
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.06,
+            vertical: size.height * 0.03,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: size.height * 0.04),
+                const AppIcon(),
+                SizedBox(height: size.height * 0.05),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Create Account',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22 * textScale,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: size.height * 0.03),
+
+                _buildInput('Full Name', Icons.person, nameController),
+                SizedBox(height: size.height * 0.02),
+                _buildInput('Email', Icons.email, emailController),
+                SizedBox(height: size.height * 0.02),
+                _buildInput('Mobile Number', Icons.phone, mobileController),
+                SizedBox(height: size.height * 0.02),
+                _buildInput('Profession', Icons.work, professionController),
+                SizedBox(height: size.height * 0.02),
+
+                CtextformField(
+                  text: 'Password',
+                  isPassword: true,
+                  icon1: const Icon(Icons.lock, color: Colors.grey),
+                  passwordController: passwordController,
+                  controller: passwordTextController,
+                  validator: (value) =>
+                      (value == null || value.isEmpty) ? 'Please enter your password' : null,
+                ),
+
+                SizedBox(height: size.height * 0.04),
+
+                Container(
+                  width: double.infinity,
+                  height: size.height * 0.065,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: AppColors.yellow,
+                  ),
+                  child: TextButton(
+                    onPressed: _handleSignup,
                     child: Text(
                       'Create Account',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 22,
+                        fontSize: 18 * textScale,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  
-                  _buildInput('Full Name', Icons.person, nameController),
-                  const SizedBox(height: 16),
-                  _buildInput('Email', Icons.email, emailController),
-                  const SizedBox(height: 16),
-                  _buildInput('Mobile Number', Icons.phone, mobileController),
-                  const SizedBox(height: 16),
-                  _buildInput('Profession', Icons.work, professionController),
-                  const SizedBox(height: 16),
-                  CtextformField(
-                    text: 'Password',
-                    isPassword: true,
-                    icon1: const Icon(Icons.lock, color: Colors.grey),
-                    passwordController: passwordController,
-                    controller: passwordTextController,
-                  ),
-                  const SizedBox(height: 24),
+                ),
 
-                  Container(
-                    width: double.infinity,
-                    height: 54,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
+                SizedBox(height: size.height * 0.05),
+
+                Text(
+                  "Already have an Account",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14 * textScale,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Get.to(() => const LoginPage()),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
                       color: AppColors.yellow,
-                    ),
-                    child: TextButton(
-                      onPressed: _handleSignup,
-                      child: const Text(
-                        'Create Account',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      fontSize: 14 * textScale,
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  const Text(
-                    "Already have an Account",
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                  TextButton(
-                    onPressed: () => Get.to(() => const LoginPage()),
-                    child: Text(
-                      'Login',
-                      style: TextStyle(color: AppColors.yellow, fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -118,9 +135,10 @@ class _SignupPageState extends State<SignupPage> {
       ),
       child: CtextformField(
         text: label,
-        icon1: Icon(icon),
+        icon1: Icon(icon, color: Colors.grey),
         controller: controller,
-        validator: (value) => (value == null || value.isEmpty) ? 'Please enter your $label' : null,
+        validator: (value) =>
+            (value == null || value.isEmpty) ? 'Please enter your $label' : null,
       ),
     );
   }

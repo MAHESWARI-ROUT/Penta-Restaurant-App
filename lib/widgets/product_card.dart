@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:penta_restaurant/pages/authentication/login_page.dart';
-import '../commons/appcolors.dart';
-import '../models/product_model.dart';
-import '../controller/cart_controller.dart';
-import '../controller/auth_controller.dart';
+
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
+import 'package:penta_restaurant/controller/cart_controller.dart';
+import 'package:penta_restaurant/models/product_model.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
   final CartController cartController;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     required this.cartController,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -27,13 +27,14 @@ class _ProductCardState extends State<ProductCard> {
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
-    // Clean description
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     final String cleanDescription =
         RegExp(r'<[^>]*>').hasMatch(product.description)
-        ? product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim()
-        : product.description;
+            ? product.description.replaceAll(RegExp(r'<[^>]*>'), '').trim()
+            : product.description;
 
-    // Determine price to display (selected variant or plimit)
     String priceDisplay;
     if (product.variants.isNotEmpty) {
       if (_selectedVariantIndex >= product.variants.length) {
@@ -55,60 +56,57 @@ class _ProductCardState extends State<ProductCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image section
             Expanded(
               flex: 3,
-              child: Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      topRight: Radius.circular(12),
-                    ),
-                    child: Image.network(
-                      product.primaryImage,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: AppColors.grey5,
-                        child: const Icon(
-                          Icons.fastfood,
-                          color: Colors.grey,
-                          size: 32,
-                        ),
-                      ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+                child: Image.network(
+                  product.primaryImage,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: AppColors.grey5,
+                    child: Icon(
+                      Icons.fastfood,
+                      color: Colors.grey,
+                      size: screenWidth * 0.08,
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-            // Content section
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(screenWidth * 0.02),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       product.productName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
-                        fontSize: 12,
+                        fontSize: screenWidth * 0.035,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: screenHeight * 0.005),
                     Text(
                       cleanDescription,
-                      style: TextStyle(color: AppColors.grey2, fontSize: 10),
+                      style: TextStyle(
+                        color: AppColors.grey2,
+                        fontSize: screenWidth * 0.03,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const Spacer(),
-                    _buildVariantAndAddRow(product, priceDisplay),
+                    Spacer(),
+                    _buildVariantAndAddRow(product, priceDisplay, screenWidth, screenHeight),
                   ],
                 ),
               ),
@@ -119,36 +117,35 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 
-  Widget _buildVariantAndAddRow(Product product, String priceDisplay) {
+  Widget _buildVariantAndAddRow(Product product, String priceDisplay, double screenWidth, double screenHeight) {
     final hasVariants = product.variants.isNotEmpty;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: hasVariants && product.variants.length > 1
-              ? _variantDropdown(product)
+              ? _variantDropdown(product, screenWidth)
               : Text(
                   '₹ $priceDisplay',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.yellow,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    fontSize: screenWidth * 0.035,
                   ),
                 ),
         ),
-        const SizedBox(width: 6),
+        SizedBox(width: screenWidth * 0.015),
         SizedBox(
-          height: 26,
+          height: screenHeight * 0.035,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.darkGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
             ),
             onPressed: () {
-              // Check if user is verified
               if (_authController.currentUser.value == null) {
                 Get.snackbar(
                   'Not Verified',
@@ -160,7 +157,6 @@ class _ProductCardState extends State<ProductCard> {
                 return;
               }
 
-             
               String variantId = '';
               String variantName = '';
               String variantPrice;
@@ -173,8 +169,6 @@ class _ProductCardState extends State<ProductCard> {
                 variantPrice = product.plimit;
               }
 
-              
-
               widget.cartController.addToCart(
                 productId: product.productId,
                 variantId: variantId,
@@ -185,11 +179,11 @@ class _ProductCardState extends State<ProductCard> {
                 quantity: 1,
               );
             },
-            child: const Text(
+            child: Text(
               'Add',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 11,
+                fontSize: screenWidth * 0.03,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -199,9 +193,9 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 
-  Widget _variantDropdown(Product product) {
+  Widget _variantDropdown(Product product, double screenWidth) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.015),
       decoration: BoxDecoration(
         color: AppColors.grey5.withOpacity(0.4),
         borderRadius: BorderRadius.circular(8),
@@ -211,8 +205,8 @@ class _ProductCardState extends State<ProductCard> {
         child: DropdownButton<int>(
           isDense: true,
           value: _selectedVariantIndex,
-          icon: const Icon(Icons.keyboard_arrow_down, size: 16),
-          style: const TextStyle(fontSize: 11, color: Colors.black),
+          icon: Icon(Icons.keyboard_arrow_down, size: screenWidth * 0.04),
+          style: TextStyle(fontSize: screenWidth * 0.03, color: Colors.black),
           borderRadius: BorderRadius.circular(10),
           items: [
             for (int i = 0; i < product.variants.length; i++)
@@ -225,17 +219,17 @@ class _ProductCardState extends State<ProductCard> {
                       child: Text(
                         product.variants[i].variantName,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 11,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.03,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    SizedBox(width: screenWidth * 0.01),
                     Text(
                       '₹ ${product.variants[i].varPrice}',
-                      style: const TextStyle(
-                        fontSize: 11,
+                      style: TextStyle(
+                        fontSize: screenWidth * 0.03,
                         fontWeight: FontWeight.bold,
                         color: AppColors.yellow,
                       ),

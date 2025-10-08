@@ -4,11 +4,12 @@ import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/terms_controller.dart';
 
 class TermsConditionsPage extends StatelessWidget {
-  const TermsConditionsPage({Key? key}) : super(key: key);
+  const TermsConditionsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final TermsController termsController = Get.put(TermsController());
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -32,49 +33,44 @@ class TermsConditionsPage extends StatelessWidget {
       body: Obx(() {
         if (termsController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.darkGreen,
-            ),
+            child: CircularProgressIndicator(color: AppColors.darkGreen),
           );
         }
 
         if (termsController.errorMessage.value.isNotEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Failed to load terms',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Failed to load terms',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  termsController.errorMessage.value,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.grey2),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => termsController.refreshTerms(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.darkGreen,
+                  const SizedBox(height: 8),
+                  Text(
+                    termsController.errorMessage.value,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.grey2),
                   ),
-                  child: const Text(
-                    'Retry',
-                    style: TextStyle(color: Colors.white),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => termsController.refreshTerms(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                    ),
+                    child: const Text('Retry', style: TextStyle(color: Colors.white)),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }
@@ -82,127 +78,132 @@ class TermsConditionsPage extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: () async => termsController.refreshTerms(),
           color: AppColors.darkGreen,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-                // Header Section
-                Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: AppColors.darkGreen.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.gavel,
-                          size: 48,
-                          color: AppColors.darkGreen,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Terms & Conditions',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.darkGreen,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Please read these terms and conditions carefully before using our service.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: AppColors.grey2,
-                        ),
-                      ),
-                    ],
-                  ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width < 360 ? 12 : 16,
+                  vertical: 16,
                 ),
-
-                // Terms Content
-                if (termsController.hasTermsData)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: _buildTermsContent(termsController),
-                  ),
-
-                // Footer
-                Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.all(16),
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: AppColors.fillSecondary,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.darkGreen.withOpacity(0.2),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Header Section
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(size.width < 360 ? 16 : 24),
+                      decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.darkGreen.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.gavel,
+                              size: 48,
+                              color: AppColors.darkGreen,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Terms & Conditions',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.darkGreen,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Please read these terms and conditions carefully before using our service.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14, color: AppColors.grey2),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        color: AppColors.darkGreen,
-                        size: 24,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Last Updated: October 2024',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.grey2,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'By using our app, you agree to these terms and conditions.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.labelSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                const SizedBox(height: 20),
-              ],
-            ),
+                    const SizedBox(height: 20),
+
+                    // Terms Content
+                    if (termsController.hasTermsData)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: _buildTermsContent(termsController, size),
+                      ),
+
+                    const SizedBox(height: 20),
+
+                    // Footer
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: AppColors.fillSecondary,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.darkGreen.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Column(
+                        children: const [
+                          Icon(Icons.info_outline,
+                              color: AppColors.darkGreen, size: 24),
+                          SizedBox(height: 8),
+                          Text(
+                            'Last Updated: October 2024',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.grey2,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'By using our app, you agree to these terms and conditions.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.labelSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              );
+            },
           ),
         );
       }),
     );
   }
 
-  Widget _buildTermsContent(TermsController controller) {
+  Widget _buildTermsContent(TermsController controller, Size size) {
     String content = controller.cleanTermsContent;
     List<String> lines = content.split('\n');
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(size.width < 360 ? 16 : 20),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
@@ -233,12 +234,15 @@ class TermsConditionsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Text(
-                'Account Terms',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.darkGreen,
+              const Expanded(
+                child: Text(
+                  'Account Terms',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.darkGreen,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -252,26 +256,21 @@ class TermsConditionsPage extends StatelessWidget {
 
           // Additional Terms
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(size.width < 360 ? 12 : 16),
             decoration: BoxDecoration(
               color: AppColors.fillTertiary,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: AppColors.separatorOpaque,
-              ),
+              border: Border.all(color: AppColors.separatorOpaque),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Row(
                   children: [
-                    Icon(
-                      Icons.warning_amber_rounded,
-                      color: Colors.orange,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
+                    Icon(Icons.warning_amber_rounded,
+                        color: Colors.orange, size: 20),
+                    SizedBox(width: 8),
+                    Text(
                       'Important Notice',
                       style: TextStyle(
                         fontSize: 14,
@@ -281,8 +280,8 @@ class TermsConditionsPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                const Text(
+                SizedBox(height: 12),
+                Text(
                   'Violation of any of these agreements will result in the termination of your Account. While Fusion X prohibits such conduct and Content on the Service, you understand and agree that Fusion X cannot be responsible for the Content posted on the Service and you nonetheless may be exposed to such materials. You agree to use the Service at your own risk.',
                   style: TextStyle(
                     fontSize: 13,

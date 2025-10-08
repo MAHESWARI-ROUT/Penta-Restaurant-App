@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/product_controller.dart';
+import 'package:penta_restaurant/pages/favorite_page.dart';
+import 'package:penta_restaurant/pages/search_page.dart';
 import 'package:penta_restaurant/widgets/category_card.dart';
 import 'package:penta_restaurant/widgets/main_drawer.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
-import '../../widgets/promo_carousal.dart';
-import '../../widgets/shimmer_widgets.dart';
-import '../favorite_page.dart';
-import '../search_page.dart';
+import 'package:penta_restaurant/widgets/promo_carousal.dart';
+import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
+
 
 class HomeTab extends StatefulWidget {
   final ProductController productController;
@@ -95,14 +96,7 @@ class _HomeTabState extends State<HomeTab> {
                         fontSize: 16,
                       ),
                     ),
-                    // Text(
-                    //   'See All',
-                    //   style: TextStyle(
-                    //     color: AppColors.darkGreen,
-                    //     fontWeight: FontWeight.bold,
-                    //     fontSize: 13,
-                    //   ),
-                    // ),
+                    
                   ],
                 ),
               ),
@@ -129,13 +123,7 @@ class _HomeTabState extends State<HomeTab> {
                     );
                   }
 
-                  // if (widget.productController.errorMessage.value.isNotEmpty) {
-                  //   return ErrorStateWidget(
-                  //     message: widget.productController.errorMessage.value,
-                  //     onRetry: () => widget.productController.fetchDataAndLink(),
-                  //     icon: Icons.restaurant_menu,
-                  //   );
-                  // }
+                 
 
                   List products;
                   if (selectedCategoryIndex.value == 0) {

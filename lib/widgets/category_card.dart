@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/product_controller.dart';
+import 'package:penta_restaurant/widgets/product_card.dart';
 
-import '../commons/appcolors.dart';
-import '../controller/product_controller.dart';
 
 class CategoryCard extends StatelessWidget {
   final String label;
@@ -12,22 +13,24 @@ class CategoryCard extends StatelessWidget {
   final IconData? icon;
 
   const CategoryCard({
-    Key? key,
+    super.key,
     required this.label,
     this.imageUrl,
     required this.isSelected,
     required this.onTap,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth / 5).clamp(70.0, 120.0);
 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 80,
+        width: cardWidth,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.yellow : AppColors.white,
@@ -101,20 +104,23 @@ class CategorySelector extends StatelessWidget {
   final ProductController controller;
 
   const CategorySelector({
-    Key? key,
+    super.key,
     required this.selectedCategoryIndex,
     required this.controller,
-  }) : super(key: key);
+  }) ;
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final listHeight = (screenHeight * 0.12).clamp(80.0, 120.0);
+
     return Obx(() => SizedBox(
-          height: 100,
+          height: listHeight,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             itemCount: controller.categories.length + 1,
-            separatorBuilder: (_, __) => const SizedBox(width: 20),
+            separatorBuilder: (_, __) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               return Obx(() {
                 if (index == 0) {
@@ -137,7 +143,6 @@ class CategorySelector extends StatelessWidget {
                 }
               });
             },
-
           ),
         ));
   }
