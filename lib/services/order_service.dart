@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:penta_restaurant/models/order_response.dart';
 import 'package:penta_restaurant/services/dio_client.dart';
 
+import '../models/my_order_model.dart';
+
 class OrderService {
   final Dio _dio = DioClient().dio;
 

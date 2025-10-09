@@ -10,6 +10,10 @@ import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:penta_restaurant/pages/favorite_page.dart';
+import 'package:penta_restaurant/pages/my_order_page.dart';
+import 'package:penta_restaurant/pages/my_address_page.dart';
+import 'package:penta_restaurant/pages/payment_method_page.dart';
 
 import '../authentication/verification_page.dart';
 
@@ -289,41 +293,49 @@ class ProfilePage extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
                     children: [
-                      _buildMenuCard(Icons.wallet, 'Payment Method', () {}),
+                      _buildMenuCard(Icons.wallet, 'Payment Method', () {
+                        Get.to(() => const PaymentMethodPage());
+                      }),
                       const SizedBox(height: 10),
                       _buildMenuCard(
                         Icons.shopping_bag_outlined,
                         'Order History',
-                        () {},
+                        () {
+                          Get.to(() => const MyOrdersPage());
+                        },
                       ),
                       const SizedBox(height: 10),
                       _buildMenuCard(
                         Icons.location_on_outlined,
                         'My Address',
-                        () {},
+                        () {
+                          Get.to(() => const MyAddressPage());
+                        },
                       ),
                       const SizedBox(height: 10),
                       _buildMenuCard(
                         Icons.favorite_border_outlined,
                         'My Favorite',
-                        () {},
-                      ),
-                      const SizedBox(height: 10),
-                      _buildMenuCard(
-                        Icons.card_giftcard_rounded,
-                        'About Us',
                         () {
-                          Get.to(() => const AboutUsPage());
+                          Get.to(() => FavoritePage());
                         },
                       ),
-                      const SizedBox(height: 10),
-                      _buildMenuCard(Icons.help_outline, 'FAQ', () {
-                        Get.to(() => const FAQPage());
-                      }),
-                      const SizedBox(height: 10),
-                      _buildMenuCard(Icons.gavel, 'Terms & Conditions', () {
-                        Get.to(() => const TermsConditionsPage());
-                      }),
+                      // const SizedBox(height: 10),
+                      // _buildMenuCard(
+                      //   Icons.card_giftcard_rounded,
+                      //   'About Us',
+                      //   () {
+                      //     Get.to(() => const AboutUsPage());
+                      //   },
+                      // ),
+                      // const SizedBox(height: 10),
+                      // _buildMenuCard(Icons.help_outline, 'FAQ', () {
+                      //   Get.to(() => const FAQPage());
+                      // }),
+                      // const SizedBox(height: 10),
+                      // _buildMenuCard(Icons.gavel, 'Terms & Conditions', () {
+                      //   Get.to(() => const TermsConditionsPage());
+                      // }),
                       const SizedBox(height: 10),
                       InkWell(
                         onTap: () async {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
+import 'package:penta_restaurant/controller/order_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/pages/my_order_page.dart';
 
 class ShippingDetailsPage extends StatefulWidget {
@@ -13,33 +15,46 @@ class ShippingDetailsPage extends StatefulWidget {
 
 class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
   final CartController cartController = Get.find<CartController>();
+  final ProfileController profileController = Get.put(ProfileController());
+  final OrderController orderController = Get.put(OrderController());
 
-  // Sample saved addresses - replace with actual data source
-  final RxList<Map<String, String>> savedAddresses = <Map<String, String>>[
-    {
-      'type': 'Home',
-      'address': '123 Main Street, Apartment 4B',
-      'city': 'New York, NY 10001',
-      'phone': '+1 (555) 123-4567',
-    },
-    {
-      'type': 'Office',
-      'address': '456 Business Park, Suite 100',
-      'city': 'Manhattan, NY 10005',
-      'phone': '+1 (555) 987-6543',
-    },
-  ].obs;
-
+  final RxList<Map<String, String>> savedAddresses = <Map<String, String>>[].obs;
   final RxInt selectedAddressIndex = (-1).obs;
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingAddresses = true.obs;
 
   @override
   void initState() {
     super.initState();
-    // Select first address by default if available
-    if (savedAddresses.isNotEmpty) {
-      selectedAddressIndex.value = 0;
+    _loadAddresses();
+  }
+
+  void _loadAddresses() async {
+    isLoadingAddresses.value = true;
+
+    // Wait a moment for profile to load if needed
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Load default address from user profile
+    if (profileController.userProfile.value != null) {
+      final profile = profileController.userProfile.value!;
+
+      // Check if profile has address data
+      if (profile.flat.isNotEmpty || profile.locality.isNotEmpty) {
+        final defaultAddress = {
+          'type': 'Default',
+          'address': '${profile.flat}${profile.flat.isNotEmpty && profile.locality.isNotEmpty ? ', ' : ''}${profile.locality}',
+          'city': '${profile.city}${profile.city.isNotEmpty && profile.state.isNotEmpty ? ', ' : ''}${profile.state}${profile.pincode.isNotEmpty ? ' - ' : ''}${profile.pincode}',
+          'phone': profile.mobile,
+          'landmark': profile.landmark,
+        };
+
+        savedAddresses.add(defaultAddress);
+        selectedAddressIndex.value = 0; // Select default address
+      }
     }
+
+    isLoadingAddresses.value = false;
   }
 
   void _showAddAddressBottomSheet() {
@@ -251,7 +266,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
     );
   }
 
-  void _confirmOrder() {
+  void _confirmOrder() async {
     if (selectedAddressIndex.value == -1) {
       Get.snackbar(
         'Error',
@@ -263,16 +278,72 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
       return;
     }
 
+    final selectedAddress = savedAddresses[selectedAddressIndex.value];
+    final userId = profileController.userId;
+
+    if (userId.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'User not authenticated',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     isLoading.value = true;
 
-    // Simulate order processing delay
-    Future.delayed(const Duration(seconds: 2), () {
+    try {
+      // Prepare order data
+      final address = selectedAddress['address']!;
+      final phone = selectedAddress['phone']!;
+      final total = cartController.totalPrice.toStringAsFixed(2);
+
+      // Place the order
+      final orderResponse = await orderController.placeOrder(
+        userId: userId,
+        cartId: userId, // Using userId as cartId since carts are user-specific
+        address: address,
+        phone: phone,
+        paymentRef: 'NA', // Empty for COD
+        payStatus: 'pending', // Pending for COD
+        total: total,
+        paymentMode: 'Cash on Delivery',
+        orderRemark: 'Order placed via app',
+      );
+
+      if (orderResponse != null && orderResponse.success) {
+        // Order placed successfully
+        isLoading.value = false;
+        _showOrderSuccessDialog();
+      } else {
+        // Order placement failed
+        isLoading.value = false;
+        Get.snackbar(
+          'Error',
+          orderResponse?.message ?? 'Failed to place order. Please try again.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
       isLoading.value = false;
-      _showOrderSuccessDialog();
-    });
+      Get.snackbar(
+        'Error',
+        'An error occurred while placing your order. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      print('Error placing order: $e');
+    }
   }
 
   void _showOrderSuccessDialog() {
+    final selectedAddress = savedAddresses[selectedAddressIndex.value];
+
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -312,42 +383,87 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                 color: AppColors.fillSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                savedAddresses[selectedAddressIndex.value]['address']!,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
+              child: Column(
+                children: [
+                  Text(
+                    selectedAddress['address']!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (selectedAddress['city']!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      selectedAddress['city']!,
+                      style: const TextStyle(fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ],
               ),
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkGreen,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.darkGreen, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close dialog
+                      cartController.clearCart(); // Clear cart
+                      Get.back(); // Go back to previous page
+                      Get.snackbar(
+                        'Success',
+                        'Cart cleared successfully',
+                        backgroundColor: Colors.green,
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                    child: const Text(
+                      'Continue Shopping',
+                      style: TextStyle(
+                        color: AppColors.darkGreen,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
-                onPressed: () {
-                  Get.back();
-                  cartController.clearCart(); // Clear cart
-                  Get.offAll(
-                    () => const MyOrdersPage(),
-                  ); // Navigate to orders page
-                },
-                child: const Text(
-                  'View Orders',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.darkGreen,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close dialog
+                      cartController.clearCart(); // Clear cart
+                      Get.off(() => const MyOrdersPage()); // Navigate to orders page
+                    },
+                    child: const Text(
+                      'My Orders',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -380,47 +496,246 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Section Title
-                  const Text(
-                    'Select Delivery Address',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.darkGreen,
-                    ),
+            child: Obx(() {
+              if (isLoadingAddresses.value) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.darkGreen,
                   ),
-                  const SizedBox(height: 16),
+                );
+              }
 
-                  // Address Cards
-                  Obx(
-                    () => Column(
-                      children: [
-                        ...savedAddresses.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final address = entry.value;
-                          final isSelected =
-                              selectedAddressIndex.value == index;
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Section Title
+                    const Text(
+                      'Select Delivery Address',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.darkGreen,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 12),
+                    // Address Cards
+                    Obx(
+                      () => Column(
+                        children: [
+                          if (savedAddresses.isEmpty)
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: AppColors.white,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.location_off_outlined,
+                                    size: 48,
+                                    color: AppColors.grey2,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'No saved addresses',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: AppColors.grey2,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Add your delivery address to continue',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColors.grey2,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
+                            )
+                          else
+                            ...savedAddresses.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final address = entry.value;
+                              final isSelected = selectedAddressIndex.value == index;
+
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                child: InkWell(
+                                  onTap: () => selectedAddressIndex.value = index,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? AppColors.darkGreen
+                                            : AppColors.separatorOpaque,
+                                        width: isSelected ? 2 : 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        // Radio Button
+                                        Container(
+                                          width: 20,
+                                          height: 20,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: isSelected
+                                                  ? AppColors.darkGreen
+                                                  : AppColors.grey3,
+                                              width: 2,
+                                            ),
+                                            color: isSelected
+                                                ? AppColors.darkGreen
+                                                : Colors.transparent,
+                                          ),
+                                          child: isSelected
+                                              ? const Icon(
+                                                  Icons.check,
+                                                  color: Colors.white,
+                                                  size: 12,
+                                                )
+                                              : null,
+                                        ),
+                                        const SizedBox(width: 16),
+
+                                        // Address Info
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.darkGreen.withOpacity(0.1),
+                                                      borderRadius: BorderRadius.circular(6),
+                                                    ),
+                                                    child: Text(
+                                                      address['type']!,
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: AppColors.darkGreen,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                address['address']!,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.black,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              if (address['city']!.isNotEmpty)
+                                                Text(
+                                                  address['city']!,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: AppColors.grey2,
+                                                  ),
+                                                ),
+                                              if (address['landmark']!.isNotEmpty) ...[
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  'Landmark: ${address['landmark']!}',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: AppColors.grey2,
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
+                                                ),
+                                              ],
+                                              const SizedBox(height: 4),
+                                              if (address['phone']!.isNotEmpty)
+                                                Text(
+                                                  address['phone']!,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: AppColors.grey2,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        // Delete Button (only for non-default addresses)
+                                        if (address['type'] != 'Default')
+                                          IconButton(
+                                            onPressed: () {
+                                              savedAddresses.removeAt(index);
+                                              if (selectedAddressIndex.value == index) {
+                                                selectedAddressIndex.value =
+                                                    savedAddresses.isNotEmpty ? 0 : -1;
+                                              } else if (selectedAddressIndex.value > index) {
+                                                selectedAddressIndex.value--;
+                                              }
+                                              Get.snackbar(
+                                                'Success',
+                                                'Address removed',
+                                                backgroundColor: Colors.green,
+                                                colorText: Colors.white,
+                                                snackPosition: SnackPosition.BOTTOM,
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.delete_outline,
+                                              color: Colors.red[400],
+                                              size: 20,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+
+                          const SizedBox(height: 8),
+
+                          // Add New Address Card
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 20),
                             child: InkWell(
-                              onTap: () => selectedAddressIndex.value = index,
+                              onTap: _showAddAddressBottomSheet,
                               borderRadius: BorderRadius.circular(16),
                               child: Container(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                   color: AppColors.white,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.darkGreen
-                                        : AppColors.separatorOpaque,
-                                    width: isSelected ? 2 : 1,
+                                    color: AppColors.darkGreen,
+                                    style: BorderStyle.solid,
+                                    width: 2,
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -431,179 +746,41 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                   ],
                                 ),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    // Radio Button
                                     Container(
-                                      width: 20,
-                                      height: 20,
+                                      padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
+                                        color: AppColors.darkGreen.withOpacity(0.1),
                                         shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: isSelected
-                                              ? AppColors.darkGreen
-                                              : AppColors.grey3,
-                                          width: 2,
-                                        ),
-                                        color: isSelected
-                                            ? AppColors.darkGreen
-                                            : Colors.transparent,
                                       ),
-                                      child: isSelected
-                                          ? const Icon(
-                                              Icons.check,
-                                              color: Colors.white,
-                                              size: 12,
-                                            )
-                                          : null,
-                                    ),
-                                    const SizedBox(width: 16),
-
-                                    // Address Info
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.darkGreen
-                                                      .withOpacity(0.1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                ),
-                                                child: Text(
-                                                  address['type']!,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.darkGreen,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            address['address']!,
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.black,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            address['city']!,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.grey2,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            address['phone']!,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColors.grey2,
-                                            ),
-                                          ),
-                                        ],
+                                      child: const Icon(
+                                        Icons.add,
+                                        color: AppColors.darkGreen,
+                                        size: 24,
                                       ),
                                     ),
-
-                                    // Edit Button
-                                    IconButton(
-                                      onPressed: () {
-                                        // TODO: Implement edit address functionality
-                                        Get.snackbar(
-                                          'Info',
-                                          'Edit address feature coming soon',
-                                          backgroundColor: AppColors.yellow,
-                                          colorText: AppColors.darkGreen,
-                                          snackPosition: SnackPosition.BOTTOM,
-                                        );
-                                      },
-                                      icon: Icon(
-                                        Icons.edit_outlined,
-                                        color: AppColors.grey2,
-                                        size: 20,
+                                    const SizedBox(width: 12),
+                                    const Text(
+                                      'Add Different Address',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.darkGreen,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                          );
-                        }),
-
-                        // Add New Address Card
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 20),
-                          child: InkWell(
-                            onTap: _showAddAddressBottomSheet,
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppColors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppColors.darkGreen,
-                                  style: BorderStyle.solid,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.darkGreen.withOpacity(
-                                        0.1,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.add,
-                                      color: AppColors.darkGreen,
-                                      size: 24,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  const Text(
-                                    'Add New Address',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.darkGreen,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
           ),
 
           // Order Summary & Confirm Button

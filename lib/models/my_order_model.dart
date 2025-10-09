@@ -1,3 +1,29 @@
+class OrderResponse {
+  final bool success;
+  final String message;
+  final List<MyOrder> orders;
+
+  OrderResponse({
+    required this.success,
+    required this.message,
+    required this.orders,
+  });
+
+  factory OrderResponse.fromJson(Map<String, dynamic> json) {
+    var ordersList = <MyOrder>[];
+    if (json['orderdata'] != null) {
+      ordersList = (json['orderdata'] as List)
+          .map((item) => MyOrder.fromJson(item))
+          .toList();
+    }
+    return OrderResponse(
+      success: json['success']?.toString().toLowerCase() == 'true',
+      message: json['message']?.toString() ?? '',
+      orders: ordersList,
+    );
+  }
+}
+
 class MyOrder {
   final String orderId;
   final String cartId;
@@ -19,19 +45,19 @@ class MyOrder {
 
   factory MyOrder.fromJson(Map<String, dynamic> json) {
     var productList = <OrderProduct>[];
-    if (json['products'] != null) {
-      productList = (json['products'] as List)
+    if (json['varients'] != null) {
+      productList = (json['varients'] as List)
           .map((item) => OrderProduct.fromJson(item))
           .toList();
     }
 
     return MyOrder(
-      orderId: json['order_id']?.toString() ?? '',
-      cartId: json['cart_id']?.toString() ?? '',
+      orderId: json['orderid']?.toString() ?? '',
+      cartId: '',  // no cart_id provided in JSON, leave empty if unknown
       status: json['status']?.toString() ?? '',
-      paymentStatus: json['payment_status']?.toString() ?? '',
+      paymentStatus: json['paymentstatus']?.toString() ?? '',
       totalAmount: json['total']?.toString() ?? '0',
-      createdAt: json['created_at']?.toString() ?? '',
+      createdAt: json['orderdate']?.toString() ?? '',
       products: productList,
     );
   }
@@ -55,10 +81,10 @@ class OrderProduct {
   factory OrderProduct.fromJson(Map<String, dynamic> json) {
     return OrderProduct(
       productId: json['product_id']?.toString() ?? '',
-      productName: json['product_name']?.toString() ?? '',
-      variantName: json['variant_name']?.toString() ?? '',
-      quantity: int.tryParse(json['quantity']?.toString() ?? '0') ?? 0,
-      price: json['price']?.toString() ?? '0',
+      productName: json['productname']?.toString() ?? '',
+      variantName: json['variantname']?.toString() ?? '',
+      quantity: int.tryParse(json['varquantity']?.toString() ?? '0') ?? 0,
+      price: json['varprice']?.toString() ?? '0',
     );
   }
 }

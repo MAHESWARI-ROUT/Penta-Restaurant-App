@@ -22,12 +22,19 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   final GetStorage _storage = GetStorage();
 
   String get userId {
-    final storedData = _storage.read('user_data');
-    if (storedData != null && storedData['userId'] != null) {
-      return storedData['userId'] as String;
+    Map<String, dynamic>? storedData = _storage.read('user_data');
+    final stored = _storage.read('user_data');
+    print('[DEBUG MyOrdersPage] Stored user_data: $stored');
+
+    if (storedData != null && storedData['user_id'] != null) {
+      final String id  = storedData['user_id'] ?? '';
+      print('[DEBUG MyOrdersPage] Retrieved userId: $id');
+      return id;
     }
+    print('[DEBUG MyOrdersPage] userId not found in storage');
     return '';
   }
+
 
   @override
   void initState() {
@@ -40,8 +47,13 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   }
 
   Future<void> _fetchOrders() async {
+    print('[DEBUG MyOrdersPage] _fetchOrders called');
     if (userId.isNotEmpty) {
+      print('[DEBUG MyOrdersPage] Calling orderController.fetchMyOrders with userId: $userId');
       await orderController.fetchMyOrders(userId);
+      print('[DEBUG MyOrdersPage] fetchMyOrders completed. Orders count: ${orderController.myOrders.length}');
+    } else {
+      print('[DEBUG MyOrdersPage] Skipping fetch - userId is empty');
     }
   }
 
@@ -73,50 +85,55 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         final profile = profileController.userProfile.value;
         final isLoggedIn = profile != null && profile.success;
 
+        print('[DEBUG MyOrdersPage] Build called - isVerified: ${profileController.isVerified.value}, isLoggedIn: $isLoggedIn');
+        print('[DEBUG MyOrdersPage] Loading: ${orderController.isLoadingMyOrders.value}, Orders count: ${orderController.myOrders.length}, Error: "${orderController.errorMessage.value}"');
+
         // Show login/verify prompt for logged-out users
-        if (!isLoggedIn) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Please login or verify your account to view your orders.',
-                    style: const TextStyle(fontSize: 18, color: AppColors.grey2),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 28),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkGreen,
-                      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 4,
-                    ),
-                    onPressed: () => Get.to(() => const LoginPage()),
-                    child: const Text(
-                      'Login / Verify',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+        // if (!isLoggedIn) {
+        //   return Center(
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(24.0),
+        //       child: Column(
+        //         mainAxisSize: MainAxisSize.min,
+        //         children: [
+        //           Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
+        //           const SizedBox(height: 20),
+        //           Text(
+        //             'Please login or verify your account to view your orders.',
+        //             style: const TextStyle(fontSize: 18, color: AppColors.grey2),
+        //             textAlign: TextAlign.center,
+        //           ),
+        //           const SizedBox(height: 28),
+        //           ElevatedButton(
+        //             style: ElevatedButton.styleFrom(
+        //               backgroundColor: AppColors.darkGreen,
+        //               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+        //               shape: RoundedRectangleBorder(
+        //                 borderRadius: BorderRadius.circular(30),
+        //               ),
+        //               elevation: 4,
+        //             ),
+        //             onPressed: () => Get.to(() => const LoginPage()),
+        //             child: const Text(
+        //               'Login / Verify',
+        //               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   );
+        // }
 
         // Show loader while fetching orders
         if (orderController.isLoadingMyOrders.value && orderController.myOrders.isEmpty) {
+          print('[DEBUG MyOrdersPage] Showing loading state');
           return const Center(child: CircularProgressIndicator());
         }
 
         // Show error if fetch fails
         if (orderController.errorMessage.value.isNotEmpty && orderController.myOrders.isEmpty) {
+          print('[DEBUG MyOrdersPage] Showing error state: ${orderController.errorMessage.value}');
           return Center(
             child: Text(
               orderController.errorMessage.value,
@@ -127,6 +144,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
 
         // Show empty state if no orders
         if (orderController.myOrders.isEmpty) {
+          print('[DEBUG MyOrdersPage] Showing empty state');
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -152,6 +170,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         }
 
         // Show orders list
+        print('[DEBUG MyOrdersPage] Showing orders list with ${orderController.myOrders.length} orders');
         return RefreshIndicator(
           onRefresh: _fetchOrders,
           child: ListView.builder(
