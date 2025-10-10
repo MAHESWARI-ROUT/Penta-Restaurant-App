@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
@@ -7,11 +6,12 @@ import 'package:penta_restaurant/controller/restaurant_controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutUsPage extends StatelessWidget {
-  const AboutUsPage({Key? key}) : super(key: key);
+  const AboutUsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final RestaurantController restaurantController = Get.put(RestaurantController());
+    final size = MediaQuery.of(context).size;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
@@ -35,71 +35,78 @@ class AboutUsPage extends StatelessWidget {
       body: Obx(() {
         if (restaurantController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: AppColors.darkGreen,
-            ),
+            child: CircularProgressIndicator(color: AppColors.darkGreen),
           );
         }
 
         if (restaurantController.errorMessage.value.isNotEmpty) {
           return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: Colors.red,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Failed to load restaurant details',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  restaurantController.errorMessage.value,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: AppColors.grey2),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: restaurantController.refreshRestaurantDetails,
-                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.darkGreen),
-                  child: const Text('Retry', style: TextStyle(color: Colors.white)),
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Failed to load restaurant details',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    restaurantController.errorMessage.value,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.grey2),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: restaurantController.refreshRestaurantDetails,
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.darkGreen),
+                    child: const Text('Retry', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
             ),
           );
         }
 
-        return SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              if (restaurantController.restaurantImages.isNotEmpty)
-                Container(
-                  height: 170,
-                  margin: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, 4))],
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  child: Image.network(
-                    restaurantController.restaurantImages.first,
-                    fit: BoxFit.fitWidth,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: AppColors.grey5,
-                      child: const Icon(Icons.restaurant, size: 64, color: AppColors.grey3),
-                    ),
-                  ),
-                ),
-
-              Padding(
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    if (restaurantController.restaurantImages.isNotEmpty)
+                      Container(
+                        height: size.height * 0.25,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        child: Image.network(
+                          restaurantController.restaurantImages.first,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: AppColors.grey5,
+                            child: const Icon(Icons.restaurant, size: 64, color: AppColors.grey3),
+                          ),
+                        ),
+                      ),
+
+                    const SizedBox(height: 20),
+
                     _buildInfoCard(
                       icon: Icons.restaurant,
                       title: restaurantController.restaurantName,
@@ -127,9 +134,12 @@ class AboutUsPage extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
-                    Row(
+                    Wrap(
+                      runSpacing: 16,
+                      spacing: 16,
                       children: [
-                        Expanded(
+                        SizedBox(
+                          width: constraints.maxWidth < 400 ? double.infinity : (constraints.maxWidth / 2) - 20,
                           child: _buildInfoCard(
                             icon: Icons.phone,
                             title: 'Call Us',
@@ -145,8 +155,8 @@ class AboutUsPage extends StatelessWidget {
                             },
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
+                        SizedBox(
+                          width: constraints.maxWidth < 400 ? double.infinity : (constraints.maxWidth / 2) - 20,
                           child: _buildInfoCard(
                             icon: Icons.web,
                             title: 'Website',
@@ -185,8 +195,8 @@ class AboutUsPage extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          ),
+            );
+          },
         );
       }),
     );
@@ -207,9 +217,12 @@ class AboutUsPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))
+          ],
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.all(12),
@@ -221,21 +234,23 @@ class AboutUsPage extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.darkGreen),
-                ),
-                const SizedBox(height: 4),
-                Text(subtitle, style: TextStyle(fontSize: 14, color: AppColors.grey2), maxLines: 3, overflow: TextOverflow.ellipsis),
-              ]),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 14, color: AppColors.grey2),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
             if (onTap != null)
-              const Icon(
-                Icons.arrow_forward_ios,
-                color: AppColors.grey3,
-                size: 16,
-              ),
+              const Icon(Icons.arrow_forward_ios, color: AppColors.grey3, size: 16),
           ],
         ),
       ),
@@ -250,28 +265,39 @@ class AboutUsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: AppColors.yellow.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-            child: const Icon(Icons.info_outline, color: AppColors.darkGreen, size: 24),
-          ),
-          const SizedBox(width: 16),
-          const Text('Service Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
-        ]),
-        const SizedBox(height: 20),
-        Row(children: [
-          Expanded(
-            child: _buildServiceItem('Currency', controller.restaurantCurrency, Icons.currency_rupee),
-          ),
-          Expanded(
-            child: _buildServiceItem('Tax', '${controller.restaurantTax}%', Icons.receipt),
-          ),
-        ]),
-        const SizedBox(height: 16),
-        _buildServiceItem('Minimum Order', '${controller.restaurantCurrency} ${controller.restaurantMinOrder}', Icons.shopping_cart),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: AppColors.yellow.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+              child: const Icon(Icons.info_outline, color: AppColors.darkGreen, size: 24),
+            ),
+            const SizedBox(width: 16),
+            const Text('Service Details',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+          ]),
+          const SizedBox(height: 20),
+          LayoutBuilder(builder: (context, constraints) {
+            final isSmallScreen = constraints.maxWidth < 400;
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(child: _buildServiceItem('Currency', controller.restaurantCurrency, Icons.currency_rupee)),
+                    if (!isSmallScreen) const SizedBox(width: 16),
+                    Expanded(child: _buildServiceItem('Tax', '${controller.restaurantTax}%', Icons.receipt)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildServiceItem('Minimum Order',
+                    '${controller.restaurantCurrency} ${controller.restaurantMinOrder}', Icons.shopping_cart),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
 
@@ -280,13 +306,16 @@ class AboutUsPage extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(right: 8),
       decoration: BoxDecoration(color: AppColors.fillSecondary, borderRadius: BorderRadius.circular(8)),
-      child: Column(children: [
-        Icon(icon, color: AppColors.darkGreen, size: 20),
-        const SizedBox(height: 8),
-        Text(label, style: TextStyle(fontSize: 12, color: AppColors.grey2)),
-        const SizedBox(height: 4),
-        Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
-      ]),
+      child: Column(
+        children: [
+          Icon(icon, color: AppColors.darkGreen, size: 20),
+          const SizedBox(height: 8),
+          Text(label, style: TextStyle(fontSize: 12, color: AppColors.grey2)),
+          const SizedBox(height: 4),
+          Text(value,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+        ],
+      ),
     );
   }
 
@@ -306,7 +335,8 @@ class AboutUsPage extends StatelessWidget {
             child: const Icon(Icons.delivery_dining, color: Colors.green, size: 24),
           ),
           const SizedBox(width: 16),
-          const Text('Delivery Areas', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+          const Text('Delivery Areas',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
         ]),
         const SizedBox(height: 16),
         Wrap(

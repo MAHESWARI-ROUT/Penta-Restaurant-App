@@ -9,11 +9,11 @@ class ShimmerEffect extends StatefulWidget {
   final Color highlightColor;
 
   const ShimmerEffect({
-    Key? key,
+   super.key,
     required this.child,
     this.baseColor = const Color(0xFFE0E0E0),
     this.highlightColor = const Color(0xFFF5F5F5),
-  }) : super(key: key);
+  }) ;
 
   @override
   State<ShimmerEffect> createState() => _ShimmerEffectState();
@@ -73,7 +73,7 @@ class _ShimmerEffectState extends State<ShimmerEffect>
 }
 
 class ProductCardShimmer extends StatelessWidget {
-  const ProductCardShimmer({Key? key}) : super(key: key);
+  const ProductCardShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,7 @@ class ProductCardShimmer extends StatelessWidget {
 }
 
 class CategoryShimmer extends StatelessWidget {
-  const CategoryShimmer({Key? key}) : super(key: key);
+  const CategoryShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +194,7 @@ class CategoryShimmer extends StatelessWidget {
 }
 
 class PromoCarouselShimmer extends StatelessWidget {
-  const PromoCarouselShimmer({Key? key}) : super(key: key);
+  const PromoCarouselShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -401,7 +401,7 @@ class ErrorStateWidget extends StatelessWidget {
 
 
 class HomeTabSkeleton extends StatelessWidget {
-  const HomeTabSkeleton({Key? key}) : super(key: key);
+  const HomeTabSkeleton({super.key});
 
   @override
   Widget build(BuildContext context) {

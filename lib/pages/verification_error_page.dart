@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'package:penta_restaurant/pages/authentication/login_page.dart';
 
 class VerificationErrorPage extends StatelessWidget {
   final String message;
@@ -11,12 +10,12 @@ class VerificationErrorPage extends StatelessWidget {
   final String? userEmail;
 
   const VerificationErrorPage({
-    Key? key,
+    super.key,
     this.message = 'Please verify your email to continue.',
     this.whatsAppPhoneNumber = '916370793232',
     this.userName,
     this.userEmail,
-  }) : super(key: key);
+  }) ;
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,6 @@ import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/favorite_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
-import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
@@ -18,7 +17,6 @@ class FavoritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // If user is not verified
     if (!profileController.isVerified.value) {
       return VerificationErrorPage(
         userName: profileController.displayName,
@@ -26,7 +24,6 @@ class FavoritePage extends StatelessWidget {
       );
     }
 
-    // Normal wishlist UI for logged-in users
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
@@ -72,39 +69,38 @@ class FavoritePage extends StatelessWidget {
           );
         }
 
-        // Grid of favorite products
-        return GridView.builder(
-          padding: const EdgeInsets.all(10),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 18,
-            mainAxisSpacing: 18,
-            childAspectRatio: 3 / 4.3,
-          ),
-          itemCount: favoriteController.favorites.length,
-          itemBuilder: (context, index) {
-            final product = favoriteController.favorites[index];
-            return Hero(
-              tag: 'favorite_${product.productId}',
-              child: Material(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(18),
-                elevation: 7,
-                child: GestureDetector(
-                  onTap: () {
-                    Get.to(() => ProductDetailsPage(
+        // Wrap-based layout instead of GridView.builder
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: Wrap(
+            spacing: 18,
+            runSpacing: 18,
+            children: favoriteController.favorites.map((product) {
+              return SizedBox(
+                width: (MediaQuery.of(context).size.width - 18 * 3) / 2, // 2 columns + spacing
+                child: Hero(
+                  tag: 'favorite_${product.productId}',
+                  child: Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(18),
+                    elevation: 7,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(() => ProductDetailsPage(
                           product: product,
                           cartController: cartController,
                         ));
-                  },
-                  child: ProductGridItem(
-                    product: product,
-                    cartController: cartController,
+                      },
+                      child: ProductGridItem(
+                        product: product,
+                        cartController: cartController,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            }).toList(),
+          ),
         );
       }),
     );

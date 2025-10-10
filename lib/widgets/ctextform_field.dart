@@ -9,16 +9,16 @@ class CtextformField extends StatefulWidget {
     this.isPassword = false,
     this.icon1,
     this.passwordController,
-    this.controller, // Added external controller
-    this.validator, // Added validator
+    this.controller,
+    this.validator,
   });
 
   final String text;
   final bool isPassword;
   final Icon? icon1;
   final PasswordController? passwordController;
-  final TextEditingController? controller; // Added
-  final String? Function(String?)? validator; // Added
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   @override
   State<CtextformField> createState() => _CtextformFieldState();
@@ -30,20 +30,21 @@ class _CtextformFieldState extends State<CtextformField> {
   @override
   void initState() {
     super.initState();
-    // Use external controller if provided, otherwise create internal one
     _internalController = widget.controller ?? TextEditingController();
   }
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = MediaQuery.of(context).size.width * 0.025;
+
     return Container(
+      width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: Colors.white,
       ),
       child: widget.isPassword
           ? Obx(() {
-              // check if passwordController is provided
               final passwordCtrl = widget.passwordController;
               if (passwordCtrl == null) {
                 throw Exception(
@@ -56,9 +57,9 @@ class _CtextformFieldState extends State<CtextformField> {
                 obscureText: passwordCtrl.isHidden.value,
                 validator: widget.validator,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(
+                  contentPadding: EdgeInsets.symmetric(
                     vertical: 16.0,
-                    horizontal: 10.0,
+                    horizontal: horizontalPadding,
                   ),
                   prefixIcon: widget.icon1,
                   suffixIcon: IconButton(
@@ -70,8 +71,10 @@ class _CtextformFieldState extends State<CtextformField> {
                     onPressed: passwordCtrl.toggleVisibility,
                   ),
                   labelText: widget.text,
-                  labelStyle:
-                      const TextStyle(color: Colors.black, fontSize: 16),
+                  labelStyle: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
                   border: InputBorder.none,
                 ),
               );
@@ -80,14 +83,13 @@ class _CtextformFieldState extends State<CtextformField> {
               controller: _internalController,
               validator: widget.validator,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    horizontal: 10.0,
-                  ),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 16.0,
+                  horizontal: horizontalPadding,
+                ),
                 prefixIcon: widget.icon1,
                 labelText: widget.text,
-                labelStyle:
-                    const TextStyle(color: Colors.black, fontSize: 16),
+                labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
                 border: InputBorder.none,
               ),
             ),
@@ -96,7 +98,6 @@ class _CtextformFieldState extends State<CtextformField> {
 
   @override
   void dispose() {
-    // Only dispose if we created the controller internally
     if (widget.controller == null) {
       _internalController.dispose();
     }

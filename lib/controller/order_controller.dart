@@ -14,19 +14,26 @@ class OrderController extends GetxController {
   final RxString errorMessage = ''.obs;
 
   Future<void> fetchMyOrders(String userId) async {
+    print('[DEBUG OrderController] fetchMyOrders called with userId: $userId');
     isLoadingMyOrders.value = true;
     errorMessage.value = '';
     try {
+      print('[DEBUG OrderController] Calling _orderService.getMyOrders...');
       final response = await _orderService.getMyOrders(userId);
+      print('[DEBUG OrderController] API response received: success=${response?.success}, message=${response?.message}');
       if (response != null && response.success) {
         myOrders.value = response.orders;
+        print('[DEBUG OrderController] Orders loaded successfully: ${myOrders.length} orders');
       } else {
         errorMessage.value = response?.message ?? 'Failed to load orders';
+        print('[DEBUG OrderController] Failed to load orders: ${errorMessage.value}');
       }
     } catch (e) {
       errorMessage.value = 'Error fetching orders: $e';
+      print('[DEBUG OrderController] Exception in fetchMyOrders: $e');
     } finally {
       isLoadingMyOrders.value = false;
+      print('[DEBUG OrderController] fetchMyOrders completed, loading=false');
     }
   }
 
