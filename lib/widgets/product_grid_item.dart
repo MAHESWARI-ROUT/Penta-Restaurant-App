@@ -66,7 +66,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                     style: TextStyle(
                       fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -80,9 +80,9 @@ class _ProductGridItemState extends State<ProductGridItem> {
                           isExpanded: true,
                           underline: Container(
                             height: 2,
-                            color: AppColors.darkGreen.withOpacity(0.6),
+                            color: AppColors.primary.withOpacity(0.6),
                           ),
-                          iconEnabledColor: AppColors.darkGreen,
+                          iconEnabledColor: AppColors.primary,
                           items: List.generate(variants.length, (index) {
                             final v = variants[index];
                             return DropdownMenuItem(
@@ -112,7 +112,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                                   shape: const CircleBorder(),
                                   padding: EdgeInsets.all(screenWidth * 0.02),
                                   backgroundColor: AppColors.grey5,
-                                  foregroundColor: AppColors.darkGreen,
+                                  foregroundColor: AppColors.primary,
                                   elevation: 0,
                                 ),
                                 onPressed: quantity > 1
@@ -140,7 +140,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                                 style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   padding: EdgeInsets.all(screenWidth * 0.025),
-                                  backgroundColor: AppColors.darkGreen,
+                                  backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                 ),
@@ -171,7 +171,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkGreen,
+                        backgroundColor: AppColors.primary,
                         padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -305,7 +305,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
           child: Text(
             '₹ $priceDisplay',
             style: TextStyle(
-              color: AppColors.yellow,
+              color: AppColors.secondary1,
               fontWeight: FontWeight.bold,
               fontSize: screenWidth * 0.04,
             ),
@@ -313,7 +313,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.darkGreen,
+            backgroundColor: AppColors.primary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

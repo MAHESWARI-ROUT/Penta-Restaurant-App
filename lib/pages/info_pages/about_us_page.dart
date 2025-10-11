@@ -19,13 +19,13 @@ class AboutUsPage extends StatelessWidget {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: Get.back,
         ),
         title: const Text(
           'About Us',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -35,7 +35,7 @@ class AboutUsPage extends StatelessWidget {
       body: Obx(() {
         if (restaurantController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.darkGreen),
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -62,7 +62,7 @@ class AboutUsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: restaurantController.refreshRestaurantDetails,
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.darkGreen),
+                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                     child: const Text('Retry', style: TextStyle(color: Colors.white)),
                   ),
                 ],
@@ -111,7 +111,7 @@ class AboutUsPage extends StatelessWidget {
                       icon: Icons.restaurant,
                       title: restaurantController.restaurantName,
                       subtitle: restaurantController.cleanDescription,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
 
                     const SizedBox(height: 16),
@@ -238,7 +238,7 @@ class AboutUsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary)),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
@@ -271,12 +271,12 @@ class AboutUsPage extends StatelessWidget {
           Row(children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: AppColors.yellow.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
-              child: const Icon(Icons.info_outline, color: AppColors.darkGreen, size: 24),
+              decoration: BoxDecoration(color: AppColors.secondary1.withOpacity(0.2), borderRadius: BorderRadius.circular(12)),
+              child: const Icon(Icons.info_outline, color: AppColors.primary, size: 24),
             ),
             const SizedBox(width: 16),
             const Text('Service Details',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
           ]),
           const SizedBox(height: 20),
           LayoutBuilder(builder: (context, constraints) {
@@ -308,12 +308,12 @@ class AboutUsPage extends StatelessWidget {
       decoration: BoxDecoration(color: AppColors.fillSecondary, borderRadius: BorderRadius.circular(8)),
       child: Column(
         children: [
-          Icon(icon, color: AppColors.darkGreen, size: 20),
+          Icon(icon, color: AppColors.primary, size: 20),
           const SizedBox(height: 8),
           Text(label, style: TextStyle(fontSize: 12, color: AppColors.grey2)),
           const SizedBox(height: 4),
           Text(value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.primary)),
         ],
       ),
     );
@@ -336,7 +336,7 @@ class AboutUsPage extends StatelessWidget {
           ),
           const SizedBox(width: 16),
           const Text('Delivery Areas',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.darkGreen)),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
         ]),
         const SizedBox(height: 16),
         Wrap(
@@ -346,12 +346,12 @@ class AboutUsPage extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.darkGreen.withOpacity(0.1),
+                color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.darkGreen.withOpacity(0.3)),
+                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
               ),
               child: Text(pincode,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.darkGreen)),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.primary)),
             );
           }).toList(),
         ),

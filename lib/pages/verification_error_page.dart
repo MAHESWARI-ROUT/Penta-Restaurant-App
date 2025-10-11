@@ -22,7 +22,7 @@ class VerificationErrorPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        backgroundColor: AppColors.yellow,
+        backgroundColor: AppColors.secondary1,
         elevation: 0,
         title: Text('Access Denied', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
         centerTitle: false,
@@ -45,7 +45,7 @@ class VerificationErrorPage extends StatelessWidget {
 
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkGreen,
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                   elevation: 4,
@@ -108,7 +108,7 @@ class UnverifiedUserDialog extends StatelessWidget {
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.darkGreen,
+            backgroundColor: AppColors.primary,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             elevation: 4,

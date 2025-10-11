@@ -12,7 +12,7 @@ class ForgetPasswordPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.darkGreen,
+        backgroundColor: AppColors.primary,
         title: Text(
           'Forget Password',
           style: TextStyle(color: AppColors.backgroundPrimary),
@@ -22,7 +22,7 @@ class ForgetPasswordPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back_ios, color: AppColors.backgroundPrimary),
         ),
       ),
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: ConstrainedBox(
@@ -58,7 +58,7 @@ class ForgetPasswordPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.yellow,
+                      backgroundColor: AppColors.secondary1,
                       padding: EdgeInsets.symmetric(vertical: 14),
                     ),
                     child: Text(

@@ -29,12 +29,12 @@ class FavoritePage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           'Wishlist',
-          style: TextStyle(color: AppColors.darkGreen, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 4,
-        iconTheme: IconThemeData(color: AppColors.darkGreen),
+        iconTheme: IconThemeData(color: AppColors.primary),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
@@ -47,12 +47,12 @@ class FavoritePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.favorite_border, color: AppColors.darkGreen, size: 60),
+                  Icon(Icons.favorite_border, color: AppColors.primary, size: 60),
                   const SizedBox(height: 24),
                   Text(
                     'No items in your Wishlist',
                     style: TextStyle(
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),

@@ -59,8 +59,12 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
 
   void _showAddAddressBottomSheet() {
     final TextEditingController typeController = TextEditingController();
-    final TextEditingController addressController = TextEditingController();
+    final TextEditingController flatController = TextEditingController();
+    final TextEditingController localityController = TextEditingController();
     final TextEditingController cityController = TextEditingController();
+    final TextEditingController stateController = TextEditingController();
+    final TextEditingController pincodeController = TextEditingController();
+    final TextEditingController landmarkController = TextEditingController();
     final TextEditingController phoneController = TextEditingController();
 
     Get.bottomSheet(
@@ -87,11 +91,11 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Add New Address',
+                    'Add Different Address',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
                   ),
                   IconButton(
@@ -117,7 +121,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                       width: 2,
                     ),
                   ),
@@ -125,12 +129,11 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
               ),
               const SizedBox(height: 16),
 
-              // Street Address
+              // Flat/House/Building
               TextField(
-                controller: addressController,
-                maxLines: 2,
+                controller: flatController,
                 decoration: InputDecoration(
-                  labelText: 'Street Address',
+                  labelText: 'Flat/House No./Building',
                   labelStyle: const TextStyle(color: AppColors.grey2),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -141,7 +144,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                       width: 2,
                     ),
                   ),
@@ -149,11 +152,34 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
               ),
               const SizedBox(height: 16),
 
-              // City & Postal Code
+              // Locality/Area/Street
+              TextField(
+                controller: localityController,
+                decoration: InputDecoration(
+                  labelText: 'Locality/Area/Street',
+                  labelStyle: const TextStyle(color: AppColors.grey2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.separatorOpaque,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // City
               TextField(
                 controller: cityController,
                 decoration: InputDecoration(
-                  labelText: 'City, State, Postal Code',
+                  labelText: 'City',
                   labelStyle: const TextStyle(color: AppColors.grey2),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -164,7 +190,77 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // State
+              TextField(
+                controller: stateController,
+                decoration: InputDecoration(
+                  labelText: 'State',
+                  labelStyle: const TextStyle(color: AppColors.grey2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.separatorOpaque,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Pincode
+              TextField(
+                controller: pincodeController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Pincode',
+                  labelStyle: const TextStyle(color: AppColors.grey2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.separatorOpaque,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Landmark (Optional)
+              TextField(
+                controller: landmarkController,
+                decoration: InputDecoration(
+                  labelText: 'Landmark (Optional)',
+                  labelStyle: const TextStyle(color: AppColors.grey2),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.separatorOpaque,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
                       width: 2,
                     ),
                   ),
@@ -188,7 +284,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                       width: 2,
                     ),
                   ),
@@ -202,7 +298,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                 height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.darkGreen,
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -210,25 +306,41 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                   ),
                   onPressed: () {
                     final type = typeController.text.trim();
-                    final address = addressController.text.trim();
+                    final flat = flatController.text.trim();
+                    final locality = localityController.text.trim();
                     final city = cityController.text.trim();
+                    final state = stateController.text.trim();
+                    final pincode = pincodeController.text.trim();
+                    final landmark = landmarkController.text.trim();
                     final phone = phoneController.text.trim();
 
                     if (type.isNotEmpty &&
-                        address.isNotEmpty &&
+                        flat.isNotEmpty &&
+                        locality.isNotEmpty &&
                         city.isNotEmpty &&
+                        state.isNotEmpty &&
+                        pincode.isNotEmpty &&
                         phone.isNotEmpty) {
+                      // Build address string in same format as default
+                      final address = '${flat}${flat.isNotEmpty && locality.isNotEmpty ? ', ' : ''}${locality}';
+                      final cityState = '${city}${city.isNotEmpty && state.isNotEmpty ? ', ' : ''}${state}${pincode.isNotEmpty ? ' - ' : ''}${pincode}';
+
                       savedAddresses.add({
                         'type': type,
                         'address': address,
-                        'city': city,
+                        'city': cityState,
                         'phone': phone,
+                        'landmark': landmark,
                       });
                       selectedAddressIndex.value = savedAddresses.length - 1;
                       Get.back();
                       typeController.dispose();
-                      addressController.dispose();
+                      flatController.dispose();
+                      localityController.dispose();
                       cityController.dispose();
+                      stateController.dispose();
+                      pincodeController.dispose();
+                      landmarkController.dispose();
                       phoneController.dispose();
                       Get.snackbar(
                         'Success',
@@ -240,7 +352,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                     } else {
                       Get.snackbar(
                         'Error',
-                        'Please fill all fields',
+                        'Please fill all required fields',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.BOTTOM,
@@ -366,7 +478,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.darkGreen,
+                color: AppColors.primary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -410,7 +522,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                 Expanded(
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.darkGreen, width: 2),
+                      side: const BorderSide(color: AppColors.primary, width: 2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -431,7 +543,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                     child: const Text(
                       'Continue Shopping',
                       style: TextStyle(
-                        color: AppColors.darkGreen,
+                        color: AppColors.primary,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -442,7 +554,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkGreen,
+                      backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -480,13 +592,13 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           'Shipping Details',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -500,7 +612,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
               if (isLoadingAddresses.value) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    color: AppColors.darkGreen,
+                    color: AppColors.primary,
                   ),
                 );
               }
@@ -516,7 +628,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.darkGreen,
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -578,7 +690,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                       borderRadius: BorderRadius.circular(16),
                                       border: Border.all(
                                         color: isSelected
-                                            ? AppColors.darkGreen
+                                            ? AppColors.primary
                                             : AppColors.separatorOpaque,
                                         width: isSelected ? 2 : 1,
                                       ),
@@ -600,12 +712,12 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                             shape: BoxShape.circle,
                                             border: Border.all(
                                               color: isSelected
-                                                  ? AppColors.darkGreen
+                                                  ? AppColors.primary
                                                   : AppColors.grey3,
                                               width: 2,
                                             ),
                                             color: isSelected
-                                                ? AppColors.darkGreen
+                                                ? AppColors.primary
                                                 : Colors.transparent,
                                           ),
                                           child: isSelected
@@ -631,7 +743,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                                       vertical: 4,
                                                     ),
                                                     decoration: BoxDecoration(
-                                                      color: AppColors.darkGreen.withOpacity(0.1),
+                                                      color: AppColors.primary.withOpacity(0.1),
                                                       borderRadius: BorderRadius.circular(6),
                                                     ),
                                                     child: Text(
@@ -639,7 +751,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                                       style: const TextStyle(
                                                         fontSize: 12,
                                                         fontWeight: FontWeight.bold,
-                                                        color: AppColors.darkGreen,
+                                                        color: AppColors.primary,
                                                       ),
                                                     ),
                                                   ),
@@ -733,7 +845,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                   color: AppColors.white,
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color: AppColors.darkGreen,
+                                    color: AppColors.primary,
                                     style: BorderStyle.solid,
                                     width: 2,
                                   ),
@@ -746,27 +858,27 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                                   ],
                                 ),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.darkGreen.withOpacity(0.1),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.add,
-                                        color: AppColors.darkGreen,
-                                        size: 24,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
+
                                     const Text(
-                                      'Add Different Address',
+                                      'Deliver To Different Address ',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.darkGreen,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.chevron_right_rounded,
+                                        color: AppColors.primary,
+                                        size: 24,
                                       ),
                                     ),
                                   ],
@@ -811,7 +923,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.darkGreen,
+                        color: AppColors.primary,
                       ),
                     ),
                     Obx(
@@ -820,7 +932,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.darkGreen,
+                          color: AppColors.primary,
                         ),
                       ),
                     ),
@@ -835,7 +947,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                     height: 56,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkGreen,
+                        backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),

@@ -39,7 +39,7 @@ class ProfilePage extends StatelessWidget {
           return Scaffold(
             backgroundColor: AppColors.backgroundSecondary,
             appBar: AppBar(
-              backgroundColor: AppColors.yellow,
+              backgroundColor: AppColors.secondary1,
               elevation: 0,
               title: Text('My Profile', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
               centerTitle: false,
@@ -61,7 +61,7 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(height: 28),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkGreen,
+                        backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 8,
@@ -107,7 +107,7 @@ class ProfilePage extends StatelessWidget {
         // Logged-in and verified user UI
         return RefreshIndicator(
           onRefresh: () async => profileController.refreshProfile(),
-          color: AppColors.darkGreen,
+          color: AppColors.primary,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -118,7 +118,7 @@ class ProfilePage extends StatelessWidget {
                     Container(
                       height: 260,
                       decoration: BoxDecoration(
-                        color: AppColors.yellow,
+                        color: AppColors.secondary1,
                         borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(50),
                           bottomRight: Radius.circular(50),
@@ -126,7 +126,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          top: 40,
+                          top: 50,
                           left: 20,
                           right: 20,
                         ),
@@ -134,25 +134,25 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                      255,
-                                      247,
-                                      199,
-                                      127,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () => Get.back(),
-                                    icon: const Icon(Icons.arrow_back),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
+                                // Container(
+                                //   decoration: BoxDecoration(
+                                //     color: const Color.fromARGB(
+                                //       255,
+                                //       247,
+                                //       199,
+                                //       127,
+                                //     ),
+                                //     borderRadius: BorderRadius.circular(12),
+                                //   ),
+                                //   child: IconButton(
+                                //     onPressed: () => Get.back(),
+                                //     icon: const Icon(Icons.arrow_back),
+                                //   ),
+                                // ),
+                                //const SizedBox(width: 10),
                                 const Text(
                                   'Profile',
-                                  style: TextStyle(fontSize: 16),
+                                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
                                 ),
                                 const Spacer(),
                               ],
@@ -165,7 +165,7 @@ class ProfilePage extends StatelessWidget {
                                   width: 60,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: AppColors.lightYellow,
+                                    color: AppColors.secondary2,
                                   ),
                                   child: Center(
                                     child: Text(
@@ -176,7 +176,7 @@ class ProfilePage extends StatelessWidget {
                                       style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.darkGreen,
+                                        color: AppColors.primary,
                                       ),
                                     ),
                                   ),

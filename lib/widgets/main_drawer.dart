@@ -10,8 +10,8 @@ import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
 import 'package:penta_restaurant/pages/info_pages/terms_conditions_page.dart';
 import 'package:penta_restaurant/pages/my_order_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
-import 'package:penta_restaurant/pages/tabs/cart_page.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
+import 'package:penta_restaurant/pages/tabs/cart_tab.dart';
+import 'package:penta_restaurant/pages/tabs/profile_tab.dart';
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
@@ -21,7 +21,7 @@ class MainDrawer extends StatelessWidget {
     {
       'title': 'My Cart',
       'icon': Icons.shopping_cart_outlined,
-      'action': () => Get.to(() => const CartPage()),
+      'action': () => Get.to(() => const CartTab()),
     },
     {
       'title': 'Wishlist',

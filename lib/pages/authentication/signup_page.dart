@@ -30,7 +30,7 @@ class _SignupPageState extends State<SignupPage> {
     final textScale = size.width / 390; // responsive text scaling
 
     return Scaffold(
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -85,7 +85,7 @@ class _SignupPageState extends State<SignupPage> {
                   height: size.height * 0.065,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: AppColors.yellow,
+                    color: AppColors.secondary1,
                   ),
                   child: TextButton(
                     onPressed: _handleSignup,
@@ -114,7 +114,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: Text(
                     'Login',
                     style: TextStyle(
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                       fontSize: 14 * textScale,
                     ),
                   ),

@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
     final textScale = size.width / 390; // scales fonts relative to width
 
     return Scaffold(
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: size.height * 0.065,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                     ),
                     child: TextButton(
                       onPressed: authController.isLoading.value
@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text(
                     'Sign Up',
                     style: TextStyle(
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                       fontSize: 14 * textScale,
                     ),
                   ),

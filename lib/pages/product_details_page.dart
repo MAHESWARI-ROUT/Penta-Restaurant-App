@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
-import 'package:penta_restaurant/pages/tabs/cart_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_tab.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import '../commons/appcolors.dart';
 import '../controller/cart_controller.dart';
@@ -63,7 +63,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   ),
                   child: IconButton(
                     onPressed: () => Get.back(),
-                    icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+                    icon: const Icon(Icons.arrow_back, color: AppColors.primary),
                   ),
                 ),
                 actions: [
@@ -83,10 +83,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     child: Stack(
                       children: [
                         IconButton(
-                          onPressed: () => Get.to(() => CartPage()),
+                          onPressed: () => Get.to(() => CartTab()),
                           icon: const Icon(
                             Icons.shopping_cart_outlined,
-                            color: AppColors.darkGreen,
+                            color: AppColors.primary,
                           ),
                         ),
                         Obx(() {
@@ -232,7 +232,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               vertical: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.darkGreen.withOpacity(0.1),
+                              color: AppColors.primary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -240,7 +240,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                               children: [
                                 const Icon(
                                   Icons.currency_rupee,
-                                  color: AppColors.darkGreen,
+                                  color: AppColors.primary,
                                   size: 24,
                                 ),
                                 Text(
@@ -248,7 +248,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   style: const TextStyle(
                                     fontSize: 28,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.darkGreen,
+                                    color: AppColors.primary,
                                   ),
                                 ),
                               ],
@@ -291,12 +291,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? AppColors.darkGreen
+                                          ? AppColors.primary
                                           : AppColors.backgroundSecondary,
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
                                         color: isSelected
-                                            ? AppColors.darkGreen
+                                            ? AppColors.primary
                                             : AppColors.separatorOpaque,
                                         width: isSelected ? 2 : 1,
                                       ),
@@ -322,7 +322,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                             fontWeight: FontWeight.w600,
                                             color: isSelected
                                                 ? Colors.white
-                                                : AppColors.darkGreen,
+                                                : AppColors.primary,
                                           ),
                                         ),
                                       ],
@@ -416,7 +416,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.darkGreen,
+                                  backgroundColor: AppColors.primary,
                                   padding: const EdgeInsets.symmetric(vertical: 16),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
@@ -442,7 +442,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.darkGreen,
+                                  color: AppColors.primary,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Row(
@@ -480,7 +480,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
-                                          color: AppColors.darkGreen,
+                                          color: AppColors.primary,
                                         ),
                                       ),
                                     ),

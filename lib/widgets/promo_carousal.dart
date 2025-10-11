@@ -42,7 +42,7 @@ class _PromoCarouselState extends State<PromoCarousel> {
           autoPlayInterval: const Duration(seconds: 3),
           autoPlayAnimationDuration: const Duration(milliseconds: 800),
           enlargeCenterPage: true,
-          viewportFraction: 0.95,
+          viewportFraction: 1.0,
           aspectRatio: screenWidth / (screenHeight * 0.25),
           onPageChanged: (index, reason) {
             setState(() {

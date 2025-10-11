@@ -13,6 +13,11 @@ class OrderController extends GetxController {
   final RxBool isLoadingAssignedOrders = false.obs;
   final RxString errorMessage = ''.obs;
 
+  // Profile statistics
+  final RxInt ongoingOrders = 0.obs;
+  final RxInt deliveredOrders = 0.obs;
+  final RxInt completedOrders = 0.obs;
+
   Future<void> fetchMyOrders(String userId) async {
     print('[DEBUG OrderController] fetchMyOrders called with userId: $userId');
     isLoadingMyOrders.value = true;

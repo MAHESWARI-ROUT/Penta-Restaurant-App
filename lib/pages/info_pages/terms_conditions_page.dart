@@ -17,13 +17,13 @@ class TermsConditionsPage extends StatelessWidget {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           'Terms & Conditions',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -33,7 +33,7 @@ class TermsConditionsPage extends StatelessWidget {
       body: Obx(() {
         if (termsController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.darkGreen),
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -65,7 +65,7 @@ class TermsConditionsPage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () => termsController.refreshTerms(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkGreen,
+                      backgroundColor: AppColors.primary,
                     ),
                     child: const Text('Retry', style: TextStyle(color: Colors.white)),
                   ),
@@ -77,7 +77,7 @@ class TermsConditionsPage extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () async => termsController.refreshTerms(),
-          color: AppColors.darkGreen,
+          color: AppColors.primary,
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -109,13 +109,13 @@ class TermsConditionsPage extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: AppColors.darkGreen.withOpacity(0.1),
+                              color: AppColors.primary.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.gavel,
                               size: 48,
-                              color: AppColors.darkGreen,
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -124,7 +124,7 @@ class TermsConditionsPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.darkGreen,
+                              color: AppColors.primary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -157,13 +157,13 @@ class TermsConditionsPage extends StatelessWidget {
                         color: AppColors.fillSecondary,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: AppColors.darkGreen.withOpacity(0.2),
+                          color: AppColors.primary.withOpacity(0.2),
                         ),
                       ),
                       child: Column(
                         children: const [
                           Icon(Icons.info_outline,
-                              color: AppColors.darkGreen, size: 24),
+                              color: AppColors.primary, size: 24),
                           SizedBox(height: 8),
                           Text(
                             'Last Updated: October 2024',
@@ -224,12 +224,12 @@ class TermsConditionsPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppColors.darkGreen.withOpacity(0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.account_circle,
-                  color: AppColors.darkGreen,
+                  color: AppColors.primary,
                   size: 20,
                 ),
               ),
@@ -240,7 +240,7 @@ class TermsConditionsPage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.darkGreen,
+                    color: AppColors.primary,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -275,7 +275,7 @@ class TermsConditionsPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.darkGreen,
+                        color: AppColors.primary,
                       ),
                     ),
                   ],
@@ -324,7 +324,7 @@ class TermsConditionsPage extends StatelessWidget {
                 height: 24,
                 margin: const EdgeInsets.only(top: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.darkGreen,
+                  color: AppColors.primary,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(

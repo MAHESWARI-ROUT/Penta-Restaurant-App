@@ -84,7 +84,7 @@ class CartController extends GetxController {
         'Not Verified',
         'Please login and verify to proceed further.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.darkGreen,
+        backgroundColor: AppColors.primary,
         colorText: Colors.white,
         onTap: (_) {
           Get.to(() => LoginPage());

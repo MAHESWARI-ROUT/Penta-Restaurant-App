@@ -83,7 +83,7 @@ class AuthController extends GetxController {
           'Success',
           response.message,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.darkGreen,
+          backgroundColor: AppColors.primary,
           colorText: AppColors.white,
         );
         return true;
@@ -94,7 +94,7 @@ class AuthController extends GetxController {
           'Login Failed',
           response.message,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.darkGreen,
+          backgroundColor: AppColors.primary,
           colorText: AppColors.white,
         );
       }
@@ -106,7 +106,7 @@ class AuthController extends GetxController {
         'Error',
         'Login failed. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.darkGreen,
+        backgroundColor: AppColors.primary,
         colorText: AppColors.white,
       );
       return false;
@@ -166,7 +166,7 @@ class AuthController extends GetxController {
           'Success',
           response.message,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.darkGreen,
+          backgroundColor: AppColors.primary,
           colorText: AppColors.white,
         );
         return true;
@@ -177,7 +177,7 @@ class AuthController extends GetxController {
           'Registration Failed',
           response.message,
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: AppColors.darkGreen,
+          backgroundColor: AppColors.primary,
           colorText: AppColors.white,
         );
       }
@@ -189,7 +189,7 @@ class AuthController extends GetxController {
         'Error',
         'Registration failed. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.darkGreen,
+        backgroundColor: AppColors.primary,
         colorText: AppColors.white,
       );
       return false;
@@ -213,7 +213,7 @@ class AuthController extends GetxController {
       'Logged Out',
       'You have been logged out successfully',
       snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       colorText: AppColors.white,
     );
   }

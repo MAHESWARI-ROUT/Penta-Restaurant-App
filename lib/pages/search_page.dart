@@ -106,20 +106,20 @@ class _SearchPageState extends State<SearchPage> {
         title: const Text(
           'Search Products',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Get.back(),
         ),
         actions: [
           IconButton(
             icon: Icon(
               showFilters ? Icons.filter_list : Icons.filter_list_outlined,
-              color: AppColors.darkGreen,
+              color: AppColors.primary,
             ),
             onPressed: () {
               setState(() {
@@ -150,7 +150,7 @@ class _SearchPageState extends State<SearchPage> {
                       decoration: InputDecoration(
                         hintText: 'Search for delicious food...',
                         hintStyle: TextStyle(color: AppColors.grey2),
-                        prefixIcon: Icon(Icons.search, color: AppColors.darkGreen),
+                        prefixIcon: Icon(Icons.search, color: AppColors.primary),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
@@ -164,7 +164,7 @@ class _SearchPageState extends State<SearchPage> {
                     icon: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppColors.darkGreen,
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.clear, color: AppColors.white, size: 20),
@@ -187,7 +187,7 @@ class _SearchPageState extends State<SearchPage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -230,7 +230,7 @@ class _SearchPageState extends State<SearchPage> {
                     min: 0,
                     max: 1000,
                     divisions: 20,
-                    activeColor: AppColors.darkGreen,
+                    activeColor: AppColors.primary,
                     inactiveColor: AppColors.grey4,
                     labels: RangeLabels('₹${minPrice.round()}', '₹${maxPrice.round()}'),
                     onChanged: (values) {
@@ -265,7 +265,7 @@ class _SearchPageState extends State<SearchPage> {
             child: isSearching
                 ? const Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
                   )
                 : searchResults.isEmpty
@@ -314,7 +314,7 @@ class _SearchPageState extends State<SearchPage> {
             ElevatedButton(
               onPressed: _clearSearch,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.darkGreen,
+                backgroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

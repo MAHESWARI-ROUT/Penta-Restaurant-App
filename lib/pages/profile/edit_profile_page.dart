@@ -118,7 +118,7 @@ late final ProfileController profileController;
                   const SizedBox(height: 28),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkGreen,
+                      backgroundColor: AppColors.primary,
                       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -140,7 +140,7 @@ late final ProfileController profileController;
         // Show loading spinner while fetching profile
         if (profileController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.darkGreen),
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -154,19 +154,19 @@ late final ProfileController profileController;
                   Container(
                     height: 200,
                     decoration: BoxDecoration(
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                      padding: const EdgeInsets.only(top: 0, left: 20, right: 20),
                       child: Row(
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 247, 199, 127),
+                              color: AppColors.accentColor ,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
@@ -174,7 +174,7 @@ late final ProfileController profileController;
                               icon: const Icon(Icons.arrow_back),
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 16),
                           const Text('Edit Profile', style: TextStyle(fontSize: 16)),
                           const Spacer(),
                         ],
@@ -189,7 +189,7 @@ late final ProfileController profileController;
                       width: 100,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.lightYellow,
+                        color: AppColors.secondary2,
                         border: Border.all(color: AppColors.backgroundPrimary, width: 3),
                       ),
                       child: profileController.hasProfile && profileController.displayName.isNotEmpty
@@ -199,7 +199,7 @@ late final ProfileController profileController;
                                 style: const TextStyle(
                                   fontSize: 36,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.darkGreen,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             )
@@ -238,7 +238,7 @@ late final ProfileController profileController;
                       child: ElevatedButton(
                         onPressed: _updateProfile,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.yellow,
+                          backgroundColor: AppColors.secondary1,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
@@ -276,7 +276,7 @@ late final ProfileController profileController;
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.darkGreen, width: 2),
+              borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),

@@ -38,7 +38,7 @@ class VerificationPage extends StatelessWidget {
     final textScale = size.width / 390; // scales text proportionally
 
     return Scaffold(
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -66,7 +66,7 @@ class VerificationPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: _sendWhatsAppVerification,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.yellow,
+                    backgroundColor: AppColors.secondary1,
                     padding: EdgeInsets.symmetric(
                       horizontal: size.width * 0.12,
                       vertical: size.height * 0.018,

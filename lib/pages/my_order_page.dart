@@ -78,7 +78,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           'My Orders',
           style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.yellow,
+        backgroundColor: AppColors.secondary1,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: Obx(() {
@@ -199,7 +199,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                               order.status,
                               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
-                            backgroundColor: AppColors.darkGreen,
+                            backgroundColor: AppColors.primary,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
                           ),
                         ],

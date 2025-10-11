@@ -74,13 +74,13 @@ class _MyAddressPageState extends State<MyAddressPage> {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           'My Addresses',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -98,7 +98,7 @@ class _MyAddressPageState extends State<MyAddressPage> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: AppColors.darkGreen,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 16),
@@ -180,7 +180,7 @@ class _MyAddressPageState extends State<MyAddressPage> {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.darkGreen.withOpacity(0.1),
+                                      color: AppColors.primary.withOpacity(0.1),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
@@ -188,7 +188,7 @@ class _MyAddressPageState extends State<MyAddressPage> {
                                       style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.darkGreen,
+                                        color: AppColors.primary,
                                       ),
                                     ),
                                   ),
