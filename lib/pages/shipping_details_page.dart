@@ -324,31 +324,30 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                       // Build address string in same format as default
                       final address = '${flat}${flat.isNotEmpty && locality.isNotEmpty ? ', ' : ''}${locality}';
                       final cityState = '${city}${city.isNotEmpty && state.isNotEmpty ? ', ' : ''}${state}${pincode.isNotEmpty ? ' - ' : ''}${pincode}';
+                      final fullAddress = '$address, $cityState';
 
-                      savedAddresses.add({
-                        'type': type,
-                        'address': address,
-                        'city': cityState,
-                        'phone': phone,
-                        'landmark': landmark,
-                      });
-                      selectedAddressIndex.value = savedAddresses.length - 1;
+                      // Close bottom sheet first (before disposing controllers)
                       Get.back();
-                      typeController.dispose();
-                      flatController.dispose();
-                      localityController.dispose();
-                      cityController.dispose();
-                      stateController.dispose();
-                      pincodeController.dispose();
-                      landmarkController.dispose();
-                      phoneController.dispose();
-                      Get.snackbar(
-                        'Success',
-                        'Address added successfully',
-                        backgroundColor: Colors.green,
-                        colorText: Colors.white,
-                        snackPosition: SnackPosition.BOTTOM,
-                      );
+
+                      // Wait for the bottom sheet to close, then show confirmation dialog
+                      Future.delayed(const Duration(milliseconds: 350), () {
+                        _showConfirmAddressDialog(
+                          type: type,
+                          fullAddress: fullAddress,
+                          landmark: landmark,
+                          phone: phone,
+                        );
+
+                        // Dispose controllers after the dialog is shown
+                        typeController.dispose();
+                        flatController.dispose();
+                        localityController.dispose();
+                        cityController.dispose();
+                        stateController.dispose();
+                        pincodeController.dispose();
+                        landmarkController.dispose();
+                        phoneController.dispose();
+                      });
                     } else {
                       Get.snackbar(
                         'Error',
@@ -360,7 +359,7 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                     }
                   },
                   child: const Text(
-                    'Save Address',
+                    'Continue',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -513,6 +512,398 @@ class _ShippingDetailsPageState extends State<ShippingDetailsPage> {
                       textAlign: TextAlign.center,
                     ),
                   ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.primary, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close dialog
+                      cartController.clearCart(); // Clear cart
+                      Get.back(); // Go back to previous page
+                      Get.snackbar(
+                        'Success',
+                        'Cart cleared successfully',
+                        backgroundColor: Colors.green,
+                        colorText: Colors.white,
+                        snackPosition: SnackPosition.BOTTOM,
+                      );
+                    },
+                    child: const Text(
+                      'Continue Shopping',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close dialog
+                      cartController.clearCart(); // Clear cart
+                      Get.off(() => const MyOrdersPage()); // Navigate to orders page
+                    },
+                    child: const Text(
+                      'My Orders',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _showConfirmAddressDialog({
+    required String type,
+    required String fullAddress,
+    required String landmark,
+    required String phone,
+  }) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        contentPadding: const EdgeInsets.all(24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.location_on,
+                color: AppColors.primary,
+                size: 40,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Confirm Delivery Address',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.fillSecondary,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppColors.separatorOpaque,
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          type,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.home_outlined,
+                        size: 18,
+                        color: AppColors.grey2,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          fullAddress,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (landmark.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.push_pin_outlined,
+                          size: 18,
+                          color: AppColors.grey2,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Landmark: $landmark',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.grey2,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.phone_outlined,
+                        size: 18,
+                        color: AppColors.grey2,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        phone,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.grey2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Your order will be delivered to this address',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.grey2,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppColors.grey3, width: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onPressed: () {
+                      Get.back(); // Close dialog and allow user to edit
+                      _showAddAddressBottomSheet(); // Reopen the form
+                    },
+                    child: const Text(
+                      'Edit',
+                      style: TextStyle(
+                        color: AppColors.grey2,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    onPressed: () async {
+                      Get.back(); // Close dialog
+                      await _placeOrderWithCustomAddress(fullAddress, phone);
+                    },
+                    child: const Text(
+                      'Place Order',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  Future<void> _placeOrderWithCustomAddress(String address, String phone) async {
+    final userId = profileController.userId;
+
+    if (userId.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'User not authenticated',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      final total = cartController.totalPrice.toStringAsFixed(2);
+
+      // Place the order
+      final orderResponse = await orderController.placeOrder(
+        userId: userId,
+        cartId: userId,
+        address: address,
+        phone: phone,
+        paymentRef: 'NA',
+        payStatus: 'pending',
+        total: total,
+        paymentMode: 'Cash on Delivery',
+        orderRemark: 'Order placed via app',
+      );
+
+      if (orderResponse != null && orderResponse.success) {
+        isLoading.value = false;
+        _showOrderSuccessDialogWithAddress(address, phone);
+      } else {
+        isLoading.value = false;
+        Get.snackbar(
+          'Error',
+          orderResponse?.message ?? 'Failed to place order. Please try again.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar(
+        'Error',
+        'An error occurred while placing your order. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      print('Error placing order: $e');
+    }
+  }
+
+  void _showOrderSuccessDialogWithAddress(String address, String phone) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        contentPadding: const EdgeInsets.all(24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                color: Colors.green,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check, color: Colors.white, size: 50),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Order Placed Successfully!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Your order has been confirmed and will be delivered to:',
+              style: TextStyle(fontSize: 14, color: AppColors.grey2),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AppColors.fillSecondary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    address,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Phone: $phone',
+                    style: const TextStyle(fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),

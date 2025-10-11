@@ -331,29 +331,27 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSearchResults() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.75,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        itemCount: searchResults.length,
-        itemBuilder: (context, index) {
-          return ProductGridItem(
-            product: searchResults[index],
-            cartController: cartController,
+    return  Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Wrap(
+        spacing: 16,
+        runSpacing: 16,
+        children: searchResults.map((product) {
+          return SizedBox(
+            width: (MediaQuery.of(context).size.width - 48) / 2,
+            child: ProductGridItem(
+              product: product,
+              cartController: cartController,
+            ),
           );
-        },
+        }).toList(),
       ),
     );
   }
-
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 }
+

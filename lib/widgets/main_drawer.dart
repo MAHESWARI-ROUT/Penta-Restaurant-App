@@ -33,16 +33,11 @@ class MainDrawer extends StatelessWidget {
       'icon': Icons.receipt_long,
       'action': () => Get.to(() => const MyOrdersPage()),
     },
-    {
-      'title': 'Notifications',
-      'icon': Icons.notification_add_outlined,
-      'action': () => Get.to(() => const NotificationsPage()),
-    },
-    {
-      'title': 'Profile',
-      'icon': Icons.account_circle_outlined,
-      'action': () => Get.to(() => const ProfilePage()),
-    },
+    // {
+    //   'title': 'Notifications',
+    //   'icon': Icons.notification_add_outlined,
+    //   'action': () => Get.to(() => const NotificationsPage()),
+    // },
     {
       'title': 'Edit Profile',
       'icon': Icons.edit,
@@ -116,9 +111,10 @@ class MainDrawer extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.04),
+                SizedBox(height: screenHeight * 0.03),
                 ...drawerItems.map((item) {
                   return ListTile(
+                    tileColor: Colors.transparent,
                     title: Text(
                       item['title'],
                       style: TextStyle(
@@ -135,8 +131,9 @@ class MainDrawer extends StatelessWidget {
                     },
                   );
                 }),
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.03),
                 ListTile(
+                  tileColor: Colors.transparent,
                   title: Text(
                     'SignOut',
                     style: TextStyle(

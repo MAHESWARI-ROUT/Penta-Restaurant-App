@@ -33,15 +33,14 @@ class AppTheme {
       // AppBar Theme
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(color: AppColors.white, size: 24),
-        actionsIconTheme: IconThemeData(color: AppColors.white, size: 24),
+        foregroundColor: AppColors.darkGrey,
+        elevation: 4,
+        iconTheme: IconThemeData(color: AppColors.darkGrey, size: 24),
+        actionsIconTheme: IconThemeData(color: AppColors.darkGrey, size: 24),
         titleTextStyle: TextStyle(
-          color: AppColors.white,
+          color: AppColors.darkGrey,
           fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.bold,
           letterSpacing: 0.15,
         ),
         systemOverlayStyle: SystemUiOverlayStyle(

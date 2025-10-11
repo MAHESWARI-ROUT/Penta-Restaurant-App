@@ -40,21 +40,21 @@ class _HomeTabState extends State<HomeTab> {
       appBar: AppBar(
         backgroundColor: AppColors.secondary1,
         elevation: 0,
+        scrolledUnderElevation: 10,
         title: Text(
           'Penta Family Restaurant',
           style: TextStyle(
-            color: AppColors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite_border, color: AppColors.black),
+            icon: const Icon(Icons.favorite_border),
             onPressed: () => Get.to(() => FavoritePage()),
             tooltip: 'Wishlist',
           ),
           IconButton(
-            icon: const Icon(Icons.search, color: AppColors.black),
+            icon: const Icon(Icons.search),
             onPressed: () => Get.to(() => SearchPage()),
             tooltip: 'Search',
           ),
