@@ -26,8 +26,6 @@ class ProductController extends GetxController {
       isRecLoading.value = true;
       final products = await _productService.getRecommendedProducts();
       recommendedProducts.assignAll(products);
-
-     
     } catch (e) {
       print("Error in controller fetching recommendations: $e");
       recommendedProducts.assignAll([]);

@@ -36,6 +36,7 @@ class _HomeTabState extends State<HomeTab> {
     final itemWidth = (screenWidth / 2) - 24;
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
         backgroundColor: AppColors.secondary1,
         elevation: 0,
