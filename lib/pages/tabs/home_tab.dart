@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
@@ -10,7 +11,7 @@ import 'package:penta_restaurant/widgets/main_drawer.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 import 'package:penta_restaurant/widgets/promo_carousal.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
-
+import 'package:penta_restaurant/widgets/recommended_section.dart'; 
 
 class HomeTab extends StatefulWidget {
   final ProductController productController;
@@ -48,24 +49,19 @@ class _HomeTabState extends State<HomeTab> {
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite_border, color: AppColors.black),
-            onPressed: () {
-              Get.to(() => FavoritePage());
-            },
+            onPressed: () => Get.to(() => FavoritePage()),
             tooltip: 'Wishlist',
           ),
           IconButton(
             icon: const Icon(Icons.search, color: AppColors.black),
-            onPressed: () {
-              Get.to(() => SearchPage());
-            },
+            onPressed: () => Get.to(() => SearchPage()),
             tooltip: 'Search',
           ),
         ],
       ),
       drawer: MainDrawer(onSelectScreen: (String identifier) {}),
-      body: Obx((){
-        if (widget.productController.isLoading.value) {
-          // Show full page skeleton while loading
+      body: Obx(() {
+        if (widget.productController.isLoading.value && widget.productController.categories.isEmpty) {
           return const HomeTabSkeleton();
         }
         return SingleChildScrollView(
@@ -83,48 +79,26 @@ class _HomeTabState extends State<HomeTab> {
                 selectedCategoryIndex: selectedCategoryIndex,
                 controller: widget.productController,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Recommendation',
-                      style: TextStyle(
-                        color: AppColors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    
-                  ],
+
+              const RecommendedSection(),
+
+              const Padding(
+                padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Text(
+                  'All Products',
+                  style: TextStyle(
+                    color: AppColors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
               ),
+
               ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
                 ),
                 child: Obx(() {
-                  if (widget.productController.isLoading.value) {
-                    // Show skeleton loading (shimmer effect) matching the product grid
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Wrap(
-                        spacing: 16,
-                        runSpacing: 16,
-                        children: List.generate(
-                          6, // Show 6 shimmer cards as placeholders
-                              (index) => SizedBox(
-                            width: itemWidth,
-                            child: const ProductCardShimmer(),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                 
-
                   List products;
                   if (selectedCategoryIndex.value == 0) {
                     products = widget.productController.categories.expand((cat) => cat.products).toList();
@@ -136,8 +110,8 @@ class _HomeTabState extends State<HomeTab> {
 
                   if (products.isEmpty) {
                     return Center(
-                      child: ErrorStateWidget(
-                        message: 'No products found in this category',
+                      child: ErrorStateWidget( 
+                        message: 'No products found',
                         onRetry: () => widget.productController.fetchDataAndLink(),
                         icon: Icons.inventory_2_outlined,
                       ),
@@ -166,7 +140,7 @@ class _HomeTabState extends State<HomeTab> {
             ],
           ),
         );
-      })
+      }),
     );
   }
 }
