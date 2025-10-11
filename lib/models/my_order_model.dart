@@ -1,5 +1,3 @@
-
-
 class MyOrder {
   final String orderId;
   final String cartId;
@@ -7,6 +5,10 @@ class MyOrder {
   final String paymentStatus;
   final String totalAmount;
   final String createdAt;
+  final String address;
+  final String phone;
+  final String paymentMode;
+  final String orderRemark;
   final List<OrderProduct> products;
 
   MyOrder({
@@ -16,6 +18,10 @@ class MyOrder {
     required this.paymentStatus,
     required this.totalAmount,
     required this.createdAt,
+    required this.address,
+    required this.phone,
+    required this.paymentMode,
+    required this.orderRemark,
     required this.products,
   });
 
@@ -34,6 +40,10 @@ class MyOrder {
       paymentStatus: json['paymentstatus']?.toString() ?? '',
       totalAmount: json['total']?.toString() ?? '0',
       createdAt: json['orderdate']?.toString() ?? '',
+      address: json['address']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? '',
+      paymentMode: json['paymentmode']?.toString() ?? 'Cash on Delivery',
+      orderRemark: json['orderremark']?.toString() ?? '',
       products: productList,
     );
   }
