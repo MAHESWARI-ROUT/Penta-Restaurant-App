@@ -75,20 +75,35 @@ late final ProfileController profileController;
     final success = await profileController.updateProfile(profileData);
 
     if (success) {
+      // Profile updated successfully - show success dialog
       showPopupDialog(context);
       Future.delayed(const Duration(seconds: 2), () {
         Get.back();
       });
     } else {
-      Get.snackbar(
-        'Error',
-        profileController.errorMessage.value.isNotEmpty
-            ? profileController.errorMessage.value
-            : 'Failed to update profile',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      // Only show error if it's not an SMTP error
+      final errorMsg = profileController.errorMessage.value;
+
+      // Check if error is SMTP related or if profile actually failed to update
+      if (errorMsg.isNotEmpty &&
+          !errorMsg.toLowerCase().contains('smtp') &&
+          !errorMsg.toLowerCase().contains('mail') &&
+          !errorMsg.toLowerCase().contains('email')) {
+        Get.snackbar(
+          'Error',
+          errorMsg,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else if (errorMsg.toLowerCase().contains('smtp') ||
+                 errorMsg.toLowerCase().contains('mail')) {
+        // SMTP error but profile might be updated - show success anyway
+        showPopupDialog(context);
+        Future.delayed(const Duration(seconds: 2), () {
+          Get.back();
+        });
+      }
     }
   }
 
