@@ -1,20 +1,33 @@
-<<<<<<< HEAD
-# penta_restaurant
+# Penta Restaurant App
 
-A new Flutter project.
+A modern Flutter application for browsing, ordering, and managing your favorite dishes from Penta Restaurant.
+
+## Features
+
+- User authentication (Sign up, Login, Email verification, Forgot password)
+- Browse menu and product details
+- Add to cart and wishlist (favorites)
+- Responsive UI with custom widgets
+- State management using GetX
+- Error handling and loading indicators
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+- [Flutter SDK](https://flutter.dev/docs/get-started/install)
+- [Dart SDK](https://dart.dev/get-dart)
+- Android Studio or VS Code
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Installation
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Penta-Restaurant-App
->>>>>>> 85ab43da548ac6bd7ce73d4fd46931571881a7cd
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/penta_restaurant.git
+   cd penta_restaurant
+2. Install dependencies:
+   ```sh
+   flutter pub get
+3. Run the app:
+   ```sh
+   flutter run
