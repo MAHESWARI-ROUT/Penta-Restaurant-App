@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart' as debug ;
 import 'package:get/get.dart';
 import 'package:penta_restaurant/models/category_model.dart';
 import 'package:penta_restaurant/models/product_model.dart';
@@ -27,7 +28,9 @@ class ProductController extends GetxController {
       final products = await _productService.getRecommendedProducts();
       recommendedProducts.assignAll(products);
     } catch (e) {
-      print("Error in controller fetching recommendations: $e");
+      if (debug.kDebugMode) {
+        print("Error in controller fetching recommendations: $e");
+      }
       recommendedProducts.assignAll([]);
     } finally {
       isRecLoading.value = false;

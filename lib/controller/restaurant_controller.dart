@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../models/restaurant_detail.dart';
 import '../services/restaurant_service.dart';
@@ -28,7 +29,9 @@ class RestaurantController extends GetxController {
     } catch (e) {
       errorMessage.value = e.toString();
       if (Get.isLogEnable) {
-        print('Error fetching restaurant details: $e');
+        if (kDebugMode) {
+          print('Error fetching restaurant details: $e');
+        }
       }
     } finally {
       isLoading.value = false;

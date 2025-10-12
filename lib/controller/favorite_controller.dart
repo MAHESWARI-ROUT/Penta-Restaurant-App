@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/models/product_model.dart';
@@ -37,7 +38,9 @@ class FavoriteController extends GetxController {
 
       return parsedData['success'].toString() == 'true';
     } catch (e) {
-      print('Error adding to wishlist: $e');
+      if (kDebugMode) {
+        print('Error adding to wishlist: $e');
+      }
       return false;
     }
   }
@@ -55,7 +58,9 @@ class FavoriteController extends GetxController {
       final data = response.data;
       return data['success'].toString() == 'true';
     } catch (e) {
-      print('Error checking wishlist: $e');
+      if (kDebugMode) {
+        print('Error checking wishlist: $e');
+      }
       return false;
     }
   }
@@ -72,7 +77,9 @@ class FavoriteController extends GetxController {
       );
 
       final data = response.data is String ? json.decode(response.data) : response.data;
-      print('fetchWishList response data: $data');
+      if (kDebugMode) {
+        print('fetchWishList response data: $data');
+      }
 
       if (data['success'].toString() == 'true' && data['product'] != null) { // <-- change here
         final List<Product> loaded = (data['product'] as List)
@@ -82,10 +89,14 @@ class FavoriteController extends GetxController {
         favorites.value = loaded;
       } else {
         favorites.clear();
-        if (Get.isLogEnable) print('Wishlist fetch failed or no products: ${data['message']}');
+        if (kDebugMode) {
+          print('Wishlist fetch failed or no products: ${data['message']}');
+        }
       }
     } catch (e) {
-      print('Error fetching wishlist: $e');
+      if (kDebugMode) {
+        print('Error fetching wishlist: $e');
+      }
     }
   }
 
@@ -104,7 +115,9 @@ class FavoriteController extends GetxController {
       if (success) {
         favorites.add(product);
       } else {
-        if (Get.isLogEnable) print('Failed to add to wishlist on server');
+        if (kDebugMode) {
+          print('Failed to add to wishlist on server');
+        }
       }
     }
   }

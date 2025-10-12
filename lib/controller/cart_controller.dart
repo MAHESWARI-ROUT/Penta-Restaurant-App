@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide TabController;
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -48,7 +49,9 @@ class CartController extends GetxController {
       getCartItems();
     } else {
       if (Get.isLogEnable) {
-        print('CartController init: User ID is empty.');
+        if (kDebugMode) {
+          print('CartController init: User ID is empty.');
+        }
       }
     }
   }
@@ -61,7 +64,9 @@ class CartController extends GetxController {
       cartItems.value = items.map((item) => CartItem.fromJson(item)).toList();
     } catch (e) {
       errorMessage.value = 'Failed to load cart items: $e';
-      if (Get.isLogEnable) print(errorMessage.value);
+      if (kDebugMode) {
+        print(errorMessage.value);
+      }
     } finally {
       isLoading.value = false;
     }
@@ -207,7 +212,9 @@ class CartController extends GetxController {
         colorText: Colors.white,
         margin: const EdgeInsets.all(10),
       );
-      if (Get.isLogEnable) print(errorMessage.value);
+       if (kDebugMode) {
+        print(errorMessage.value);
+      }
       return false;
     } finally {
       isLoading.value = false;
@@ -215,9 +222,11 @@ class CartController extends GetxController {
   }
 
   Future<bool> removeFromCart(String productId, String variantId) async {
-    print(
+    if (kDebugMode) {
+      print(
       "[DEBUG] removeFromCart called for productId=$productId variantId=$variantId",
     );
+    }
     isLoading.value = true;
     errorMessage.value = '';
 
@@ -247,7 +256,9 @@ class CartController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = 'Exception: $e';
-      print(errorMessage.value);
+      if (kDebugMode) {
+        print(errorMessage.value);
+      }
       Get.snackbar('Error', errorMessage.value);
       return false;
     } finally {
@@ -296,7 +307,9 @@ class CartController extends GetxController {
       return false;
     } catch (e) {
       errorMessage.value = 'Failed to update quantity: $e';
-      if (Get.isLogEnable) print(errorMessage.value);
+       if (kDebugMode) {
+        print(errorMessage.value);
+      }
       return false;
     } finally {
       isLoading.value = false;

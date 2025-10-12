@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../models/auth_response.dart';
@@ -55,7 +56,9 @@ class ProfileController extends GetxController {
       // Check verification based on success and message
       if (profile.success && profile.message.toLowerCase().contains('verified')) {
         isVerified.value = true;
-        print("[profile]: profile is verified");
+        if (kDebugMode) {
+          print("[profile]: profile is verified");
+        }
         await _storage.write('is_verified', isVerified.value);
       } else {
         isVerified.value = false;
@@ -83,7 +86,11 @@ class ProfileController extends GetxController {
   } catch (e) {
     errorMessage.value = e.toString();
     isVerified.value = false;
-    if (Get.isLogEnable) print('Error fetching profile: $e');
+    if (Get.isLogEnable) {
+      if (kDebugMode) {
+        print('Error fetching profile: $e');
+      }
+    }
   } finally {
     isLoading.value = false;
   }
@@ -104,7 +111,9 @@ class ProfileController extends GetxController {
     } catch (e) {
       errorMessage.value = e.toString();
       if (Get.isLogEnable) {
-        print('Error updating profile: $e');
+        if (kDebugMode) {
+          print('Error updating profile: $e');
+        }
       }
       return false;
     } finally {
@@ -119,7 +128,9 @@ class ProfileController extends GetxController {
 
   Future<void> fetchOrderStatistics() async {
     try {
-      print('[DEBUG ProfileController] Fetching order statistics for userId: $userId');
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Fetching order statistics for userId: $userId');
+      }
 
       // Get OrderController instance
       final orderController = Get.put(OrderController());
@@ -129,7 +140,9 @@ class ProfileController extends GetxController {
 
       // Calculate statistics based on order status
       final orders = orderController.myOrders;
-      print('[DEBUG ProfileController] Total orders fetched: ${orders.length}');
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Total orders fetched: ${orders.length}');
+      }
 
       int ongoing = 0;
       int delivered = 0;
@@ -137,7 +150,9 @@ class ProfileController extends GetxController {
 
       for (var order in orders) {
         final status = order.status.toLowerCase();
-        print('[DEBUG ProfileController] Order ${order.orderId} status: $status');
+        if (kDebugMode) {
+          print('[DEBUG ProfileController] Order ${order.orderId} status: $status');
+        }
 
         if (status.contains('pending') || status.contains('processing') || status.contains('confirmed') || status.contains('preparing')) {
           ongoing++;
@@ -152,9 +167,13 @@ class ProfileController extends GetxController {
       deliveredOrders.value = delivered;
       completedOrders.value = completed;
 
-      print('[DEBUG ProfileController] Statistics - Ongoing: $ongoing, Delivered: $delivered, Completed: $completed');
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Statistics - Ongoing: $ongoing, Delivered: $delivered, Completed: $completed');
+      }
     } catch (e) {
-      print('[DEBUG ProfileController] Error fetching order statistics: $e');
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Error fetching order statistics: $e');
+      }
     }
   }
 
