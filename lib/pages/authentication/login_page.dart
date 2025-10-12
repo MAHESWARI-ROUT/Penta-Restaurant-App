@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
 import 'package:penta_restaurant/controller/auth_controller.dart';
-import 'package:penta_restaurant/pages/authentication/forget_password_page.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/pages/authentication/signup_page.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
 import '../../commons/appcolors.dart';
+import '../authentication/verification_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,7 +19,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final PasswordController passwordController = Get.put(PasswordController());
-  final AuthController authController = Get.put(AuthController());
+  final AuthController authController = Get.find<AuthController>();
+  final ProfileController profileController= Get.put(ProfileController());
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -29,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     final textScale = size.width / 390; // scales fonts relative to width
 
     return Scaffold(
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -102,19 +105,19 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 SizedBox(height: size.height * 0.01),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Get.to(() => const ForgetPasswordPage()),
-                    child: Text(
-                      'Forgot password?',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12 * textScale,
-                      ),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: TextButton(
+                //     onPressed: () => Get.to(() => const ForgetPasswordPage()),
+                //     child: Text(
+                //       'Forgot password?',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 12 * textScale,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 SizedBox(height: size.height * 0.03),
                 Obx(
                   () => Container(
@@ -122,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: size.height * 0.065,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                     ),
                     child: TextButton(
                       onPressed: authController.isLoading.value
@@ -162,7 +165,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text(
                     'Sign Up',
                     style: TextStyle(
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                       fontSize: 14 * textScale,
                     ),
                   ),
@@ -181,9 +184,20 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text.trim(),
         password: passwordTextController.text,
       );
+      await profileController.fetchProfile();
 
       if (success) {
-        Get.offAll(() => const HomePage());
+        // Check if user is verified
+        if (profileController.isVerified.value) {
+          // User is verified, go to home page
+          Get.offAll(() => const HomePage());
+        } else {
+          // User is not verified, go to verification page
+          Get.offAll(() => VerificationPage(
+                name: profileController.displayName ?? '',
+                email: emailController.text.trim(),
+              ));
+        }
       }
     }
   }

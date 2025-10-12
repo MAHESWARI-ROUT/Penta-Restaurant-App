@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../models/order_response.dart';
 import '../models/my_order_model.dart';
@@ -13,27 +14,46 @@ class OrderController extends GetxController {
   final RxBool isLoadingAssignedOrders = false.obs;
   final RxString errorMessage = ''.obs;
 
+  // Profile statistics
+  final RxInt ongoingOrders = 0.obs;
+  final RxInt deliveredOrders = 0.obs;
+  final RxInt completedOrders = 0.obs;
+
   Future<void> fetchMyOrders(String userId) async {
-    print('[DEBUG OrderController] fetchMyOrders called with userId: $userId');
+    if (kDebugMode) {
+      print('[DEBUG OrderController] fetchMyOrders called with userId: $userId');
+    }
     isLoadingMyOrders.value = true;
     errorMessage.value = '';
     try {
-      print('[DEBUG OrderController] Calling _orderService.getMyOrders...');
+      if (kDebugMode) {
+        print('[DEBUG OrderController] Calling _orderService.getMyOrders...');
+      }
       final response = await _orderService.getMyOrders(userId);
-      print('[DEBUG OrderController] API response received: success=${response?.success}, message=${response?.message}');
+      if (kDebugMode) {
+        print('[DEBUG OrderController] API response received: success=${response?.success}, message=${response?.message}');
+      }
       if (response != null && response.success) {
         myOrders.value = response.orders;
-        print('[DEBUG OrderController] Orders loaded successfully: ${myOrders.length} orders');
+        if (kDebugMode) {
+          print('[DEBUG OrderController] Orders loaded successfully: ${myOrders.length} orders');
+        }
       } else {
         errorMessage.value = response?.message ?? 'Failed to load orders';
-        print('[DEBUG OrderController] Failed to load orders: ${errorMessage.value}');
+        if (kDebugMode) {
+          print('[DEBUG OrderController] Failed to load orders: ${errorMessage.value}');
+        }
       }
     } catch (e) {
       errorMessage.value = 'Error fetching orders: $e';
-      print('[DEBUG OrderController] Exception in fetchMyOrders: $e');
+      if (kDebugMode) {
+        print('[DEBUG OrderController] Exception in fetchMyOrders: $e');
+      }
     } finally {
       isLoadingMyOrders.value = false;
-      print('[DEBUG OrderController] fetchMyOrders completed, loading=false');
+      if (kDebugMode) {
+        print('[DEBUG OrderController] fetchMyOrders completed, loading=false');
+      }
     }
   }
 

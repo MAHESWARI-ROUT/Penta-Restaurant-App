@@ -8,9 +8,9 @@ import 'package:penta_restaurant/controller/favorite_controller.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/controller/product_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
-import 'package:penta_restaurant/pages/tabs/cart_page.dart';
+import 'package:penta_restaurant/pages/tabs/cart_tab.dart';
 import 'package:penta_restaurant/pages/tabs/home_tab.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
+import 'package:penta_restaurant/pages/tabs/profile_tab.dart';
 import '../controller/tab_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     pages = [
       HomeTab(productController: productController, cartController: cartController),
-      CartPage(),
+      CartTab(),
       const ProfilePage(),
     ];
   }
@@ -106,18 +106,18 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.yellow : Colors.transparent,
+            color: isSelected ? AppColors.secondary1 : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
             children: [
-              Icon(icon, color: isSelected ? Colors.white : AppColors.darkGrey, size: 24),
+              Icon(icon, color: isSelected ? AppColors.darkGrey : AppColors.white, size: 24),
               const SizedBox(width: 8),
               if (isSelected)
                 Text(
                   label,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.darkGrey,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import '../models/auth_response.dart';
 import '../models/profile_response.dart';
 import '../services/profile_service.dart';
+import 'order_controller.dart';
 
 class ProfileController extends GetxController {
   final ProfileService _profileService = ProfileService();
@@ -14,12 +16,13 @@ class ProfileController extends GetxController {
   final RxString errorMessage = ''.obs;
   final RxBool isVerified = false.obs;
 
-
-
-  // Profile statistics
+  // Order statistics
   final RxInt ongoingOrders = 0.obs;
   final RxInt deliveredOrders = 0.obs;
   final RxInt completedOrders = 0.obs;
+
+
+
 
   // User ID getter from stored user data
   String get userId {
@@ -36,6 +39,7 @@ class ProfileController extends GetxController {
     super.onInit();
     if (userId.isNotEmpty) {
       fetchProfile();
+      fetchOrderStatistics();
     } else {
       errorMessage.value = 'User not logged in';
     }
@@ -52,7 +56,9 @@ class ProfileController extends GetxController {
       // Check verification based on success and message
       if (profile.success && profile.message.toLowerCase().contains('verified')) {
         isVerified.value = true;
-        print("[profile]: profile is verified");
+        if (kDebugMode) {
+          print("[profile]: profile is verified");
+        }
         await _storage.write('is_verified', isVerified.value);
       } else {
         isVerified.value = false;
@@ -80,7 +86,11 @@ class ProfileController extends GetxController {
   } catch (e) {
     errorMessage.value = e.toString();
     isVerified.value = false;
-    if (Get.isLogEnable) print('Error fetching profile: $e');
+    if (Get.isLogEnable) {
+      if (kDebugMode) {
+        print('Error fetching profile: $e');
+      }
+    }
   } finally {
     isLoading.value = false;
   }
@@ -101,7 +111,9 @@ class ProfileController extends GetxController {
     } catch (e) {
       errorMessage.value = e.toString();
       if (Get.isLogEnable) {
-        print('Error updating profile: $e');
+        if (kDebugMode) {
+          print('Error updating profile: $e');
+        }
       }
       return false;
     } finally {
@@ -111,6 +123,58 @@ class ProfileController extends GetxController {
 
   void refreshProfile() {
     fetchProfile();
+    fetchOrderStatistics();
+  }
+
+  Future<void> fetchOrderStatistics() async {
+    try {
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Fetching order statistics for userId: $userId');
+      }
+
+      // Get OrderController instance
+      final orderController = Get.put(OrderController());
+
+      // Fetch user's orders
+      await orderController.fetchMyOrders(userId);
+
+      // Calculate statistics based on order status
+      final orders = orderController.myOrders;
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Total orders fetched: ${orders.length}');
+      }
+
+      int ongoing = 0;
+      int delivered = 0;
+      int completed = 0;
+
+      for (var order in orders) {
+        final status = order.status.toLowerCase();
+        if (kDebugMode) {
+          print('[DEBUG ProfileController] Order ${order.orderId} status: $status');
+        }
+
+        if (status.contains('pending') || status.contains('processing') || status.contains('confirmed') || status.contains('preparing')) {
+          ongoing++;
+        } else if (status.contains('delivered') || status.contains('out for delivery')) {
+          delivered++;
+        } else if (status.contains('completed') || status.contains('complete')) {
+          completed++;
+        }
+      }
+
+      ongoingOrders.value = ongoing;
+      deliveredOrders.value = delivered;
+      completedOrders.value = completed;
+
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Statistics - Ongoing: $ongoing, Delivered: $delivered, Completed: $completed');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('[DEBUG ProfileController] Error fetching order statistics: $e');
+      }
+    }
   }
 
   // Get user display name

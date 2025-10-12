@@ -128,7 +128,7 @@ class _ProductCardState extends State<ProductCard> {
               : Text(
                   '₹ $priceDisplay',
                   style: TextStyle(
-                    color: AppColors.yellow,
+                    color: AppColors.secondary1,
                     fontWeight: FontWeight.bold,
                     fontSize: screenWidth * 0.035,
                   ),
@@ -139,7 +139,7 @@ class _ProductCardState extends State<ProductCard> {
           height: screenHeight * 0.035,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.darkGreen,
+              backgroundColor: AppColors.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -151,7 +151,7 @@ class _ProductCardState extends State<ProductCard> {
                   'Not Verified',
                   'Please login and verify to proceed further.',
                   snackPosition: SnackPosition.BOTTOM,
-                  backgroundColor: AppColors.darkGreen,
+                  backgroundColor: AppColors.primary,
                   colorText: AppColors.white,
                 );
                 return;
@@ -231,7 +231,7 @@ class _ProductCardState extends State<ProductCard> {
                       style: TextStyle(
                         fontSize: screenWidth * 0.03,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.yellow,
+                        color: AppColors.secondary1,
                       ),
                     ),
                   ],

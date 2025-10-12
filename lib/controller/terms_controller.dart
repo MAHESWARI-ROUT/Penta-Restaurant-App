@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../models/terms_model.dart';
 import '../services/terms_service.dart';
@@ -28,7 +29,9 @@ class TermsController extends GetxController {
     } catch (e) {
       errorMessage.value = e.toString();
       if (Get.isLogEnable) {
-        print('Error fetching terms: $e');
+        if (kDebugMode) {
+          print('Error fetching terms: $e');
+        }
       }
     } finally {
       isLoading.value = false;

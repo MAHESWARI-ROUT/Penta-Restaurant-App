@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/pages/authentication/verification_page.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
@@ -16,6 +17,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final PasswordController passwordController = Get.put(PasswordController());
+  final AuthController authController = Get.find<AuthController>();
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -30,7 +32,7 @@ class _SignupPageState extends State<SignupPage> {
     final textScale = size.width / 390; // responsive text scaling
 
     return Scaffold(
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -80,22 +82,36 @@ class _SignupPageState extends State<SignupPage> {
 
                 SizedBox(height: size.height * 0.04),
 
-                Container(
-                  width: double.infinity,
-                  height: size.height * 0.065,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppColors.yellow,
-                  ),
-                  child: TextButton(
-                    onPressed: _handleSignup,
-                    child: Text(
-                      'Create Account',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18 * textScale,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Obx(
+                  () => Container(
+                    width: double.infinity,
+                    height: size.height * 0.065,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppColors.secondary1,
+                    ),
+                    child: TextButton(
+                      onPressed: authController.isLoading.value
+                          ? null
+                          : _handleSignup,
+                      child: authController.isLoading.value
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : Text(
+                              'Create Account',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18 * textScale,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                 ),
@@ -114,7 +130,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: Text(
                     'Login',
                     style: TextStyle(
-                      color: AppColors.yellow,
+                      color: AppColors.secondary1,
                       fontSize: 14 * textScale,
                     ),
                   ),
@@ -143,12 +159,23 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  void _handleSignup() {
+  Future<void> _handleSignup() async {
     if (_formKey.currentState!.validate()) {
-      Get.to(() => VerificationPage(
-            name: nameController.text.trim(),
-            email: emailController.text.trim(),
-          ));
+      final success = await authController.signup(
+        name: nameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordTextController.text,
+        mobileNum: mobileController.text.trim(),
+        profession: professionController.text.trim(),
+      );
+
+      if (success) {
+        // Navigate to verification page after successful signup
+        Get.off(() => VerificationPage(
+              name: nameController.text.trim(),
+              email: emailController.text.trim(),
+            ));
+      }
     }
   }
 

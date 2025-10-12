@@ -5,6 +5,8 @@ import 'package:penta_restaurant/commons/app_Icon.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/home_page.dart';
 
+import '../commons/appcolors.dart';
+
 class PreloadPage extends StatelessWidget {
   const PreloadPage({super.key});
 
@@ -26,7 +28,7 @@ class PreloadPage extends StatelessWidget {
       });
     });
     return Container(
-      color: const Color(0xFF1a6f6a),
+      color: AppColors.primary,
       child: Padding(
         padding: const EdgeInsets.only(top: 250.0),
         child: Column(

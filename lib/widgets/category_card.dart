@@ -33,10 +33,10 @@ class CategoryCard extends StatelessWidget {
         width: cardWidth,
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.yellow : AppColors.white,
+          color: isSelected ? AppColors.secondary1 : AppColors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected ? AppColors.darkGreen : AppColors.grey4,
+            color: isSelected ? AppColors.primary : AppColors.grey4,
             width: 2,
           ),
           boxShadow: [
@@ -55,7 +55,7 @@ class CategoryCard extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.darkGreen : AppColors.grey5,
+                color: isSelected ? AppColors.primary : AppColors.grey5,
                 shape: BoxShape.circle,
               ),
               padding: const EdgeInsets.all(2),
@@ -68,14 +68,14 @@ class CategoryCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (c, e, s) => Icon(
                           icon ?? Icons.fastfood,
-                          color: isSelected ? AppColors.darkGreen : AppColors.grey2,
+                          color: isSelected ? AppColors.primary : AppColors.grey2,
                         ),
                       ),
                     )
                   : Icon(
                       icon ?? Icons.fastfood,
                       size: 20,
-                      color: isSelected ? AppColors.yellow : AppColors.grey2,
+                      color: isSelected ? AppColors.secondary1 : AppColors.grey2,
                     ),
             ),
             const SizedBox(height: 8),

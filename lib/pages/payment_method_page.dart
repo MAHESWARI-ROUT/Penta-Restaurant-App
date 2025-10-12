@@ -13,13 +13,13 @@ class PaymentMethodPage extends StatelessWidget {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           'Payment Methods',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -36,7 +36,7 @@ class PaymentMethodPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.darkGreen,
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 16),
@@ -61,12 +61,12 @@ class PaymentMethodPage extends StatelessWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: AppColors.darkGreen.withOpacity(0.1),
+                      color: AppColors.primary.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.payment,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                       size: 40,
                     ),
                   ),
@@ -99,7 +99,7 @@ class PaymentMethodPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: AppColors.darkGreen,
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 16),
@@ -136,17 +136,17 @@ class PaymentMethodPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.yellow.withOpacity(0.1),
+                color: AppColors.secondary1.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppColors.yellow.withOpacity(0.3),
+                  color: AppColors.secondary1.withOpacity(0.3),
                 ),
               ),
               child: Row(
                 children: [
                   Icon(
                     Icons.info_outline,
-                    color: AppColors.yellow,
+                    color: AppColors.secondary1,
                     size: 24,
                   ),
                   const SizedBox(width: 12),
@@ -197,12 +197,12 @@ class PaymentMethodPage extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: AppColors.darkGreen.withOpacity(0.1),
+                color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 icon,
-                color: AppColors.darkGreen,
+                color: AppColors.primary,
                 size: 24,
               ),
             ),
@@ -249,13 +249,13 @@ class PaymentMethodPage extends StatelessWidget {
           children: [
             Icon(
               Icons.access_time,
-              color: AppColors.darkGreen,
+              color: AppColors.primary,
             ),
             const SizedBox(width: 8),
             const Text(
               'Coming Soon',
               style: TextStyle(
-                color: AppColors.darkGreen,
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -274,7 +274,7 @@ class PaymentMethodPage extends StatelessWidget {
             child: const Text(
               'OK',
               style: TextStyle(
-                color: AppColors.darkGreen,
+                color: AppColors.primary,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../models/faq_model.dart';
 import '../services/faq_service.dart';
@@ -28,7 +29,9 @@ class FAQController extends GetxController {
     } catch (e) {
       errorMessage.value = e.toString();
       if (Get.isLogEnable) {
-        print('Error fetching FAQ: $e');
+        if (kDebugMode) {
+          print('Error fetching FAQ: $e');
+        }
       }
     } finally {
       isLoading.value = false;

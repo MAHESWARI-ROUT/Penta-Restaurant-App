@@ -1,4 +1,4 @@
-package com.adt.otdc
+package com.lasolution.penta
 
 import io.flutter.embedding.android.FlutterActivity
 

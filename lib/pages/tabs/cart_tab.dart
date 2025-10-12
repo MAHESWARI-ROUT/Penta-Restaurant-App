@@ -1,24 +1,33 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' hide TabController;
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
+import 'package:penta_restaurant/controller/tab_controller.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
+import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+class CartTab extends StatefulWidget {
+  const CartTab({super.key});
 
   @override
-  State<CartPage> createState() => _CartPageState();
+  State<CartTab> createState() => _CartTabState();
 }
 
-class _CartPageState extends State<CartPage> {
+class _CartTabState extends State<CartTab> {
+  final GetStorage _storage = GetStorage();
   late final CartController cartController;
   late final ProfileController profileController;
+  late final AuthController authcontroller;
+
+
   final RxBool _showDetailedBill = false.obs;
   final RxList<String> savedAddresses = <String>[
     '123 Main Street, City',
@@ -31,6 +40,7 @@ class _CartPageState extends State<CartPage> {
     super.initState();
     cartController = Get.find<CartController>();
     profileController = Get.find<ProfileController>();
+     authcontroller = Get.find<AuthController>();
     if (savedAddresses.isNotEmpty) {
       selectedAddress.value = savedAddresses[0];
     }
@@ -49,82 +59,6 @@ class _CartPageState extends State<CartPage> {
     Get.to(() => const ShippingDetailsPage());
   }
 
-  void _showAddAddressSheet() {
-    final TextEditingController _addressController = TextEditingController();
-
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.only(
-          top: 24,
-          left: 24,
-          right: 24,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(28),
-            topRight: Radius.circular(28),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Add New Address',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: AppColors.darkGreen,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _addressController,
-              maxLines: 2,
-              decoration: const InputDecoration(
-                labelText: 'Address',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.darkGreen,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-                onPressed: () {
-                  String newAddress = _addressController.text.trim();
-                  if (newAddress.isNotEmpty) {
-                    savedAddresses.add(newAddress);
-                    selectedAddress.value = newAddress;
-                    Get.back();
-                  } else {
-                    Get.snackbar(
-                      'Error',
-                      'Please enter an address',
-                      backgroundColor: Colors.red,
-                      colorText: Colors.white,
-                    );
-                  }
-                },
-                child: const Text(
-                  'Save Address',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
-    );
-  }
 
   Widget _buildSummaryRow(
     String label,
@@ -149,51 +83,6 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Widget _buildAddressSelector() {
-    return Obx(() {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedAddress.value.isEmpty
-                      ? null
-                      : selectedAddress.value,
-                  hint: const Text('Select delivery address'),
-                  items: savedAddresses
-                      .map(
-                        (addr) => DropdownMenuItem(
-                          value: addr,
-                          child: Text(addr, overflow: TextOverflow.ellipsis),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (val) {
-                    if (val != null) selectedAddress.value = val;
-                  },
-                ),
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.add_location_alt, color: AppColors.darkGreen),
-              onPressed: _showAddAddressSheet,
-              tooltip: 'Add New Address',
-            ),
-          ],
-        ),
-      );
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -202,7 +91,7 @@ class _CartPageState extends State<CartPage> {
       return Scaffold(
         backgroundColor: AppColors.backgroundSecondary,
         appBar: AppBar(
-          backgroundColor: AppColors.yellow,
+          backgroundColor: AppColors.secondary1,
           elevation: 0,
           title: Text(
             'My Cart',
@@ -214,65 +103,9 @@ class _CartPageState extends State<CartPage> {
           centerTitle: false,
           automaticallyImplyLeading: false,
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
-                const SizedBox(height: 20),
-                Text(
-                  'Please verify your email to continue.',
-                  style: TextStyle(fontSize: 18, color: AppColors.grey2),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.darkGreen,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 4,
-                  ),
-                  onPressed: () async {
-                    final phone = '916370793232';
-                    final message =
-                        'Verification Request:\n\nName: ${profileController.displayName}\nEmail: ${profileController.displayEmail}\n\nPlease verify this user.';
-
-                    final url =
-                        'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
-                    if (await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(
-                        Uri.parse(url),
-                        mode: LaunchMode.externalApplication,
-                      );
-                    } else {
-                      Get.snackbar(
-                        'Error',
-                        'Could not open WhatsApp.',
-                        backgroundColor: Colors.red,
-                        colorText: Colors.white,
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'Verify Now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        body: VerificationErrorPage(
+          message: 'Please verify your email to access the cart.',
+          userEmail: authcontroller.currentUser.value?.email,
         ),
       );
     }
@@ -281,7 +114,7 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        backgroundColor: AppColors.yellow,
+        backgroundColor: AppColors.secondary1,
         elevation: 0,
         title: Text(
           'My Cart',
@@ -306,9 +139,39 @@ class _CartPageState extends State<CartPage> {
               }
               if (cartController.cartItems.isEmpty) {
                 return Center(
-                  child: Text(
-                    'Your cart is empty',
-                    style: TextStyle(fontSize: 18),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_outlined,
+                        size: 100,
+                        color: AppColors.grey3,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Your cart is empty',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.grey2,
+                        ),
+                      ),
+
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          elevation: 4,
+                        ),
+                        onPressed: () {
+                          final tabController = Get.find<TabController>();
+                          tabController.changeTab(0);
+                        },
+                        child: const Text('Continue shopping',style: TextStyle(color: Colors.white),),
+                      ),
+                    ],
                   ),
                 );
               }
@@ -377,7 +240,7 @@ class _CartPageState extends State<CartPage> {
                                 Text(
                                   '₹${item.variantPrice}',
                                   style: TextStyle(
-                                    color: AppColors.yellow,
+                                    color: AppColors.secondary1,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 17,
                                   ),
@@ -399,7 +262,7 @@ class _CartPageState extends State<CartPage> {
                                   ),
                                   child: Icon(
                                     Icons.remove,
-                                    color: AppColors.darkGreen,
+                                    color: AppColors.primary,
                                     size: 18,
                                   ),
                                 ),
@@ -417,7 +280,7 @@ class _CartPageState extends State<CartPage> {
                                           item.productId,
                                           item.variantId,
                                         );
-                                        Get.back(); 
+                                        Get.back();
                                       },
                                     );
                                   } else {
@@ -440,7 +303,7 @@ class _CartPageState extends State<CartPage> {
                                 icon: Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(
-                                    color: AppColors.darkGreen,
+                                    color: AppColors.primary,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
@@ -467,8 +330,11 @@ class _CartPageState extends State<CartPage> {
               );
             }),
           ),
-          Obx(
-            () => InkWell(
+          Obx(() {
+            if (cartController.cartItems.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            return InkWell(
               onTap: () => _showDetailedBill.value = !_showDetailedBill.value,
               child: Container(
                 margin: const EdgeInsets.symmetric(
@@ -497,7 +363,7 @@ class _CartPageState extends State<CartPage> {
                           ? 'Hide Detailed Bill'
                           : 'Show Detailed Bill',
                       style: TextStyle(
-                        color: AppColors.darkGreen,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
@@ -506,13 +372,13 @@ class _CartPageState extends State<CartPage> {
                       _showDetailedBill.value
                           ? Icons.expand_less
                           : Icons.expand_more,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
                   ],
                 ),
               ),
-            ),
-          ),
+            );
+          }),
           Obx(() {
             if (!_showDetailedBill.value) return const SizedBox.shrink();
             return Container(
@@ -557,73 +423,78 @@ class _CartPageState extends State<CartPage> {
               ),
             );
           }),
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(28),
-                topRight: Radius.circular(28),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 12,
-                  offset: const Offset(0, -5),
+          Obx(() {
+            if (cartController.cartItems.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            return Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(28),
+                  topRight: Radius.circular(28),
                 ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Obx(
-                  () => _buildSummaryRow(
-                    'Subtotal',
-                    '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 12,
+                    offset: const Offset(0, -5),
                   ),
-                ),
-                const SizedBox(height: 8),
-                _buildSummaryRow(
-                  'Delivery',
-                  'Free',
-                  valueColor: Colors.green,
-                  valueFontWeight: FontWeight.bold,
-                ),
-                const SizedBox(height: 20),
-                const Divider(height: 1),
-                const SizedBox(height: 20),
-                Obx(
-                  () => _buildSummaryRow(
-                    'Total',
-                    '₹${cartController.totalPrice.toStringAsFixed(2)}',
-                    valueFontSize: 22,
+                ],
+              ),
+              child: Column(
+                children: [
+                  Obx(
+                    () => _buildSummaryRow(
+                      'Subtotal',
+                      '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildSummaryRow(
+                    'Delivery',
+                    'Free',
+                    valueColor: Colors.green,
                     valueFontWeight: FontWeight.bold,
                   ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkGreen,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
+                  const SizedBox(height: 20),
+                  const Divider(height: 1),
+                  const SizedBox(height: 20),
+                  Obx(
+                    () => _buildSummaryRow(
+                      'Total',
+                      '₹${cartController.totalPrice.toStringAsFixed(2)}',
+                      valueFontSize: 22,
+                      valueFontWeight: FontWeight.bold,
                     ),
-                    onPressed: _checkout,
-                    child: const Text(
-                      'Checkout',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 54,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: _checkout,
+                      child: const Text(
+                        'Checkout',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+          }),
           const SizedBox(height: 100),
         ],
       ),

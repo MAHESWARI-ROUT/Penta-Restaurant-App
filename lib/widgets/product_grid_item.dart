@@ -8,6 +8,8 @@ import 'package:penta_restaurant/models/product_model.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 
+import '../controller/auth_controller.dart';
+
 
 
 class ProductGridItem extends StatefulWidget {
@@ -27,6 +29,8 @@ class ProductGridItem extends StatefulWidget {
 class _ProductGridItemState extends State<ProductGridItem> {
   final FavoriteController favoriteController = Get.find<FavoriteController>();
   final ProfileController profileController = Get.find<ProfileController>();
+  final AuthController authController = Get.find<AuthController>();
+
 
   void toggleFavorite() {
     final userId = widget.cartController.userId;
@@ -66,7 +70,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                     style: TextStyle(
                       fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.darkGreen,
+                      color: AppColors.primary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -80,9 +84,9 @@ class _ProductGridItemState extends State<ProductGridItem> {
                           isExpanded: true,
                           underline: Container(
                             height: 2,
-                            color: AppColors.darkGreen.withOpacity(0.6),
+                            color: AppColors.primary.withOpacity(0.6),
                           ),
-                          iconEnabledColor: AppColors.darkGreen,
+                          iconEnabledColor: AppColors.primary,
                           items: List.generate(variants.length, (index) {
                             final v = variants[index];
                             return DropdownMenuItem(
@@ -112,7 +116,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                                   shape: const CircleBorder(),
                                   padding: EdgeInsets.all(screenWidth * 0.02),
                                   backgroundColor: AppColors.grey5,
-                                  foregroundColor: AppColors.darkGreen,
+                                  foregroundColor: AppColors.primary,
                                   elevation: 0,
                                 ),
                                 onPressed: quantity > 1
@@ -140,7 +144,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                                 style: ElevatedButton.styleFrom(
                                   shape: const CircleBorder(),
                                   padding: EdgeInsets.all(screenWidth * 0.025),
-                                  backgroundColor: AppColors.darkGreen,
+                                  backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                 ),
@@ -171,7 +175,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkGreen,
+                        backgroundColor: AppColors.primary,
                         padding: EdgeInsets.symmetric(vertical: screenHeight * 0.018),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
@@ -211,7 +215,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => Get.to(
-          () => ProductDetailsPage(
+              () => ProductDetailsPage(
             product: widget.product,
             cartController: widget.cartController,
           ),
@@ -245,15 +249,22 @@ class _ProductGridItemState extends State<ProductGridItem> {
                     return GestureDetector(
                       onTap: toggleFavorite,
                       child: Container(
-                        padding: EdgeInsets.all(screenWidth * 0.02),
+                        padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.black45,
+                          color: Colors.white,
                           shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
                         child: Icon(
                           isFav ? Icons.favorite : Icons.favorite_border,
-                          color: isFav ? Colors.red : Colors.white,
-                          size: screenWidth * 0.05,
+                          color: isFav ? Colors.red : AppColors.grey2,
+                          size: 18,
                         ),
                       ),
                     );
@@ -281,7 +292,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                     Text(
                       cleanDescription,
                       style: TextStyle(color: AppColors.grey2, fontSize: screenWidth * 0.035),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   SizedBox(height: screenWidth * 0.02),
@@ -305,38 +316,65 @@ class _ProductGridItemState extends State<ProductGridItem> {
           child: Text(
             '₹ $priceDisplay',
             style: TextStyle(
-              color: AppColors.yellow,
+              color: AppColors.secondary1,
               fontWeight: FontWeight.bold,
               fontSize: screenWidth * 0.04,
             ),
           ),
         ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.darkGreen,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            minimumSize: Size(0, screenWidth * 0.08),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.3),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          onPressed: () {
-            if (!profileController.isVerified.value) {
-              showDialog(
-                context: context,
-                builder: (_) => const UnverifiedUserDialog(),
-              );
-            } else {
-              _showVariantSelectionDialog();
-            }
-          },
-          child: Text(
-            'Add',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: screenWidth * 0.035,
-              fontWeight: FontWeight.bold,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                if (!profileController.isVerified.value) {
+                  showDialog(
+                    context: context,
+                    builder: (_) =>  UnverifiedUserDialog(
+                      userEmail:  authController.currentUser.value?.email,
+                    ),
+                  );
+                } else {
+                  _showVariantSelectionDialog();
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.add_shopping_cart,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      'Add',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

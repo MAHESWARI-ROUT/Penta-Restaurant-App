@@ -12,14 +12,14 @@ class AppIcon extends StatelessWidget {
           width: 100,
           height: 100,
           decoration: BoxDecoration(
-            color: AppColors.yellow,
+            color: AppColors.secondary1,
             shape: BoxShape.circle,
           ),
           child: Center(
             child: Icon(
               Icons.restaurant_menu,
               size: 60,
-              color: AppColors.darkGreen,
+              color: AppColors.primary,
             ),
           ),
         ),
@@ -29,7 +29,7 @@ class AppIcon extends StatelessWidget {
           'Penta',
           style: TextStyle(
             decoration: TextDecoration.none,
-            color: AppColors.yellow,
+            color: AppColors.secondary1,
             fontSize: 32,
             fontWeight: FontWeight.bold,
           ),

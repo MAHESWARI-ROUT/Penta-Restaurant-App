@@ -10,8 +10,8 @@ import 'package:penta_restaurant/pages/info_pages/faq_page.dart';
 import 'package:penta_restaurant/pages/info_pages/terms_conditions_page.dart';
 import 'package:penta_restaurant/pages/my_order_page.dart';
 import 'package:penta_restaurant/pages/profile/edit_profile_page.dart';
-import 'package:penta_restaurant/pages/tabs/cart_page.dart';
-import 'package:penta_restaurant/pages/tabs/profile_page_new.dart';
+import 'package:penta_restaurant/pages/tabs/cart_tab.dart';
+import 'package:penta_restaurant/pages/tabs/profile_tab.dart';
 
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
@@ -21,7 +21,7 @@ class MainDrawer extends StatelessWidget {
     {
       'title': 'My Cart',
       'icon': Icons.shopping_cart_outlined,
-      'action': () => Get.to(() => const CartPage()),
+      'action': () => Get.to(() => const CartTab()),
     },
     {
       'title': 'Wishlist',
@@ -33,16 +33,11 @@ class MainDrawer extends StatelessWidget {
       'icon': Icons.receipt_long,
       'action': () => Get.to(() => const MyOrdersPage()),
     },
-    {
-      'title': 'Notifications',
-      'icon': Icons.notification_add_outlined,
-      'action': () => Get.to(() => const NotificationsPage()),
-    },
-    {
-      'title': 'Profile',
-      'icon': Icons.account_circle_outlined,
-      'action': () => Get.to(() => const ProfilePage()),
-    },
+    // {
+    //   'title': 'Notifications',
+    //   'icon': Icons.notification_add_outlined,
+    //   'action': () => Get.to(() => const NotificationsPage()),
+    // },
     {
       'title': 'Edit Profile',
       'icon': Icons.edit,
@@ -116,9 +111,10 @@ class MainDrawer extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.04),
+                SizedBox(height: screenHeight * 0.03),
                 ...drawerItems.map((item) {
                   return ListTile(
+                    tileColor: Colors.transparent,
                     title: Text(
                       item['title'],
                       style: TextStyle(
@@ -135,8 +131,9 @@ class MainDrawer extends StatelessWidget {
                     },
                   );
                 }),
-                SizedBox(height: screenHeight * 0.05),
+                SizedBox(height: screenHeight * 0.03),
                 ListTile(
+                  tileColor: Colors.transparent,
                   title: Text(
                     'SignOut',
                     style: TextStyle(

@@ -16,6 +16,7 @@ import 'package:penta_restaurant/pages/my_address_page.dart';
 import 'package:penta_restaurant/pages/payment_method_page.dart';
 
 import '../authentication/verification_page.dart';
+import '../verification_error_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -23,6 +24,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ProfileController profileController = Get.put(ProfileController());
+    final AuthController authcontroller = Get.find<AuthController>();
+
 
     return Scaffold(
       body: Obx(() {
@@ -39,75 +42,22 @@ class ProfilePage extends StatelessWidget {
           return Scaffold(
             backgroundColor: AppColors.backgroundSecondary,
             appBar: AppBar(
-              backgroundColor: AppColors.yellow,
+              backgroundColor: AppColors.secondary1,
               elevation: 0,
               title: Text('My Profile', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
               centerTitle: false,
               automaticallyImplyLeading: false,
             ),
-            body: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Please verify your email to continue.',
-                      style: TextStyle(fontSize: 18, color: AppColors.grey2),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 28),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.darkGreen,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 4,
-                      ),
-                      onPressed: () async {
-                        final phone = '916370793232';
-                        final message =
-                            'Verification Request:\n\nName: ${profileController.displayName}\nEmail: ${profileController.displayEmail}\n\nPlease verify this user.';
-
-                        final url = 'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
-                        if (await canLaunchUrl(Uri.parse(url))) {
-                          await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-                        } else {
-                          Get.snackbar(
-                            'Error',
-                            'Could not open WhatsApp.',
-                            backgroundColor: Colors.red,
-                            colorText: Colors.white,
-                          );
-                        }
-                      },
-                      child: const Text(
-                        'Verify Now',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-
-                  ],
-                ),
-              ),
+            body:VerificationErrorPage(
+              message: 'Please verify your email to access the profile.',
+              userEmail: authcontroller.currentUser.value?.email,
             ),
           );
         }
         // Logged-in and verified user UI
         return RefreshIndicator(
           onRefresh: () async => profileController.refreshProfile(),
-          color: AppColors.darkGreen,
+          color: AppColors.primary,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
@@ -118,7 +68,7 @@ class ProfilePage extends StatelessWidget {
                     Container(
                       height: 260,
                       decoration: BoxDecoration(
-                        color: AppColors.yellow,
+                        color: AppColors.secondary1,
                         borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(50),
                           bottomRight: Radius.circular(50),
@@ -126,7 +76,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          top: 40,
+                          top: 50,
                           left: 20,
                           right: 20,
                         ),
@@ -134,25 +84,25 @@ class ProfilePage extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color.fromARGB(
-                                      255,
-                                      247,
-                                      199,
-                                      127,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: IconButton(
-                                    onPressed: () => Get.back(),
-                                    icon: const Icon(Icons.arrow_back),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
+                                // Container(
+                                //   decoration: BoxDecoration(
+                                //     color: const Color.fromARGB(
+                                //       255,
+                                //       247,
+                                //       199,
+                                //       127,
+                                //     ),
+                                //     borderRadius: BorderRadius.circular(12),
+                                //   ),
+                                //   child: IconButton(
+                                //     onPressed: () => Get.back(),
+                                //     icon: const Icon(Icons.arrow_back),
+                                //   ),
+                                // ),
+                                //const SizedBox(width: 10),
                                 const Text(
                                   'Profile',
-                                  style: TextStyle(fontSize: 16),
+                                  style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
                                 ),
                                 const Spacer(),
                               ],
@@ -165,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                                   width: 60,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: AppColors.lightYellow,
+                                    color: AppColors.secondary2,
                                   ),
                                   child: Center(
                                     child: Text(
@@ -176,7 +126,7 @@ class ProfilePage extends StatelessWidget {
                                       style: const TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.darkGreen,
+                                        color: AppColors.primary,
                                       ),
                                     ),
                                   ),

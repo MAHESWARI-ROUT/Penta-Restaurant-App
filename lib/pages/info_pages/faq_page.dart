@@ -18,13 +18,13 @@ class FAQPage extends StatelessWidget {
         backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.darkGreen),
+          icon: const Icon(Icons.arrow_back, color: AppColors.primary),
           onPressed: () => Get.back(),
         ),
         title: const Text(
           'FAQ',
           style: TextStyle(
-            color: AppColors.darkGreen,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -34,7 +34,7 @@ class FAQPage extends StatelessWidget {
       body: Obx(() {
         if (faqController.isLoading.value) {
           return const Center(
-            child: CircularProgressIndicator(color: AppColors.darkGreen),
+            child: CircularProgressIndicator(color: AppColors.primary),
           );
         }
 
@@ -66,7 +66,7 @@ class FAQPage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () => faqController.refreshFAQ(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkGreen,
+                      backgroundColor: AppColors.primary,
                     ),
                     child: const Text('Retry', style: TextStyle(color: Colors.white)),
                   ),
@@ -78,7 +78,7 @@ class FAQPage extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () async => faqController.refreshFAQ(),
-          color: AppColors.darkGreen,
+          color: AppColors.primary,
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
@@ -110,13 +110,13 @@ class FAQPage extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: AppColors.darkGreen.withOpacity(0.1),
+                              color: AppColors.primary.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
                               Icons.help_outline,
                               size: 48,
-                              color: AppColors.darkGreen,
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -125,7 +125,7 @@ class FAQPage extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.darkGreen,
+                              color: AppColors.primary,
                             ),
                             textAlign: TextAlign.center,
                           ),
@@ -184,7 +184,7 @@ class FAQPage extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.darkGreen.withOpacity(0.1),
+              color: AppColors.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -192,7 +192,7 @@ class FAQPage extends StatelessWidget {
                 '${index + 1}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.darkGreen,
+                  color: AppColors.primary,
                   fontSize: 14,
                 ),
               ),
@@ -203,10 +203,10 @@ class FAQPage extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 15,
-              color: AppColors.darkGreen,
+              color: AppColors.primary,
             ),
           ),
-          iconColor: AppColors.darkGreen,
+          iconColor: AppColors.primary,
           collapsedIconColor: AppColors.grey2,
           children: [
             Container(

@@ -17,7 +17,7 @@ class VerificationPage extends StatelessWidget {
   Future<void> _sendWhatsAppVerification() async {
     final phone = '916370793232';
     final message =
-        'Verification Request:\n\nName: $name\nEmail: $email\n\nPlease verify this user.';
+        'Verification Request:\n\nEmail: $email\n\nPlease verify this user.';
 
     final url = 'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
     if (await canLaunchUrl(Uri.parse(url))) {
@@ -38,7 +38,7 @@ class VerificationPage extends StatelessWidget {
     final textScale = size.width / 390; // scales text proportionally
 
     return Scaffold(
-      backgroundColor: AppColors.darkGreen,
+      backgroundColor: AppColors.primary,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -57,8 +57,8 @@ class VerificationPage extends StatelessWidget {
               ),
               SizedBox(height: size.height * 0.04),
 
-              _buildDisplayField('Name', name),
-              SizedBox(height: size.height * 0.02),
+              // _buildDisplayField('Name', name),
+              // SizedBox(height: size.height * 0.02),
               _buildDisplayField('Email', email),
               SizedBox(height: size.height * 0.05),
 
@@ -66,7 +66,7 @@ class VerificationPage extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: _sendWhatsAppVerification,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.yellow,
+                    backgroundColor: AppColors.secondary1,
                     padding: EdgeInsets.symmetric(
                       horizontal: size.width * 0.12,
                       vertical: size.height * 0.018,
