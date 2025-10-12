@@ -1,5 +1,7 @@
 // lib/services/dio_client.dart
 
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 class DioClient {
@@ -24,7 +26,7 @@ class DioClient {
       responseBody: true,
       responseHeader: false,
       error: true,
-      logPrint: (obj) => print(obj),
+      logPrint: (obj) => log(obj.toString()),
     ));
   }
 }

@@ -11,6 +11,7 @@ class CtextformField extends StatefulWidget {
     this.passwordController,
     this.controller,
     this.validator,
+    this.keyboardType,
   });
 
   final String text;
@@ -19,6 +20,7 @@ class CtextformField extends StatefulWidget {
   final PasswordController? passwordController;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
 
   @override
   State<CtextformField> createState() => _CtextformFieldState();
@@ -56,6 +58,7 @@ class _CtextformFieldState extends State<CtextformField> {
                 controller: _internalController,
                 obscureText: passwordCtrl.isHidden.value,
                 validator: widget.validator,
+                keyboardType: widget.keyboardType,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(
                     vertical: 16.0,
@@ -82,6 +85,7 @@ class _CtextformFieldState extends State<CtextformField> {
           : TextFormField(
               controller: _internalController,
               validator: widget.validator,
+              keyboardType: widget.keyboardType,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 16.0,

@@ -69,4 +69,27 @@ class AuthService {
     }
   }
 
+  // Forgot password
+  Future<AuthResponse> forgotPassword({
+    required String email,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/JSON/forgot.php',
+        data: FormData.fromMap({
+          'email': email.trim(),
+        }),
+      );
+
+      // Ensure backend sometimes returns JSON string
+      final data = response.data is String ? json.decode(response.data) : response.data;
+
+      print('Forgot password response: $data');
+
+      return AuthResponse.fromJson(data);
+    } catch (e) {
+      print('Forgot password failed: $e');
+      throw Exception('Forgot password failed: $e');
+    }
+  }
 }

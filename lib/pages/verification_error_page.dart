@@ -6,14 +6,12 @@ import 'package:penta_restaurant/commons/appcolors.dart';
 class VerificationErrorPage extends StatelessWidget {
   final String message;
   final String whatsAppPhoneNumber;
-  final String? userName;
   final String? userEmail;
 
   const VerificationErrorPage({
     super.key,
     this.message = 'Please verify your email to continue.',
     this.whatsAppPhoneNumber = '916370793232',
-    this.userName,
     this.userEmail,
   }) ;
 
@@ -21,13 +19,6 @@ class VerificationErrorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
-      appBar: AppBar(
-        backgroundColor: AppColors.secondary1,
-        elevation: 0,
-        title: Text('Access Denied', style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold)),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -69,7 +60,7 @@ class VerificationErrorPage extends StatelessWidget {
       return;
     }
 
-    final message = 'Verification Request:\n\nName: ${userName ?? ''}\nEmail: ${userEmail ?? ''}\n\nPlease verify this user.';
+    final message = 'Verification Request:\n\nEmail: ${userEmail ?? ''}\n\nPlease verify this user.';
     final url = 'https://wa.me/$whatsAppPhoneNumber?text=${Uri.encodeComponent(message)}';
 
     if (await canLaunchUrl(Uri.parse(url))) {
@@ -82,13 +73,11 @@ class VerificationErrorPage extends StatelessWidget {
 
 class UnverifiedUserDialog extends StatelessWidget {
   final String whatsAppPhoneNumber;
-  final String? userName;
   final String? userEmail;
 
   const UnverifiedUserDialog({
     Key? key,
     this.whatsAppPhoneNumber = '916370793232',
-    this.userName,
     this.userEmail,
   }) : super(key: key);
 
@@ -129,7 +118,7 @@ class UnverifiedUserDialog extends StatelessWidget {
       return;
     }
 
-    final message = 'Verification Request:\n\nName: ${userName ?? ''}\nEmail: ${userEmail ?? ''}\n\nPlease verify this user.';
+    final message = 'Verification Request:\n\nEmail: ${userEmail ?? ''}\n\nPlease verify this user.';
     final url = 'https://wa.me/$whatsAppPhoneNumber?text=${Uri.encodeComponent(message)}';
 
     if (await canLaunchUrl(Uri.parse(url))) {

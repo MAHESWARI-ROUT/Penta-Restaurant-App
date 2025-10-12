@@ -262,6 +262,73 @@ class AuthController extends GetxController {
     );
   }
 
+  // Forgot Password function
+  Future<bool> forgotPassword({
+    required String email,
+  }) async {
+    if (kDebugMode) {
+      print('Forgot password requested for email: $email');
+    }
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+      final response = await _authService.forgotPassword(
+        email: email,
+      );
+      if (kDebugMode) {
+        print('Forgot password response success: ${response.success}');
+        print('Forgot password response message: ${response.message}');
+      }
+
+      if (response.success) {
+        if (kDebugMode) {
+          print('Forgot password successful');
+        }
+
+        Get.snackbar(
+          'Success',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.primary,
+          colorText: AppColors.white,
+          duration: Duration(seconds: 4),
+        );
+        return true;
+      } else {
+        errorMessage.value = response.message;
+        if (kDebugMode) {
+          print('Forgot password failed: ${response.message}');
+        }
+        Get.snackbar(
+          'Failed',
+          response.message,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.primary,
+          colorText: AppColors.white,
+        );
+      }
+      return false;
+    } catch (e) {
+      errorMessage.value = 'Forgot password failed: $e';
+      if (kDebugMode) {
+        print('Forgot password error: $e');
+      }
+      Get.snackbar(
+        'Error',
+        'Failed to send reset link. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.primary,
+        colorText: AppColors.white,
+      );
+      return false;
+    } finally {
+      isLoading.value = false;
+      if (kDebugMode) {
+        print('Forgot password process complete');
+      }
+    }
+  }
   // Get current user ID
   String get userId => currentUser.value?.userId ?? '';
 }

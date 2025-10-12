@@ -14,21 +14,21 @@ class AppColors {
   static const grey6 = Color(0xFFF2F2F5);
 
   // Primary Colors
-  // static const primary = Color(0xFF1B5C58);
-  // static const secondary1 = Color(0xFFf3af4a);
-  // static const secondary2 = Color.fromARGB(255, 244, 201, 136);
-  // static const darkGrey = Color(0xFF181818);
-  // static const accentColor = Color(0xFFFFFEFF);
-  // static const productBackground = Color(0xFFC9E9E6);
-
-
-
-  static const Color primary = Color(0xFF4D2412); // Dark Brown
-  static const Color secondary1 = Color(0xFF967F74); // White
-  static const secondary2 = Color(0xFFB5A49C);    // Muted lighter brown, good for highlights or secondary emphasis
+  static const primary = Color(0xFF1B5C58);
+  static const secondary1 = Color(0xFFf3af4a);
+  static const secondary2 = Color.fromARGB(255, 244, 201, 136);
   static const darkGrey = Color(0xFF181818);
-  static const Color accentColor = Color(0xFFFFFEFF); // Off White
-  static const Color productBackground = Color(0xFFC9E9E6); // Dark Brown
+  static const accentColor = Color(0xFFFFFEFF);
+  static const productBackground = Color(0xFFC9E9E6);
+
+
+
+  // static const Color primary = Color(0xFF4D2412); // Dark Brown
+  // static const Color secondary1 = Color(0xFF967F74); // White
+  // static const secondary2 = Color(0xFFB5A49C);    // Muted lighter brown, good for highlights or secondary emphasis
+  // static const darkGrey = Color(0xFF181818);
+  // static const Color accentColor = Color(0xFFFFFEFF); // Off White
+  // static const Color productBackground = Color(0xFFC9E9E6); // Dark Brown
 
   // System Background
   static const backgroundPrimary = Color(0xFFFFFFFF);

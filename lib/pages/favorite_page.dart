@@ -8,19 +8,22 @@ import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/widgets/product_grid_item.dart';
 
+import '../controller/auth_controller.dart';
+
 class FavoritePage extends StatelessWidget {
   FavoritePage({super.key});
 
   final FavoriteController favoriteController = Get.find<FavoriteController>();
   final CartController cartController = Get.find<CartController>();
   final ProfileController profileController = Get.find<ProfileController>();
+  final AuthController authcontroller = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
     if (!profileController.isVerified.value) {
       return VerificationErrorPage(
-        userName: profileController.displayName,
-        userEmail: profileController.displayEmail,
+        message: 'Please verify your email to access the cart.',
+        userEmail: authcontroller.currentUser.value?.email,
       );
     }
 

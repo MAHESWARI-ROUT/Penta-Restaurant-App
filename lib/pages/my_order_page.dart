@@ -9,6 +9,8 @@ import 'package:penta_restaurant/pages/home_page.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/pages/order_details_page.dart';
 
+import '../controller/auth_controller.dart';
+
 class MyOrdersPage extends StatefulWidget {
   const MyOrdersPage({super.key});
 
@@ -19,6 +21,8 @@ class MyOrdersPage extends StatefulWidget {
 class _MyOrdersPageState extends State<MyOrdersPage> {
   final OrderController orderController = Get.put(OrderController());
   final ProfileController profileController = Get.find<ProfileController>();
+  final AuthController authcontroller = Get.find<AuthController>();
+
   final GetStorage _storage = GetStorage();
 
   String get userId {
@@ -61,8 +65,8 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   Widget build(BuildContext context) {
     if (!profileController.isVerified.value) {
       return VerificationErrorPage(
-        userName: profileController.displayName,
-        userEmail: profileController.displayEmail,
+        message: 'Please verify your email to access the orders.',
+        userEmail: authcontroller.currentUser.value?.email,
       );
     }
 

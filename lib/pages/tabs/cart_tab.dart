@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide TabController;
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
+import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/controller/cart_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/controller/tab_controller.dart';
 import 'package:penta_restaurant/pages/shipping_details_page.dart';
+import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/widgets/shimmer_widgets.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:shimmer/shimmer.dart';
@@ -18,8 +22,12 @@ class CartTab extends StatefulWidget {
 }
 
 class _CartTabState extends State<CartTab> {
+  final GetStorage _storage = GetStorage();
   late final CartController cartController;
   late final ProfileController profileController;
+  late final AuthController authcontroller;
+
+
   final RxBool _showDetailedBill = false.obs;
   final RxList<String> savedAddresses = <String>[
     '123 Main Street, City',
@@ -32,6 +40,7 @@ class _CartTabState extends State<CartTab> {
     super.initState();
     cartController = Get.find<CartController>();
     profileController = Get.find<ProfileController>();
+     authcontroller = Get.find<AuthController>();
     if (savedAddresses.isNotEmpty) {
       selectedAddress.value = savedAddresses[0];
     }
@@ -94,65 +103,9 @@ class _CartTabState extends State<CartTab> {
           centerTitle: false,
           automaticallyImplyLeading: false,
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.lock_outline, size: 80, color: AppColors.grey3),
-                const SizedBox(height: 20),
-                Text(
-                  'Please verify your email to continue.',
-                  style: TextStyle(fontSize: 18, color: AppColors.grey2),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 4,
-                  ),
-                  onPressed: () async {
-                    final phone = '916370793232';
-                    final message =
-                        'Verification Request:\n\nName: ${profileController.displayName}\nEmail: ${profileController.displayEmail}\n\nPlease verify this user.';
-
-                    final url =
-                        'https://wa.me/$phone?text=${Uri.encodeComponent(message)}';
-                    if (await canLaunchUrl(Uri.parse(url))) {
-                      await launchUrl(
-                        Uri.parse(url),
-                        mode: LaunchMode.externalApplication,
-                      );
-                    } else {
-                      Get.snackbar(
-                        'Error',
-                        'Could not open WhatsApp.',
-                        backgroundColor: Colors.red,
-                        colorText: Colors.white,
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'Verify Now',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        body: VerificationErrorPage(
+          message: 'Please verify your email to access the cart.',
+          userEmail: authcontroller.currentUser.value?.email,
         ),
       );
     }

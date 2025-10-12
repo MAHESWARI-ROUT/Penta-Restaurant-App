@@ -5,6 +5,7 @@ import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/tabs/cart_tab.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import '../commons/appcolors.dart';
+import '../controller/auth_controller.dart';
 import '../controller/cart_controller.dart';
 import '../controller/favorite_controller.dart';
 import '../models/product_model.dart';
@@ -30,6 +31,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     final FavoriteController favoriteController = Get.find<FavoriteController>();
     final ProfileController profileController = Get.find<ProfileController>();
+    final AuthController authcontroller = Get.find<AuthController>();
+
 
     final variant = widget.product.variants.isNotEmpty
         ? widget.product.variants[selectedVariantIndex]
@@ -199,9 +202,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                         colorText: Colors.white,
                                         snackPosition: SnackPosition.BOTTOM,
                                         onTap: (_) => Get.to(() =>  VerificationErrorPage(
-                                          userName: profileController.displayName,
-                                          userEmail: profileController.displayEmail,
-                                        )),
+                                          message: 'Please verify your email to access the product details.',
+                                          userEmail: authcontroller.currentUser.value?.email,
+                                        ),),
                                       );
                                       return;
                                     }

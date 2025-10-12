@@ -8,6 +8,8 @@ import 'package:penta_restaurant/models/product_model.dart';
 import 'package:penta_restaurant/pages/product_details_page.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 
+import '../controller/auth_controller.dart';
+
 
 
 class ProductGridItem extends StatefulWidget {
@@ -27,6 +29,8 @@ class ProductGridItem extends StatefulWidget {
 class _ProductGridItemState extends State<ProductGridItem> {
   final FavoriteController favoriteController = Get.find<FavoriteController>();
   final ProfileController profileController = Get.find<ProfileController>();
+  final AuthController authController = Get.find<AuthController>();
+
 
   void toggleFavorite() {
     final userId = widget.cartController.userId;
@@ -338,7 +342,9 @@ class _ProductGridItemState extends State<ProductGridItem> {
                 if (!profileController.isVerified.value) {
                   showDialog(
                     context: context,
-                    builder: (_) => const UnverifiedUserDialog(),
+                    builder: (_) =>  UnverifiedUserDialog(
+                      userEmail:  authController.currentUser.value?.email,
+                    ),
                   );
                 } else {
                   _showVariantSelectionDialog();
