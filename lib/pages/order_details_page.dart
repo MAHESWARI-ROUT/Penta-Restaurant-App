@@ -178,21 +178,21 @@ class OrderDetailsPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.phone_outlined,
-                        size: 20,
-                        color: AppColors.grey2,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        order.phone,
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(height: 12),
+                  // Row(
+                  //   children: [
+                  //     Icon(
+                  //       Icons.phone_outlined,
+                  //       size: 20,
+                  //       color: AppColors.grey2,
+                  //     ),
+                  //     const SizedBox(width: 12),
+                  //     Text(
+                  //       order.phone,
+                  //       style: theme.textTheme.bodyLarge,
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),
@@ -367,7 +367,7 @@ class OrderDetailsPage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Product Image Placeholder
+        // Product Image with Variant Image and Placeholder
         Container(
           width: 60,
           height: 60,
@@ -376,10 +376,41 @@ class OrderDetailsPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.separatorOpaque),
           ),
-          child: const Icon(
-            Icons.fastfood,
-            color: AppColors.grey3,
-            size: 30,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: product.imageUrl.isNotEmpty
+                ? Image.network(
+                    product.imageUrl,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.fastfood,
+                      color: AppColors.grey3,
+                      size: 30,
+                    ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                : const Icon(
+                    Icons.fastfood,
+                    color: AppColors.grey3,
+                    size: 30,
+                  ),
           ),
         ),
         const SizedBox(width: 12),

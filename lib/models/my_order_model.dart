@@ -55,6 +55,7 @@ class OrderProduct {
   final String variantName;
   final int quantity;
   final String price;
+  final String imageUrl;
 
   OrderProduct({
     required this.productId,
@@ -62,6 +63,7 @@ class OrderProduct {
     required this.variantName,
     required this.quantity,
     required this.price,
+    required this.imageUrl,
   });
 
   factory OrderProduct.fromJson(Map<String, dynamic> json) {
@@ -71,6 +73,7 @@ class OrderProduct {
       variantName: json['variantname']?.toString() ?? '',
       quantity: int.tryParse(json['varquantity']?.toString() ?? '0') ?? 0,
       price: json['varprice']?.toString() ?? '0',
+      imageUrl: json['image']?.toString() ?? '',
     );
   }
 }
