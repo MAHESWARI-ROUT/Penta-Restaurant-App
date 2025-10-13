@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
@@ -38,27 +37,113 @@ class _HomeTabState extends State<HomeTab> {
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
-        backgroundColor: AppColors.secondary1,
+        backgroundColor: Colors.white,
         elevation: 0,
-        scrolledUnderElevation: 10,
-        title: Text(
-          'Penta Family Restaurant',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+        scrolledUnderElevation: 0,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.secondary1,
+                AppColors.secondary1.withOpacity(0.9),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () => Get.to(() => FavoritePage()),
-            tooltip: 'Wishlist',
+
+
+        //drawer icon button
+        leading: Builder(
+          builder: (context) => Container(
+            margin: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.menu_rounded, color: Colors.white),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              tooltip: 'Menu',
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => Get.to(() => SearchPage()),
-            tooltip: 'Search',
+        ),
+        title: const Flexible(
+          child: Text(
+            'Penta Family Restaurant',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontSize: 20,
+              letterSpacing: 0.5,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        centerTitle: false,
+
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 4),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.favorite_rounded, color: Colors.white),
+              onPressed: () => Get.to(
+                () => const FavoritePage(),
+                transition: Transition.rightToLeft,
+                duration: const Duration(milliseconds: 300),
+              ),
+              tooltip: 'Wishlist',
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 8, left: 4),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.search_rounded, color: Colors.white),
+              onPressed: () => Get.to(
+                () => const SearchPage(),
+                transition: Transition.rightToLeft,
+                duration: const Duration(milliseconds: 300),
+              ),
+              tooltip: 'Search',
+            ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(4),
+          child: Container(
+            height: 4,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.3),
+                  Colors.transparent,
+                  Colors.white.withOpacity(0.3),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
       drawer: MainDrawer(onSelectScreen: (String identifier) {}),
       body: Obx(() {
