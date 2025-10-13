@@ -75,9 +75,10 @@ class _CtextformFieldState extends State<CtextformField> {
                   ),
                   labelText: widget.text,
                   labelStyle: const TextStyle(
-                    color: Colors.black,
+                    color: Colors.white,
                     fontSize: 16,
                   ),
+
                   border: InputBorder.none,
                 ),
               );

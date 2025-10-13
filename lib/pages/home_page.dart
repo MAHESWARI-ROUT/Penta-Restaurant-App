@@ -111,7 +111,36 @@ class _HomePageState extends State<HomePage> {
           ),
           child: Row(
             children: [
-              Icon(icon, color: isSelected ? AppColors.darkGrey : AppColors.white, size: 24),
+              Stack(
+                children: [
+                  Icon(icon, color: isSelected ? AppColors.darkGrey : AppColors.white, size:isSelected ?28: 24),
+                  if (index == 1 && cartController.itemCount > 0) // Cart badge
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(0.5),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          cartController.itemCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
               const SizedBox(width: 8),
               if (isSelected)
                 Text(
@@ -128,5 +157,3 @@ class _HomePageState extends State<HomePage> {
     });
   }
 }
-
-

@@ -44,7 +44,7 @@ class AppTheme {
           letterSpacing: 0.15,
         ),
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: AppColors.primary,
+          statusBarColor: AppColors.secondary1,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),
@@ -229,9 +229,10 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.red.shade700, width: 2),
         ),
-        labelStyle: const TextStyle(
+        labelStyle: TextStyle(
           fontSize: 14,
           color: AppColors.labelSecondary,
+          background:  Paint()..color = AppColors.grey6,
           fontWeight: FontWeight.w400,
         ),
         hintStyle: const TextStyle(
@@ -244,6 +245,7 @@ class AppTheme {
           color: Colors.red.shade700,
           fontWeight: FontWeight.w400,
         ),
+
       ),
 
       // Icon Theme
