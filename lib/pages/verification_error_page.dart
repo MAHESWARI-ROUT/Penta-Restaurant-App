@@ -91,19 +91,22 @@ class VerificationErrorPage extends StatelessWidget {
 class UnverifiedUserDialog extends StatelessWidget {
   final String whatsAppPhoneNumber;
   final String? userEmail;
+  final String? message;
 
   const UnverifiedUserDialog({
     Key? key,
     this.whatsAppPhoneNumber = '916370793232',
     this.userEmail,
+    this.message,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Account Not Verified'),
-      content: const Text(
-        'You need to verify your account before adding items to the cart.',
+      content: Text(
+        message ?? 'Please verify your email to continue.',
+        style: const TextStyle(fontSize: 16),
       ),
       actions: [
         TextButton(

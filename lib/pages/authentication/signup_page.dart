@@ -29,7 +29,7 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final textScale = size.width / 390; // responsive text scaling
+    final textScale = size.width / 390;
 
     return Scaffold(
       backgroundColor: AppColors.primary,
