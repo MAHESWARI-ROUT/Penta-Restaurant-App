@@ -97,78 +97,78 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> with SingleTick
                       icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primary, size: 20),
                     ),
                   ),
-                  actions: [
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          IconButton(
-                            onPressed: () => Get.to(() => CartTab()),
-                            icon: const Icon(
-                              Icons.shopping_cart_rounded,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          Obx(() {
-                            final itemCount = widget.cartController.itemCount;
-                            if (itemCount > 0) {
-                              return Positioned(
-                                right: 4,
-                                top: 4,
-                                child: Container(
-                                  padding: const EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Colors.red, Color(0xFFE53935)],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white, width: 2),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.red.withOpacity(0.5),
-                                        blurRadius: 6,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  constraints: const BoxConstraints(
-                                    minWidth: 18,
-                                    minHeight: 18,
-                                  ),
-                                  child: Text(
-                                    itemCount > 99 ? '99+' : '$itemCount',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.bold,
-                                      height: 1,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          }),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+                  // actions: [
+                  //   Container(
+                  //     margin: const EdgeInsets.all(8),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.white,
+                  //       shape: BoxShape.circle,
+                  //       boxShadow: [
+                  //         BoxShadow(
+                  //           color: Colors.black.withOpacity(0.15),
+                  //           blurRadius: 12,
+                  //           offset: const Offset(0, 4),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     child: Stack(
+                  //       clipBehavior: Clip.none,
+                  //       children: [
+                  //         IconButton(
+                  //           onPressed: () => Get.to(() => CartTab()),
+                  //           icon: const Icon(
+                  //             Icons.shopping_cart_rounded,
+                  //             color: AppColors.primary,
+                  //           ),
+                  //         ),
+                  //         Obx(() {
+                  //           final itemCount = widget.cartController.itemCount;
+                  //           if (itemCount > 0) {
+                  //             return Positioned(
+                  //               right: 4,
+                  //               top: 4,
+                  //               child: Container(
+                  //                 padding: const EdgeInsets.all(6),
+                  //                 decoration: BoxDecoration(
+                  //                   gradient: const LinearGradient(
+                  //                     colors: [Colors.red, Color(0xFFE53935)],
+                  //                     begin: Alignment.topLeft,
+                  //                     end: Alignment.bottomRight,
+                  //                   ),
+                  //                   shape: BoxShape.circle,
+                  //                   border: Border.all(color: Colors.white, width: 2),
+                  //                   boxShadow: [
+                  //                     BoxShadow(
+                  //                       color: Colors.red.withOpacity(0.5),
+                  //                       blurRadius: 6,
+                  //                       offset: const Offset(0, 2),
+                  //                     ),
+                  //                   ],
+                  //                 ),
+                  //                 constraints: const BoxConstraints(
+                  //                   minWidth: 18,
+                  //                   minHeight: 18,
+                  //                 ),
+                  //                 child: Text(
+                  //                   itemCount > 99 ? '99+' : '$itemCount',
+                  //                   style: const TextStyle(
+                  //                     color: Colors.white,
+                  //                     fontSize: 9,
+                  //                     fontWeight: FontWeight.bold,
+                  //                     height: 1,
+                  //                   ),
+                  //                   textAlign: TextAlign.center,
+                  //                 ),
+                  //               ),
+                  //             );
+                  //           }
+                  //           return const SizedBox.shrink();
+                  //         }),
+                  //       ],
+                  //     ),
+                  //   ),
+                  //   const SizedBox(width: 8),
+                  // ],
                   flexibleSpace: FlexibleSpaceBar(
                     background: Hero(
                       tag: 'product_${widget.product.productId}',
