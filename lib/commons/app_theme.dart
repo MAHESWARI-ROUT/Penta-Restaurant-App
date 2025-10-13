@@ -44,7 +44,7 @@ class AppTheme {
           letterSpacing: 0.15,
         ),
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: AppColors.secondary1,
+          statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
           statusBarBrightness: Brightness.dark,
         ),

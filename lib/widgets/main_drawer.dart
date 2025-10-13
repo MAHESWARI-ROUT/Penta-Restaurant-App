@@ -116,7 +116,7 @@ class MainDrawer extends StatelessWidget {
                     ),
                   )),
                 ),
-                SizedBox(height: screenHeight * 0.03),
+                SizedBox(height: screenHeight * 0.02),
                 ...drawerItems.map((item) {
                   return ListTile(
                     tileColor: Colors.transparent,

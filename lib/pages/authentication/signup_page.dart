@@ -67,8 +67,8 @@ class _SignupPageState extends State<SignupPage> {
                 SizedBox(height: size.height * 0.02),
                 _buildInput('Mobile Number', Icons.phone, mobileController),
                 SizedBox(height: size.height * 0.02),
-                _buildInput('Profession', Icons.work, professionController),
-                SizedBox(height: size.height * 0.02),
+                // _buildInput('Profession', Icons.work, professionController),
+                // SizedBox(height: size.height * 0.02),
 
                 CtextformField(
                   text: 'Password',
@@ -166,7 +166,7 @@ class _SignupPageState extends State<SignupPage> {
         email: emailController.text.trim(),
         password: passwordTextController.text,
         mobileNum: mobileController.text.trim(),
-        profession: professionController.text.trim(),
+        profession: '',
       );
 
       if (success) {

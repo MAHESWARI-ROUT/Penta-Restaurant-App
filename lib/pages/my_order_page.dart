@@ -67,6 +67,8 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       return VerificationErrorPage(
         message: 'Please verify your email to access the orders.',
         userEmail: authcontroller.currentUser.value?.email,
+        isAppBar: true,
+        appbarTitle: "My Orders",
       );
     }
 

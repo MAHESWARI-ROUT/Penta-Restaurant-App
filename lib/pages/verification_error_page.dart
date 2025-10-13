@@ -7,18 +7,35 @@ class VerificationErrorPage extends StatelessWidget {
   final String message;
   final String whatsAppPhoneNumber;
   final String? userEmail;
+  final bool isAppBar;
+  final String appbarTitle;
 
   const VerificationErrorPage({
     super.key,
     this.message = 'Please verify your email to continue.',
     this.whatsAppPhoneNumber = '916370793232',
     this.userEmail,
-  }) ;
+    this.isAppBar = false,
+    this.appbarTitle = '',
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
+      appBar: isAppBar
+          ? AppBar(
+              backgroundColor: AppColors.secondary1,
+              title: Text(
+                appbarTitle,
+                // style: TextStyle(color: AppColors),
+              ),
+              leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
+              ),
+            )
+          : null,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
