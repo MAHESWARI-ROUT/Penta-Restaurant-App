@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/controller/password_controller.dart';
 
+import '../commons/appcolors.dart';
+
 class CtextformField extends StatefulWidget {
   const CtextformField({
     super.key,
@@ -73,12 +75,32 @@ class _CtextformFieldState extends State<CtextformField> {
                     ),
                     onPressed: passwordCtrl.toggleVisibility,
                   ),
-                  labelText: widget.text,
-                  labelStyle: const TextStyle(
-                    color: Colors.black,
+                  hintText: widget.text,
+                  hintStyle:  TextStyle(
+                    color: AppColors.darkGrey.withAlpha(400),
                     fontSize: 16,
                   ),
-                  border: InputBorder.none,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      color: AppColors.darkGrey.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      color: AppColors.darkGrey.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(
+                      color: AppColors.secondary1,
+                      width: 2,
+                    ),
+                  ),
                 ),
               );
             })
@@ -92,9 +114,32 @@ class _CtextformFieldState extends State<CtextformField> {
                   horizontal: horizontalPadding,
                 ),
                 prefixIcon: widget.icon1,
-                labelText: widget.text,
-                labelStyle: const TextStyle(color: Colors.black, fontSize: 16),
-                border: InputBorder.none,
+                hintText: widget.text,
+                hintStyle:  TextStyle(
+                  color: AppColors.darkGrey.withAlpha(400),
+                  fontSize: 16,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                    color: AppColors.darkGrey.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                    color: AppColors.darkGrey.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                    color: AppColors.secondary1,
+                    width: 2,
+                  ),
+                ),
               ),
             ),
     );

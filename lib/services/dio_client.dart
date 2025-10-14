@@ -16,8 +16,7 @@ class DioClient {
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),
       contentType: 'application/json',
-      // THIS IS THE FIX: Change ResponseType.json to ResponseType.plain
-      responseType: ResponseType.plain, 
+      responseType: ResponseType.plain,
     );
     dio = Dio(options);
     dio.interceptors.add(LogInterceptor(

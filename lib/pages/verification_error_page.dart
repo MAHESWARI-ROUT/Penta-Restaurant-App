@@ -7,18 +7,35 @@ class VerificationErrorPage extends StatelessWidget {
   final String message;
   final String whatsAppPhoneNumber;
   final String? userEmail;
+  final bool isAppBar;
+  final String appbarTitle;
 
   const VerificationErrorPage({
     super.key,
     this.message = 'Please verify your email to continue.',
     this.whatsAppPhoneNumber = '916370793232',
     this.userEmail,
-  }) ;
+    this.isAppBar = false,
+    this.appbarTitle = '',
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundSecondary,
+      appBar: isAppBar
+          ? AppBar(
+              backgroundColor: AppColors.secondary1,
+              title: Text(
+                appbarTitle,
+                // style: TextStyle(color: AppColors),
+              ),
+              leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back),
+              ),
+            )
+          : null,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -74,19 +91,22 @@ class VerificationErrorPage extends StatelessWidget {
 class UnverifiedUserDialog extends StatelessWidget {
   final String whatsAppPhoneNumber;
   final String? userEmail;
+  final String? message;
 
   const UnverifiedUserDialog({
     Key? key,
     this.whatsAppPhoneNumber = '916370793232',
     this.userEmail,
+    this.message,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Account Not Verified'),
-      content: const Text(
-        'You need to verify your account before adding items to the cart.',
+      content: Text(
+        message ?? 'Please verify your email to continue.',
+        style: const TextStyle(fontSize: 16),
       ),
       actions: [
         TextButton(

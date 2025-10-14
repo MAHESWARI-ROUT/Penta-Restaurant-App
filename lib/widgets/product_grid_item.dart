@@ -247,7 +247,19 @@ class _ProductGridItemState extends State<ProductGridItem> {
                   child: Obx(() {
                     final isFav = favoriteController.isFavorite(product);
                     return GestureDetector(
-                      onTap: toggleFavorite,
+                      onTap: () {
+                        if (!profileController.isVerified.value) {
+                          showDialog(
+                            context: context,
+                            builder: (_) =>  UnverifiedUserDialog(
+                              userEmail:  authController.currentUser.value?.email,
+                              message: 'You need to verify your account before adding items to wishlist.',
+                            ),
+                          );
+                        } else {
+                          toggleFavorite();
+                        }
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
@@ -344,6 +356,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
                     context: context,
                     builder: (_) =>  UnverifiedUserDialog(
                       userEmail:  authController.currentUser.value?.email,
+                      message: 'You need to verify your account before adding items to the cart.',
                     ),
                   );
                 } else {

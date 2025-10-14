@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/auth_controller.dart';
+import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/pages/authentication/login_page.dart';
 import 'package:penta_restaurant/pages/favorite_page.dart';
 import 'package:penta_restaurant/pages/info_pages/about_us_page.dart';
@@ -16,6 +17,10 @@ import 'package:penta_restaurant/pages/tabs/profile_tab.dart';
 class MainDrawer extends StatelessWidget {
   MainDrawer({super.key, required this.onSelectScreen});
   final void Function(String identifier) onSelectScreen;
+
+  final AuthController authController = Get.find<AuthController>();
+  final ProfileController profileController = Get.find<ProfileController>();
+
 
   final List<Map<String, dynamic>> drawerItems = [
     {
@@ -91,27 +96,27 @@ class MainDrawer extends StatelessWidget {
                 SizedBox(height: screenHeight * 0.015),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0),
-                  child: Text(
-                    'Hey,',
+                  child: Obx(() => Text(
+                    profileController.displayName ?? "Hey Foodie!" ,
                     style: TextStyle(
                       fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.bold,
                       color: AppColors.white,
                     ),
-                  ),
+                  )),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0),
-                  child: Text(
-                    'Foodie!',
+                  child: Obx(() => Text(
+                    authController.currentUser.value!.email ??'',
                     style: TextStyle(
                       fontSize: screenWidth * 0.045,
                       fontWeight: FontWeight.bold,
                       color: AppColors.white,
                     ),
-                  ),
+                  )),
                 ),
-                SizedBox(height: screenHeight * 0.03),
+                SizedBox(height: screenHeight * 0.02),
                 ...drawerItems.map((item) {
                   return ListTile(
                     tileColor: Colors.transparent,
