@@ -3,6 +3,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:penta_restaurant/commons/app_constants.dart';
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -11,7 +12,7 @@ class DioClient {
 
   DioClient._internal() {
     BaseOptions options = BaseOptions(
-      baseUrl: 'https://adda.lasolution.in/',
+      baseUrl: AppConstants.baseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       sendTimeout: const Duration(seconds: 10),

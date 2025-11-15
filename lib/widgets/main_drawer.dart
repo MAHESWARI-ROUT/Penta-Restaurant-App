@@ -58,11 +58,11 @@ class MainDrawer extends StatelessWidget {
       'icon': Icons.info_outline,
       'action': () => Get.to(() => const AboutUsPage()),
     },
-    {
-      'title': 'Terms & Conditions',
-      'icon': Icons.settings,
-      'action': () => Get.to(() => const TermsConditionsPage()),
-    },
+    // {
+    //   'title': 'Terms & Conditions',
+    //   'icon': Icons.settings,
+    //   'action': () => Get.to(() => const TermsConditionsPage()),
+    // },
   ];
 
   @override

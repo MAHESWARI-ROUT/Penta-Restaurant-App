@@ -2,29 +2,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../models/auth_response.dart';
 import '../models/profile_response.dart';
+import 'dio_client.dart';
 
 class ProfileService {
-  late final Dio _dio;
+  final Dio _dio = DioClient().dio;
 
-  ProfileService() {
-    BaseOptions options = BaseOptions(
-      baseUrl: 'https://adda.lasolution.in/',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      sendTimeout: const Duration(seconds: 10),
-      contentType: 'application/json',
-      responseType: ResponseType.plain,
-    );
-    _dio = Dio(options);
-    _dio.interceptors.add(LogInterceptor(
-      request: true,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      error: true,
-      logPrint: (obj) => print(obj),
-    ));
-  }
 
   Future<UserProfile?> getProfile(String userId) async {
     try {

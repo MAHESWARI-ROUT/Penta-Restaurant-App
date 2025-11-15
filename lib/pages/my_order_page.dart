@@ -5,7 +5,7 @@ import 'package:penta_restaurant/commons/appcolors.dart';
 import 'package:penta_restaurant/controller/order_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/models/my_order_model.dart';
-import 'package:penta_restaurant/pages/home_page.dart';
+import 'package:penta_restaurant/pages/main_layout.dart';
 import 'package:penta_restaurant/pages/verification_error_page.dart';
 import 'package:penta_restaurant/pages/order_details_page.dart';
 
@@ -77,7 +77,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Get.to(() => const HomePage());
+            Get.to(() => const MainLayout());
           },
         ),
         title: Text(

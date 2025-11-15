@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:penta_restaurant/commons/appcolors.dart';
-import 'package:penta_restaurant/pages/home_page.dart';
+import 'package:penta_restaurant/pages/main_layout.dart';
 
 class VerificationPage extends StatelessWidget {
   final String name;
@@ -89,7 +89,7 @@ class VerificationPage extends StatelessWidget {
               Center(
                 child: TextButton(
                   onPressed: () {
-                    Get.offAll(() => const HomePage(), arguments: {'verified': false});
+                    Get.offAll(() => const MainLayout(), arguments: {'verified': false});
                   },
                   child: Text(
                     'Skip verification',
