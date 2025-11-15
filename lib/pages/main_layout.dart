@@ -14,14 +14,14 @@ import 'package:penta_restaurant/pages/tabs/home_tab.dart';
 import 'package:penta_restaurant/pages/tabs/profile_tab.dart';
 import '../controller/tab_controller.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class MainLayout extends StatefulWidget {
+  const MainLayout({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<MainLayout> createState() => _MainLayoutState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _MainLayoutState extends State<MainLayout> with TickerProviderStateMixin {
   final tabController = Get.put(TabController());
   final ProductController productController = Get.put(ProductController());
   final CartController cartController = Get.put(CartController());

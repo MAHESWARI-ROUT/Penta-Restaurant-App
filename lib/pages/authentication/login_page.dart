@@ -5,7 +5,7 @@ import 'package:penta_restaurant/controller/password_controller.dart';
 import 'package:penta_restaurant/controller/auth_controller.dart';
 import 'package:penta_restaurant/controller/profile_controller.dart';
 import 'package:penta_restaurant/pages/authentication/signup_page.dart';
-import 'package:penta_restaurant/pages/home_page.dart';
+import 'package:penta_restaurant/pages/main_layout.dart';
 import 'package:penta_restaurant/widgets/ctextform_field.dart';
 import '../../commons/appcolors.dart';
 import '../authentication/verification_page.dart';
@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> {
         // Check if user is verified
         if (profileController.isVerified.value) {
           // User is verified, go to home page
-          Get.offAll(() => const HomePage());
+          Get.offAll(() => const MainLayout());
         } else {
           // User is not verified, go to verification page
           Get.offAll(() => VerificationPage(

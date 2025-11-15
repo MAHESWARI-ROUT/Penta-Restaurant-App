@@ -45,6 +45,7 @@ dependencies:
   change_app_package_name: ^1.5.0
   flutter_launcher_icons: ^0.14.4
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -61,15 +62,16 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - lib/images/
+
+  # To add assets to your application, add an assets section, like this:
+#  assets:
+#    - assets/images/
+#    - assets/images/logo_otdc.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -100,6 +102,6 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo.png"            # Your logo file path
+  image_path: "assets/images/logo_otdc.png"  # logo file path
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/logo.png" # Optional foreground
+  adaptive_icon_foreground: "assets/images/logo_otdc.png" # Optional foreground

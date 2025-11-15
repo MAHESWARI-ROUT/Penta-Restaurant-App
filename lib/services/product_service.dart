@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import '../models/category_model.dart';
 import '../models/product_model.dart';
 import 'dio_client.dart';
@@ -15,7 +16,7 @@ class ProductService {
       final List<dynamic> decodedData = json.decode(response.data.toString());
       return decodedData.map((json) => Category.fromJson(json)).toList();
     } catch (e) {
-      print("Error fetching categories: $e");
+      debugPrint("Error fetching categories: $e");
       throw Exception('Failed to load categories.');
     }
   }
@@ -26,16 +27,16 @@ class ProductService {
       final List<dynamic> decodedData = json.decode(response.data.toString());
       return decodedData.map((json) => Product.fromJson(json)).toList();
     } catch (e) {
-      print("Error fetching products: $e");
+      debugPrint("Error fetching products: $e");
       throw Exception('Failed to load products.');
     }
   }
 
   Future<List<Product>> getRecommendedProducts() async {
     try {
-      final response = await _dio.get('/JSON/recom.php');
-      
-      print(response.data.toString());
+      final response = await _dio.get('/JSON/policy.php');
+
+      debugPrint(response.data.toString());
       
 
       final Map<String, dynamic> decodedData = json.decode(response.data.toString());
@@ -44,14 +45,14 @@ class ProductService {
       final List<dynamic>? productList = decodedData['rcomitem'];
 
       if (productList == null) {
-        print("'rcomitem' key not found or is null.");
+        debugPrint("'rcomitem' key not found or is null.");
         return [];
       }
 
       return productList.map((json) => Product.fromJson(json)).toList();
 
     } catch (e) {
-      print("Error fetching or parsing recommended products: $e");
+      debugPrint("Error fetching or parsing recommended products: $e");
       return []; 
     }
   }
